@@ -1,0 +1,48 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ru.nordmine.crystalmoney"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="18" />
+
+    <application android:allowBackup="true"
+        android:label="@string/app_name"
+        android:icon="@drawable/ic_launcher"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name="ru.nordmine.crystalmoney.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="ru.nordmine.crystalmoney.account.AccountActivity"
+            android:label="@string/title_activity_account"
+            android:uiOptions="" >
+        </activity>
+        <activity
+            android:name="ru.nordmine.crystalmoney.account.AccountListActivity"
+            android:label="@string/title_activity_account_list" >
+        </activity>
+        <activity
+            android:name="ru.nordmine.crystalmoney.trx.TransactionActivity"
+            android:label="@string/title_activity_income" >
+        </activity>
+        <activity
+            android:name="ru.nordmine.crystalmoney.trx.IncomeListActivity"
+            android:label="@string/title_activity_income_list" >
+        </activity>
+        <activity
+            android:name="ru.nordmine.crystalmoney.category.CategoryListActivity"
+            android:label="@string/title_activity_category_list" >
+        </activity>
+        <activity
+            android:name="ru.nordmine.crystalmoney.trx.OutcomeListActivity"
+            android:label="@string/title_activity_outcome_list" >
+        </activity>
+    </application>
+
+</manifest>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Crystal Money</string>
+    <string name="action_settings">Настройки</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="about_title">О программе</string>
+    <string name="prop_title">Настройки</string>
+    <string name="button_text_about">О программе</string>
+    <string name="prop_label">Please, choose the variant</string>
+    <string name="prop_var1">First</string>
+    <string name="prop_var2">Second</string>
+    <string name="prop_var3">Anything else</string>
+    <string name="button_prop">Настройки</string>
+    <string name="action_menu_item1">Menu Item 1</string>
+    <string name="action_menu_item2">Menu Item 2</string>
+    <string name="action_menu_item3">Menu Item 3</string>
+    <string name="main_button_add_rec">Добавить запись</string>
+    <string name="main_action_read_db">Прочитать из БД</string>
+    <string name="action_record_list">Записи из БД</string>
+    <string name="title_activity_account">Редактирование счёта</string>
+    <string name="account_name_caption">Имя счёта</string>
+    <string name="account_amount_caption">Сумма</string>
+    <string name="account_button_save">Сохранить</string>
+    <string name="title_activity_account_list">Мои счета</string>
+    <string name="account_list_add_caption">Добавить счёт</string>
+    <string name="activity_main_accounts_caption">Мои счета</string>
+    <string name="account_is_card">Банковская карта</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="title_activity_income">Доходы</string>
+    <string name="title_activity_outcome">Расходы</string>
+    <string name="caption_comment">Комментарий</string>
+    <string name="caption_save">Сохранить</string>
+    <string name="title_activity_income_list">Список доходов</string>
+    <string name="caption_create_new">Создать новый</string>
+    <string name="title_activity_category">Категория</string>
+    <string name="title_activity_category_list">Список категорий</string>
+    <string name="caption_delete">Удалить</string>
+    <string name="caption_constraint_exception">Ошибка при удалении: от этого элемента зависят другие записи</string>
+    <string name="caption_zero_account_exception">Перед добавлением транзакций необходимо создать хотя бы один счёт</string>
+    <string name="caption_no_selected_category">Вы не указали категорию</string>
+    <string name="title_activity_outcome_list">Список расходов</string>
+    <string name="caption_move_to_another_account">Перевод средств</string>
+</resources>
