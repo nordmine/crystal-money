@@ -55,11 +55,6 @@ public class CategoryListActivity extends Activity {
 	}
 
 	private void loadCategoriesFromDatabase() {
-
-//		DatabaseHelper dh = new DatabaseHelper();
-//		items = dh.loadRecordList(this, MyDb.CAT_TABLE_NAME, MyDb.CAT_NAME,
-//				MyDb.CAT_TYPE + " = " + categoryType);
-		
 		items = dao.getAll();
 		
 		CategoryItemAdapter adapter = new CategoryItemAdapter(this,
@@ -83,6 +78,7 @@ public class CategoryListActivity extends Activity {
 		if (v.getId() == R.id.categoryListView) {
 			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 			menu.setHeaderTitle(items.get(info.position).getName());
+            // todo добавить возможность переименовать категорию
 			menu.add(R.string.caption_delete);
 		}
 	}
@@ -105,24 +101,6 @@ public class CategoryListActivity extends Activity {
 	
 	public void addNewCategory(View v)
 	{
-		/*try {
-			MyDb sqh = new MyDb(this);
-			SQLiteDatabase sqdb = sqh.getWritableDatabase();
-
-			ContentValues cv = new ContentValues();
-			cv.put(MyDb.CAT_NAME, categoryNameEditText.getText()
-					.toString());
-			cv.put(MyDb.CAT_TYPE, categoryType);
-
-			sqdb.insert(MyDb.CAT_TABLE_NAME, null, cv);
-
-			sqdb.close();
-			sqh.close();
-
-		} catch (Throwable t) {
-			Log.d(this.getClass().getName(), t.toString());
-		}*/
-		
 		String categoryName = categoryNameEditText.getText().toString();
 		CategoryItem item = new CategoryItem(0, categoryType, categoryName);
 		dao.save(0, item);

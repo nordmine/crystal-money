@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.View;
 
 import ru.nordmine.crystalmoney.account.AccountListActivity;
+import ru.nordmine.crystalmoney.stat.StatActivity;
 import ru.nordmine.crystalmoney.trx.IncomeListActivity;
 import ru.nordmine.crystalmoney.trx.OutcomeListActivity;
 
@@ -42,5 +43,11 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(MainActivity.this, OutcomeListActivity.class);
 		startActivity(intent);
 	}
+
+    public void onStatButtonClick(View v)
+    {
+        Intent intent = new Intent(MainActivity.this, StatActivity.class);
+        startActivity(intent);
+    }
 
 }

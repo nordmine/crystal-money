@@ -1,14 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.nordmine.crystalmoney"
     android:versionCode="1"
-    android:versionName="1.0">
+    android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="18" />
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="18" />
 
-    <application android:allowBackup="true"
-        android:label="@string/app_name"
+    <application
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:theme="@style/AppTheme">
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
         <activity
             android:name="ru.nordmine.crystalmoney.MainActivity"
             android:label="@string/app_name" >
@@ -42,6 +46,10 @@
         <activity
             android:name="ru.nordmine.crystalmoney.trx.OutcomeListActivity"
             android:label="@string/title_activity_outcome_list" >
+        </activity>
+        <activity
+            android:name="ru.nordmine.crystalmoney.stat.StatActivity"
+            android:label="@string/title_activity_stat" >
         </activity>
     </application>
 

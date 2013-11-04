@@ -43,7 +43,7 @@ public class TransactionItemAdapter extends ArrayAdapter<TransactionItem> {
 			ViewGroup parent) {
 
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View row = inflater.inflate(R.layout.row2, parent, false);
+		View row = inflater.inflate(R.layout.row_trx_item, parent, false);
 		
 		TextView label1 = (TextView) row.findViewById(R.id.text1);
 		label1.setText(items[position].getCategoryName());
@@ -61,7 +61,7 @@ public class TransactionItemAdapter extends ArrayAdapter<TransactionItem> {
 		
 		TextView amountTextView = (TextView) row.findViewById(R.id.dateText);
 		amountTextView.setText(f.format(items[position].getCreated()));
-		
+
 		return row;
 	}
 }

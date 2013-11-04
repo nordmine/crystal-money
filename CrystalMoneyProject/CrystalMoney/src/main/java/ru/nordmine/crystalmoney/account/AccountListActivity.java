@@ -11,17 +11,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import ru.nordmine.crystalmoney.NumberWithText;
 import ru.nordmine.crystalmoney.R;
+import ru.nordmine.crystalmoney.stat.StatisticsDao;
 
 public class AccountListActivity extends Activity {
 
 	private static final int EDIT_ACCOUNT = 10;
 	private ListView listView;
+    private TextView totalSumPerDayTextView;
+    private TextView totalSumPerMonthTextView;
 	private List<AccountItem> items;
 	private AccountDao dao = new AccountDao(this);
 
@@ -31,6 +37,8 @@ public class AccountListActivity extends Activity {
 		setContentView(R.layout.activity_account_list);
 
 		listView = (ListView) findViewById(R.id.categoryListView);
+        totalSumPerDayTextView = (TextView) findViewById(R.id.totalSumPerDayTextView);
+        totalSumPerMonthTextView = (TextView) findViewById(R.id.totalSumPerMonthTextView);
 
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> a, View v, int position,
@@ -53,16 +61,31 @@ public class AccountListActivity extends Activity {
 	 	items = dao.getAll();
 		NumberWithText[] iconsOriginal = AccountActivity.getAccountIcons();
 		List<AccountItem> icons = new ArrayList<AccountItem>();
+
+        StatisticsDao statistics = new StatisticsDao(this);
+        Map<Integer, Double> totalAmount = statistics.getTotalAmount();
 		
-		for (AccountItem kvi : items) {
-			NumberWithText item = iconsOriginal[kvi.getIconId()];
-			icons.add(new AccountItem(kvi.getId(), kvi.getName(), item
-					.getNumber(), kvi.getAmount()));
+		for (AccountItem ai : items) {
+			NumberWithText item = iconsOriginal[ai.getIconId()];
+            Double statAmount = totalAmount.containsKey(ai.getId()) ? totalAmount.get(ai.getId()) : 0;
+			icons.add(new AccountItem(ai.getId(), ai.getName(), item.getNumber(), statAmount));
 		}
 
 		listView.setAdapter(new AccountItemAdapter(this,
 					android.R.layout.simple_list_item_1, icons
 							.toArray(new AccountItem[icons.size()])));
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        double totalSumPerDay = statistics.getAmountBetweenDate(c.getTimeInMillis(), null);
+        totalSumPerDayTextView.setText("Расходы за день: " + totalSumPerDay);
+
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        double totalSumPerMonth = statistics.getAmountBetweenDate(c.getTimeInMillis(), null);
+        totalSumPerMonthTextView.setText("Расходы за месяц: " + totalSumPerMonth);
 	}
 	
 	public void onAddButtonClick(View v) {

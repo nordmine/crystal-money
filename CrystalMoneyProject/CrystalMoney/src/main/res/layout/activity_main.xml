@@ -64,4 +64,23 @@
         android:layout_marginRight="44dp"
         android:text="@string/title_activity_income_list" />
 
+    <ImageButton
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:id="@+id/statImageButton"
+        android:layout_alignTop="@+id/outgoingImageButton"
+        android:layout_alignLeft="@+id/accountListImageButton"
+        android:layout_alignBottom="@+id/outgoingImageButton"
+        android:layout_alignRight="@+id/accountListImageButton"
+        android:src="@drawable/chart_pie2"
+        android:onClick="onStatButtonClick" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_activity_stat"
+        android:id="@+id/textView"
+        android:layout_alignTop="@+id/textView3"
+        android:layout_alignLeft="@+id/textView1" />
+
 </RelativeLayout>

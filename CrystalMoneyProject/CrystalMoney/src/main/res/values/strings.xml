@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Crystal Money</string>
     <string name="action_settings">Настройки</string>
     <string name="hello_world">Hello world!</string>
@@ -42,4 +43,8 @@
     <string name="caption_no_selected_category">Вы не указали категорию</string>
     <string name="title_activity_outcome_list">Список расходов</string>
     <string name="caption_move_to_another_account">Перевод средств</string>
+    <string name="title_activity_stat">Статистика</string>
+    <string name="caption_outcomes_by_day">Расходы за день: </string>
+    <string name="caption_outcomes_by_month">Расходы за месяц: </string>
+
 </resources>

@@ -16,212 +16,210 @@ import ru.nordmine.crystalmoney.R;
 
 public abstract class BasicDao<T> {
 
-	private Context context;
+    protected Context context;
 
-	public BasicDao(Context context) {
-		this.context = context;
-	}
+    public BasicDao(Context context) {
+        this.context = context;
+    }
 
-	protected abstract String[] getSelectFields();
+    protected abstract String[] getSelectFields();
 
-	protected WhereClauseItem[] getClauseForList() {
-		return null;
-	}
-	
-	protected String getOrderByFieldName() {
-		return null;
-	}
-	
-	protected String getOrderDirection()
-	{
-		return "asc";
-	}
+    protected WhereClauseItem[] getClauseForList() {
+        return null;
+    }
 
-	protected JoinTableItem[] getJoinTables() {
-		return null;
-	}
+    protected String getOrderByFieldName() {
+        return null;
+    }
 
-	protected abstract String getTableName();
+    protected String getOrderDirection() {
+        return "asc";
+    }
 
-	protected abstract T parseRow(Cursor cursor);
+    protected JoinTableItem[] getJoinTables() {
+        return null;
+    }
 
-	protected abstract ContentValues getValuesForSave(T t);
+    protected abstract String getTableName();
 
-	public T getById(int id) {
-		T result = null;
+    protected abstract T parseRow(Cursor cursor);
 
-		try {
-			MyDb sqh = new MyDb(context);
-			SQLiteDatabase sqdb = sqh.getReadableDatabase();
+    protected void addJoinTables(StringBuilder query) {
+        JoinTableItem[] joinTables = getJoinTables();
+        if (joinTables != null && joinTables.length > 0) {
+            for (JoinTableItem joinItem : joinTables) {
+                query.append(" left join ").append(joinItem.getJoinTableName());
+                query.append(" on (").append(getTableName()).append(".");
+                query.append(joinItem.getForeignKeyName()).append(" = ");
+                query.append(joinItem.getJoinTableName()).append(".");
+                query.append(MyDb.UID).append(") ");
+            }
+        }
+    }
 
-			StringBuilder query = new StringBuilder("select ");
-			query.append(TextUtils.join(", ", getSelectFields()));
-			query.append(" FROM ").append(getTableName());
+    protected StringBuilder clauseToString(List<String> whereArgs,
+                                           WhereClauseItem[] whereClause) {
+        StringBuilder query = new StringBuilder("");
+        if (whereClause != null && whereClause.length > 0) {
+            List<String> whereClauseList = new ArrayList<String>();
+            for (WhereClauseItem i : whereClause) {
+                whereClauseList.add(i.toString());
+                whereArgs.add(i.getValue());
+            }
+            query.append(" where ").append(TextUtils.join(" and ", whereClauseList));
+        }
+        return query;
+    }
 
-			addJoinTables(query);
+    protected abstract ContentValues getValuesForSave(T t);
 
-			List<String> whereArgs = new ArrayList<String>();
-			WhereClauseItem[] whereClause = new WhereClauseItem[] { new WhereClauseItem(
-					getTableName() + "." + MyDb.UID, "=", Integer.toString(id)) };
-			query.append(clauseToString(whereArgs, whereClause));
-			
-			String queryString = query.toString();
+    public T getById(int id) {
+        T result = null;
 
-			Log.d(this.getClass().getName(), queryString);
+        try {
+            MyDb sqh = new MyDb(context);
+            SQLiteDatabase sqdb = sqh.getReadableDatabase();
 
-			Cursor cursor = sqdb.rawQuery(queryString,
-					whereArgs.toArray(new String[whereArgs.size()]));
+            StringBuilder query = new StringBuilder("select ");
+            query.append(TextUtils.join(", ", getSelectFields()));
+            query.append(" FROM ").append(getTableName());
 
-			while (cursor.moveToNext()) {
-				result = parseRow(cursor);
-			}
-			cursor.close();
+            addJoinTables(query);
 
-			sqdb.close();
-			sqh.close();
+            List<String> whereArgs = new ArrayList<String>();
+            WhereClauseItem[] whereClause = new WhereClauseItem[]{new WhereClauseItem(
+                    getTableName() + "." + MyDb.UID, "=", Integer.toString(id))};
+            query.append(clauseToString(whereArgs, whereClause));
 
-		} catch (Throwable t) {
-			Log.d(this.getClass().getName(), t.toString());
-		}
-		return result;
-	}
+            String queryString = query.toString();
 
-	private void addJoinTables(StringBuilder query) {
-		JoinTableItem[] joinTables = getJoinTables();
-		if (joinTables != null && joinTables.length > 0) {
-			for (JoinTableItem joinItem : joinTables) {
-				query.append(" left join ").append(joinItem.getJoinTableName());
-				query.append(" on (").append(getTableName()).append(".");
-				query.append(joinItem.getForeignKeyName()).append(" = ");
-				query.append(joinItem.getJoinTableName()).append(".");
-				query.append(MyDb.UID).append(") ");
-			}
-		}
-	}
+            Log.d(this.getClass().getName(), queryString);
 
-	private StringBuilder clauseToString(List<String> whereArgs,
-			WhereClauseItem[] whereClause) {
-		StringBuilder query = new StringBuilder("");
-		if (whereClause != null && whereClause.length > 0) {
-			List<String> whereClauseList = new ArrayList<String>();
-			for (WhereClauseItem i : whereClause) {
-				whereClauseList.add(i.toString());
-				whereArgs.add(i.getValue());
-			}
-			query.append(" where ").append(TextUtils.join(" and ", whereClauseList));
-		}
-		return query;
-	}
+            Cursor cursor = sqdb.rawQuery(queryString,
+                    whereArgs.toArray(new String[whereArgs.size()]));
 
-	public List<T> getAll() {
-		List<T> items = new ArrayList<T>();
+            while (cursor.moveToNext()) {
+                result = parseRow(cursor);
+            }
+            cursor.close();
 
-		try {
-			MyDb sqh = new MyDb(context);
-			SQLiteDatabase sqdb = sqh.getReadableDatabase();
-			StringBuilder query = new StringBuilder("select ");
-			query.append(TextUtils.join(", ", getSelectFields()));
+            sqdb.close();
+            sqh.close();
 
-			query.append(" FROM ").append(getTableName());
-			
-			addJoinTables(query);
+        } catch (Throwable t) {
+            Log.d(this.getClass().getName(), t.toString());
+        }
+        return result;
+    }
 
-			List<String> whereArgs = new ArrayList<String>();
-			WhereClauseItem[] whereClause = getClauseForList();
-			query.append(clauseToString(whereArgs, whereClause));
-			
-			String orderByFieldName = getOrderByFieldName();
-			if(orderByFieldName != null)
-			{
-				query.append(" order by ").append(orderByFieldName);
-				query.append(" ").append(getOrderDirection());
-			}
-			
-			String queryString = query.toString();
-			
-			Log.d(this.getClass().getName(), queryString);
+    public List<T> getAll() {
+        List<T> items = new ArrayList<T>();
 
-			Cursor cursor = sqdb.rawQuery(queryString,
-					whereArgs.toArray(new String[whereArgs.size()]));
+        try {
+            MyDb sqh = new MyDb(context);
+            SQLiteDatabase sqdb = sqh.getReadableDatabase();
+            StringBuilder query = new StringBuilder("select ");
+            query.append(TextUtils.join(", ", getSelectFields()));
 
-			while (cursor.moveToNext()) {
-				items.add(parseRow(cursor));
-			}
-			cursor.close();
-			sqdb.close();
-			sqh.close();
-		} catch (Throwable t) {
-			Log.d(this.getClass().getName(), t.toString());
-		}
-		return items;
-	}
+            query.append(" FROM ").append(getTableName());
 
-	public void save(int id, T t) {
-		try {
-			MyDb sqh = new MyDb(context);
-			SQLiteDatabase sqdb = sqh.getWritableDatabase();
+            addJoinTables(query);
 
-			ContentValues cv = getValuesForSave(t);
+            List<String> whereArgs = new ArrayList<String>();
+            WhereClauseItem[] whereClause = getClauseForList();
+            query.append(clauseToString(whereArgs, whereClause));
 
-			if (id > 0) {
-				String[] args = new String[] { Integer.toString(id) };
-				sqdb.update(getTableName(), cv, MyDb.UID + " = ?", args);
-			} else {
-				sqdb.insert(getTableName(), null, cv);
-			}
+            String orderByFieldName = getOrderByFieldName();
+            if (orderByFieldName != null) {
+                query.append(" order by ").append(orderByFieldName);
+                query.append(" ").append(getOrderDirection());
+            }
 
-			sqdb.close();
-			sqh.close();
+            String queryString = query.toString();
 
-		} catch (Throwable tr) {
-			Log.d(this.getClass().getName(), tr.toString());
-		}
-	}
+            Log.d(this.getClass().getName(), queryString);
 
-	public void removeById(int id) {
-		try {
-			MyDb sqh = new MyDb(context);
-			SQLiteDatabase sqdb = sqh.getWritableDatabase();
+            Cursor cursor = sqdb.rawQuery(queryString,
+                    whereArgs.toArray(new String[whereArgs.size()]));
 
-			sqdb.delete(getTableName(), MyDb.UID + " = ?",
-					new String[] { Integer.toString(id) });
+            while (cursor.moveToNext()) {
+                items.add(parseRow(cursor));
+            }
+            cursor.close();
+            sqdb.close();
+            sqh.close();
+        } catch (Throwable t) {
+            Log.d(this.getClass().getName(), t.toString());
+        }
+        return items;
+    }
 
-			sqdb.close();
-			sqh.close();
-		} catch (SQLiteConstraintException e) {
-			Toast.makeText(context, R.string.caption_constraint_exception,
-					Toast.LENGTH_LONG).show();
-		} catch (Throwable t) {
-			Log.d(this.getClass().getName(), t.toString());
-		}
-	}
-	
-	public int getTotalCount() {
-		int totalCount = 0;
+    public void save(int id, T t) {
+        try {
+            MyDb sqh = new MyDb(context);
+            SQLiteDatabase sqdb = sqh.getWritableDatabase();
 
-		try {
-			MyDb sqh = new MyDb(context);
-			SQLiteDatabase sqdb = sqh.getReadableDatabase();
+            ContentValues cv = getValuesForSave(t);
 
-			String query = "select count(" + MyDb.UID + ") as count_id FROM "
-					+ getTableName();
+            if (id > 0) {
+                String[] args = new String[]{Integer.toString(id)};
+                sqdb.update(getTableName(), cv, MyDb.UID + " = ?", args);
+            } else {
+                sqdb.insert(getTableName(), null, cv);
+            }
 
-			Log.d(this.getClass().getName(), query);
+            sqdb.close();
+            sqh.close();
 
-			Cursor cursor = sqdb.rawQuery(query, null);
+        } catch (Throwable tr) {
+            Log.d(this.getClass().getName(), tr.toString());
+        }
+    }
 
-			while (cursor.moveToNext()) {
-				totalCount = cursor.getInt(cursor.getColumnIndex("count_id"));
-			}
-			cursor.close();
+    public void removeById(int id) {
+        try {
+            MyDb sqh = new MyDb(context);
+            SQLiteDatabase sqdb = sqh.getWritableDatabase();
 
-			sqdb.close();
-			sqh.close();
+            sqdb.delete(getTableName(), MyDb.UID + " = ?",
+                    new String[]{Integer.toString(id)});
 
-		} catch (Throwable t) {
-			Log.d(this.getClass().getName(), t.toString());
-		}
-		return totalCount;
-	}
+            sqdb.close();
+            sqh.close();
+        } catch (SQLiteConstraintException e) {
+            Toast.makeText(context, R.string.caption_constraint_exception,
+                    Toast.LENGTH_LONG).show();
+        } catch (Throwable t) {
+            Log.d(this.getClass().getName(), t.toString());
+        }
+    }
+
+    public int getTotalCount() {
+        int totalCount = 0;
+
+        try {
+            MyDb sqh = new MyDb(context);
+            SQLiteDatabase sqdb = sqh.getReadableDatabase();
+
+            String query = "select count(" + MyDb.UID + ") as count_id FROM "
+                    + getTableName();
+
+            Log.d(this.getClass().getName(), query);
+
+            Cursor cursor = sqdb.rawQuery(query, null);
+
+            while (cursor.moveToNext()) {
+                totalCount = cursor.getInt(cursor.getColumnIndex("count_id"));
+            }
+            cursor.close();
+
+            sqdb.close();
+            sqh.close();
+
+        } catch (Throwable t) {
+            Log.d(this.getClass().getName(), t.toString());
+        }
+        return totalCount;
+    }
 
 }

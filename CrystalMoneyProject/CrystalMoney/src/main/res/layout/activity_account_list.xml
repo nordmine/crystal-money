@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/createAccountImageButton" >
+        android:layout_below="@+id/createAccountImageButton">
 
     </ListView>
 
@@ -25,5 +25,21 @@
         android:layout_alignParentTop="true"
         android:onClick="onAddButtonClick"
         android:src="@drawable/add2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/totalSumPerMonthTextView"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/createAccountImageButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/totalSumPerDayTextView"
+        android:layout_below="@+id/totalSumPerMonthTextView"
+        android:layout_alignLeft="@+id/totalSumPerMonthTextView" />
 
 </RelativeLayout>

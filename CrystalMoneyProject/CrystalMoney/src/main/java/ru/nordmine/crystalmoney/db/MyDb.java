@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MyDb extends SQLiteOpenHelper {
 
-	private static final String DATABASE_NAME = "nordmine.db";
-	private static final int DATABASE_VERSION = 13;
+	private static final String DATABASE_NAME = "ru.nordmine.crystalmoney.db";
+	private static final int DATABASE_VERSION = 14;
 
 	public static final String UID = "_id";
 	
