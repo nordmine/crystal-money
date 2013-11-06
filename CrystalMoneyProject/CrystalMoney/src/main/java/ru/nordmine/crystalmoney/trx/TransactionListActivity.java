@@ -17,7 +17,7 @@ import java.util.List;
 import ru.nordmine.crystalmoney.R;
 import ru.nordmine.crystalmoney.account.AccountDao;
 
-public class TransactionListActivity extends Activity {
+public abstract class TransactionListActivity extends Activity {
 	
 	protected ListView listView;
 	protected int categoryType = 0;
@@ -84,5 +84,19 @@ public class TransactionListActivity extends Activity {
 				Toast.LENGTH_LONG).show();
 		return false;
 	}
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                onAddButtonClick();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    protected abstract void onAddButtonClick();
 
 }

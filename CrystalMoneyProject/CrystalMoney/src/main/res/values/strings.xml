@@ -46,5 +46,6 @@
     <string name="title_activity_stat">Статистика</string>
     <string name="caption_outcomes_by_day">Расходы за день: </string>
     <string name="caption_outcomes_by_month">Расходы за месяц: </string>
+    <string name="caption_add">Добавить</string>
 
 </resources>

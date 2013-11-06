@@ -5,7 +5,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"    
+    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".AccountListActivity" >
 
     <ListView
@@ -13,33 +13,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/createAccountImageButton">
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/totalSumPerMonthTextView">
 
     </ListView>
 
-    <ImageButton
-        android:id="@+id/createAccountImageButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_alignLeft="@+id/categoryListView"
-        android:layout_alignParentTop="true"
-        android:onClick="onAddButtonClick"
-        android:src="@drawable/add2" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
+        android:text="New Text 1"
         android:id="@+id/totalSumPerMonthTextView"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/createAccountImageButton" />
+        android:layout_above="@+id/totalSumPerMonthTextView"
+        android:layout_alignParentLeft="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/totalSumPerDayTextView"
-        android:layout_below="@+id/totalSumPerMonthTextView"
-        android:layout_alignLeft="@+id/totalSumPerMonthTextView" />
+        android:text="New Text 2"
+        android:id="@+id/totalSumPerMonthTextView"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true" />
 
 </RelativeLayout>

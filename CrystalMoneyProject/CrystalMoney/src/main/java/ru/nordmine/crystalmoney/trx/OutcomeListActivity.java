@@ -2,10 +2,12 @@ package ru.nordmine.crystalmoney.trx;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import ru.nordmine.crystalmoney.R;
 
@@ -38,8 +40,9 @@ public class OutcomeListActivity extends TransactionListActivity {
 		registerForContextMenu(listView);
 		refreshItems();		
 	}
-	
-	public void onAddButtonClick(View v) {
+
+	@Override
+	protected void onAddButtonClick() {
 		if (!super.checkAccountListForEmpty()) {
 			return;
 		}

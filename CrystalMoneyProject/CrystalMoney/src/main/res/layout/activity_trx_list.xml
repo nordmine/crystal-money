@@ -12,17 +12,7 @@
         android:id="@+id/categoryListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/createIncomeImageButton" >
-
+        android:layout_alignParentTop="true" >
     </ListView>
-
-    <ImageButton
-        android:id="@+id/createIncomeImageButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_alignLeft="@+id/categoryListView"
-        android:layout_alignParentTop="true"
-        android:onClick="onAddButtonClick"
-        android:src="@drawable/add2" />
 
 </RelativeLayout>

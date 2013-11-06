@@ -87,10 +87,21 @@ public class AccountListActivity extends Activity {
         double totalSumPerMonth = statistics.getAmountBetweenDate(c.getTimeInMillis(), null);
         totalSumPerMonthTextView.setText("Расходы за месяц: " + totalSumPerMonth);
 	}
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add:
+                onAddButtonClick();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
 	
-	public void onAddButtonClick(View v) {
-		Intent intent = new Intent(AccountListActivity.this,
-				AccountActivity.class);
+	public void onAddButtonClick() {
+		Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
 		startActivityForResult(intent, EDIT_ACCOUNT);
 	}
 
