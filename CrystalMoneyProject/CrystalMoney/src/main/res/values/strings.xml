@@ -47,5 +47,5 @@
     <string name="caption_outcomes_by_day">Расходы за день: </string>
     <string name="caption_outcomes_by_month">Расходы за месяц: </string>
     <string name="caption_add">Добавить</string>
-
+    <string name="title_activity_exchange">Перевод между счетами</string>
 </resources>

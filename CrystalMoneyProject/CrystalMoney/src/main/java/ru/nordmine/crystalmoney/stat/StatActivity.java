@@ -1,13 +1,16 @@
 package ru.nordmine.crystalmoney.stat;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -19,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import ru.nordmine.crystalmoney.MainActivity;
 import ru.nordmine.crystalmoney.R;
 
 public class StatActivity extends Activity {
@@ -54,6 +58,23 @@ public class StatActivity extends Activity {
         percentByCategoryListView.setAdapter(
                 new StatItemAdapter(this, android.R.layout.simple_list_item_1,
                         items.toArray(new StatItem[0])));
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     public class MyGraphView extends View {

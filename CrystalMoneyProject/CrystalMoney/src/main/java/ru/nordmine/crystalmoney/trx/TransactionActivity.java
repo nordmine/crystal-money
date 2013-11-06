@@ -1,9 +1,11 @@
 package ru.nordmine.crystalmoney.trx;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -15,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import ru.nordmine.crystalmoney.MainActivity;
 import ru.nordmine.crystalmoney.R;
 import ru.nordmine.crystalmoney.account.AccountDao;
 import ru.nordmine.crystalmoney.account.AccountItem;
@@ -66,13 +69,6 @@ public class TransactionActivity extends Activity {
 		Bundle bundle = getIntent().getExtras();
 		transactionType = bundle.getInt("transactionType");
 		
-		if (transactionType == 1) {
-			this.setTitle(R.string.title_activity_income);
-		}
-		if (transactionType == 2) {
-			this.setTitle(R.string.title_activity_outcome);
-		}
-		
 		trxDao = new TransactionDao(this, transactionType);
 		if (bundle != null && bundle.containsKey("defStrID")) {
 			id = bundle.getInt("defStrID");
@@ -81,6 +77,16 @@ public class TransactionActivity extends Activity {
 			setDefaultCategory();
 			amountEditText.setText("0");
 		}
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        if (transactionType == 1) {
+            actionBar.setTitle(R.string.title_activity_income);
+        }
+        if (transactionType == 2) {
+            actionBar.setTitle(R.string.title_activity_outcome);
+        }
 	}
 
 	private void setDefaultCategory() {
@@ -110,6 +116,26 @@ public class TransactionActivity extends Activity {
 		getMenuInflater().inflate(R.menu.income, menu);
 		return true;
 	}
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = null;
+                if (transactionType == 1) {
+                    intent = new Intent(this, IncomeListActivity.class);
+                }
+                if (transactionType == 2) {
+                    intent = new Intent(this, OutcomeListActivity.class);
+                }
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
 
 	private void loadRecordById(int id) {
 		TransactionItem trxItem = trxDao.getById(id);

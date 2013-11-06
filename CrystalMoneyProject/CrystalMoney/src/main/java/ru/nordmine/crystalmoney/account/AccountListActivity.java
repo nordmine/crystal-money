@@ -1,5 +1,6 @@
 package ru.nordmine.crystalmoney.account;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,13 +19,17 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import ru.nordmine.crystalmoney.MainActivity;
 import ru.nordmine.crystalmoney.NumberWithText;
 import ru.nordmine.crystalmoney.R;
+import ru.nordmine.crystalmoney.exchange.ExchangeActivity;
 import ru.nordmine.crystalmoney.stat.StatisticsDao;
 
 public class AccountListActivity extends Activity {
 
 	private static final int EDIT_ACCOUNT = 10;
+    public static final int EXCHANGE_AMOUNT = 40;
+
 	private ListView listView;
     private TextView totalSumPerDayTextView;
     private TextView totalSumPerMonthTextView;
@@ -55,6 +60,9 @@ public class AccountListActivity extends Activity {
 		registerForContextMenu(listView);
 
 		loadAccountsFromDatabase();
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 	}
 
 	private void loadAccountsFromDatabase() {
@@ -91,6 +99,11 @@ public class AccountListActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                break;
             case R.id.action_add:
                 onAddButtonClick();
                 break;
@@ -136,10 +149,16 @@ public class AccountListActivity extends Activity {
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		int menuItemIndex = item.getItemId();
+        AdapterView.AdapterContextMenuInfo info =
+                (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        if(menuItemIndex == 0)
+        {
+            Intent intent = new Intent(AccountListActivity.this, ExchangeActivity.class);
+            intent.putExtra("fromAccountId", items.get(info.position).getId());
+            startActivityForResult(intent, EXCHANGE_AMOUNT);
+        }
 		if(menuItemIndex == 1)
 		{
-			AdapterView.AdapterContextMenuInfo info = 
-					(AdapterView.AdapterContextMenuInfo) item.getMenuInfo();			
 			deleteRecordById(items.get(info.position).getId());
 		}
 		return super.onContextItemSelected(item);

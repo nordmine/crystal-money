@@ -5,8 +5,8 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="18" />
+        android:minSdkVersion="11"
+        android:targetSdkVersion="15" />
 
     <application
         android:allowBackup="true"
@@ -50,6 +50,10 @@
         <activity
             android:name="ru.nordmine.crystalmoney.stat.StatActivity"
             android:label="@string/title_activity_stat" >
+        </activity>
+        <activity
+            android:name="ru.nordmine.crystalmoney.exchange.ExchangeActivity"
+            android:label="@string/title_activity_exchange" >
         </activity>
     </application>
 

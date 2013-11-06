@@ -1,8 +1,11 @@
 package ru.nordmine.crystalmoney.account;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.nordmine.crystalmoney.IconWithTextAdapter;
+import ru.nordmine.crystalmoney.MainActivity;
 import ru.nordmine.crystalmoney.NumberWithText;
 import ru.nordmine.crystalmoney.R;
 
@@ -46,6 +50,9 @@ public class AccountActivity extends Activity {
 		} else {
 			editAmount.setText("0");
 		}
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 	}
 
 	public static NumberWithText[] getAccountIcons() {
@@ -82,6 +89,20 @@ public class AccountActivity extends Activity {
 		getMenuInflater().inflate(R.menu.account, menu);
 		return true;
 	}
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent(this, AccountListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
 
 	public void onSaveClick(View v) {
 		String name = editAccountName.getText().toString();

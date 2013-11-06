@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MyDb extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "ru.nordmine.crystalmoney.db";
-	private static final int DATABASE_VERSION = 14;
+	private static final int DATABASE_VERSION = 15;
 
 	public static final String UID = "_id";
 	
@@ -29,6 +29,12 @@ public class MyDb extends SQLiteOpenHelper {
 	public static final String CAT_TABLE_NAME = "categories";
 	public static final String CAT_NAME = "name";
 	public static final String CAT_TYPE = "category_type";
+
+    public static final String EXCHANGE_TABLE_NAME = "exchanges";
+    public static final String EXCHANGE_CREATED = "created";
+    public static final String EXCHANGE_FROM_ACCOUNT_ID = "from_account_id";
+    public static final String EXCHANGE_TO_ACCOUNT_ID = "to_account_id";
+    public static final String EXCHANGE_AMOUNT = "amount";
 	
 	private static final String SQL_CREATE_ACCOUNTS =
 			"create table " + ACCOUNT_TABLE_NAME 
@@ -59,6 +65,18 @@ public class MyDb extends SQLiteOpenHelper {
 			+ CAT_NAME + " varchar(255) not null, "
 			+ CAT_TYPE + " integer not null)";
 
+    private static final String SQL_CREATE_EXCHANGE =
+            "create table " + EXCHANGE_TABLE_NAME
+            + " (" + UID + " integer primary key autoincrement, "
+            + EXCHANGE_CREATED + " integer not null, "
+            + EXCHANGE_FROM_ACCOUNT_ID + " integer not null, "
+            + EXCHANGE_TO_ACCOUNT_ID + " integer not null, "
+            + EXCHANGE_AMOUNT + " numeric not null, "
+            + "foreign key (" + EXCHANGE_FROM_ACCOUNT_ID
+            + ") REFERENCES " + ACCOUNT_TABLE_NAME + "(" + UID + "), "
+            + "foreign key (" + EXCHANGE_TO_ACCOUNT_ID
+            + ") REFERENCES " + ACCOUNT_TABLE_NAME + "(" + UID + "))";
+
 	public MyDb(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -76,13 +94,14 @@ public class MyDb extends SQLiteOpenHelper {
 		db.execSQL(SQL_CREATE_ACCOUNTS);
 		db.execSQL(SQL_CREATE_CATEGORY);
 		db.execSQL(SQL_CREATE_TRX);
+        db.execSQL(SQL_CREATE_EXCHANGE);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int arg1, int arg2) {
-		String[] tablesForDelete = new String[] { TRX_TABLE_NAME,
-				ACCOUNT_TABLE_NAME, CAT_TABLE_NAME };
-		for (String tableName : tablesForDelete) {
+        String[] tablesForDelete = new String[]{TRX_TABLE_NAME, EXCHANGE_TABLE_NAME,
+                ACCOUNT_TABLE_NAME, CAT_TABLE_NAME};
+        for (String tableName : tablesForDelete) {
 			db.execSQL("drop table if exists " + tableName);
 		}
 		onCreate(db);

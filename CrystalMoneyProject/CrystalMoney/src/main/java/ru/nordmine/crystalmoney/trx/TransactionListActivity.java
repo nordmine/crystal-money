@@ -1,7 +1,10 @@
 package ru.nordmine.crystalmoney.trx;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import ru.nordmine.crystalmoney.MainActivity;
 import ru.nordmine.crystalmoney.R;
 import ru.nordmine.crystalmoney.account.AccountDao;
 
@@ -30,6 +34,9 @@ public abstract class TransactionListActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_trx_list);
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 	}
 	
 	protected void refreshItems() {
@@ -88,11 +95,16 @@ public abstract class TransactionListActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                break;
             case R.id.action_add:
                 onAddButtonClick();
                 break;
             default:
-                break;
+                return super.onOptionsItemSelected(item);
         }
         return true;
     }
