@@ -55,6 +55,10 @@
             android:name="ru.nordmine.crystalmoney.exchange.ExchangeActivity"
             android:label="@string/title_activity_exchange" >
         </activity>
+        <activity
+            android:name="ru.nordmine.crystalmoney.exchange.ExchangeListActivity"
+            android:label="@string/title_activity_exchange_list" >
+        </activity>
     </application>
 
 </manifest>

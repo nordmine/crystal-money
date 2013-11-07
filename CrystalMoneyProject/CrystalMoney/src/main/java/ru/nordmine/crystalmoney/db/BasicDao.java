@@ -48,10 +48,10 @@ public abstract class BasicDao<T> {
         JoinTableItem[] joinTables = getJoinTables();
         if (joinTables != null && joinTables.length > 0) {
             for (JoinTableItem joinItem : joinTables) {
-                query.append(" left join ").append(joinItem.getJoinTableName());
+                query.append(" left join ").append(joinItem.getJoinTableName()).append(" ").append(joinItem.getAlias());
                 query.append(" on (").append(getTableName()).append(".");
                 query.append(joinItem.getForeignKeyName()).append(" = ");
-                query.append(joinItem.getJoinTableName()).append(".");
+                query.append(joinItem.getAlias()).append(".");
                 query.append(MyDb.UID).append(") ");
             }
         }
@@ -137,7 +137,9 @@ public abstract class BasicDao<T> {
 
             String queryString = query.toString();
 
-            Log.d(this.getClass().getName(), queryString);
+//            Log.d(this.getClass().getName(), queryString);
+
+            System.out.println(queryString);
 
             Cursor cursor = sqdb.rawQuery(queryString,
                     whereArgs.toArray(new String[whereArgs.size()]));

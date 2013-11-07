@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import ru.nordmine.crystalmoney.db.BasicDao;
+import ru.nordmine.crystalmoney.db.JoinTableItem;
 import ru.nordmine.crystalmoney.db.MyDb;
 
 public class ExchangeDao extends BasicDao<ExchangeItem> {
@@ -16,8 +17,15 @@ public class ExchangeDao extends BasicDao<ExchangeItem> {
 
     @Override
     protected String[] getSelectFields() {
-        return new String[] { MyDb.UID, MyDb.EXCHANGE_CREATED, MyDb.EXCHANGE_FROM_ACCOUNT_ID,
-                MyDb.EXCHANGE_TO_ACCOUNT_ID, MyDb.EXCHANGE_AMOUNT };
+        return new String[] {
+                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.UID,
+                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.EXCHANGE_CREATED,
+                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.EXCHANGE_FROM_ACCOUNT_ID,
+                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.EXCHANGE_TO_ACCOUNT_ID,
+                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.EXCHANGE_AMOUNT,
+                "acc1." + MyDb.ACCOUNT_PICTURE,
+                "acc2." + MyDb.ACCOUNT_PICTURE
+        };
     }
 
     @Override
@@ -27,12 +35,14 @@ public class ExchangeDao extends BasicDao<ExchangeItem> {
 
     @Override
     protected ExchangeItem parseRow(Cursor cursor) {
-        int id = cursor.getInt(cursor.getColumnIndex(MyDb.UID));
-        long created = cursor.getLong(cursor.getColumnIndex(MyDb.EXCHANGE_CREATED));
-        int fromAccountId = cursor.getInt(cursor.getColumnIndex(MyDb.EXCHANGE_FROM_ACCOUNT_ID));
-        int toAccountId = cursor.getInt(cursor.getColumnIndex(MyDb.EXCHANGE_TO_ACCOUNT_ID));
-        double amount = cursor.getDouble(cursor.getColumnIndex(MyDb.EXCHANGE_AMOUNT));
-        return new ExchangeItem(id, created, fromAccountId, toAccountId, amount);
+        int id = cursor.getInt(cursor.getColumnIndex(getTableName() + "." + MyDb.UID));
+        long created = cursor.getLong(cursor.getColumnIndex(getTableName() + "." + MyDb.EXCHANGE_CREATED));
+        int fromAccountId = cursor.getInt(cursor.getColumnIndex(getTableName() + "." + MyDb.EXCHANGE_FROM_ACCOUNT_ID));
+        int toAccountId = cursor.getInt(cursor.getColumnIndex(getTableName() + "." + MyDb.EXCHANGE_TO_ACCOUNT_ID));
+        double amount = cursor.getDouble(cursor.getColumnIndex(getTableName() + "." + MyDb.EXCHANGE_AMOUNT));
+        int fromAccountIconId = cursor.getInt(cursor.getColumnIndex("acc1." + MyDb.ACCOUNT_PICTURE));
+        int toAccountIconId = cursor.getInt(cursor.getColumnIndex("acc2." + MyDb.ACCOUNT_PICTURE));
+        return new ExchangeItem(id, created, fromAccountId, toAccountId, amount, fromAccountIconId, toAccountIconId);
     }
 
     @Override
@@ -43,5 +53,21 @@ public class ExchangeDao extends BasicDao<ExchangeItem> {
         cv.put(MyDb.EXCHANGE_TO_ACCOUNT_ID, exchangeItem.getToAccountId());
         cv.put(MyDb.EXCHANGE_AMOUNT, exchangeItem.getAmount());
         return cv;
+    }
+
+    @Override
+    protected String getOrderByFieldName() {
+        return getTableName() + "." + MyDb.EXCHANGE_CREATED;
+    }
+
+    @Override
+    protected String getOrderDirection() {
+        return "desc";
+    }
+
+    @Override
+    protected JoinTableItem[] getJoinTables() {
+        return new JoinTableItem[] {new JoinTableItem(MyDb.EXCHANGE_FROM_ACCOUNT_ID, MyDb.ACCOUNT_TABLE_NAME, "acc1"),
+                                    new JoinTableItem(MyDb.EXCHANGE_TO_ACCOUNT_ID, MyDb.ACCOUNT_TABLE_NAME, "acc2")};
     }
 }

@@ -7,13 +7,17 @@ public class ExchangeItem {
     private int fromAccountId;
     private int toAccountId;
     private double amount;
+    private Integer fromAccountIconId;
+    private Integer toAccountIconId;
 
-    public ExchangeItem(int id, long created, int fromAccountId, int toAccountId, double amount) {
+    public ExchangeItem(int id, long created, int fromAccountId, int toAccountId, double amount, Integer fromAccountIconId, Integer toAccountIconId) {
         this.id = id;
         this.created = created;
         this.fromAccountId = fromAccountId;
         this.toAccountId = toAccountId;
         this.amount = amount;
+        this.fromAccountIconId = fromAccountIconId;
+        this.toAccountIconId = toAccountIconId;
     }
 
     public int getId() {
@@ -54,5 +58,21 @@ public class ExchangeItem {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public Integer getFromAccountIconId() {
+        return fromAccountIconId;
+    }
+
+    public void setFromAccountIconId(Integer fromAccountIconId) {
+        this.fromAccountIconId = fromAccountIconId;
+    }
+
+    public Integer getToAccountIconId() {
+        return toAccountIconId;
+    }
+
+    public void setToAccountIconId(Integer toAccountIconId) {
+        this.toAccountIconId = toAccountIconId;
     }
 }

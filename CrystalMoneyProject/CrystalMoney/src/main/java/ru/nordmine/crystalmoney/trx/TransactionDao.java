@@ -27,8 +27,8 @@ public class TransactionDao extends BasicDao<TransactionItem> {
 				MyDb.TRX_COMMENT, 
 				MyDb.TRX_CREATED,
 				MyDb.TRX_TYPE, 
-				MyDb.ACCOUNT_PICTURE, 
-				MyDb.CAT_TABLE_NAME + "." + MyDb.CAT_NAME };
+				"acc." + MyDb.ACCOUNT_PICTURE,
+				"cat." + MyDb.CAT_NAME };
 	}
 	
 	@Override
@@ -57,8 +57,8 @@ public class TransactionDao extends BasicDao<TransactionItem> {
 		int accountId = cursor.getInt(cursor
 				.getColumnIndex(MyDb.TRX_ACCOUNT_ID));
 		
-		int iconId = cursor.getInt(cursor.getColumnIndex(MyDb.ACCOUNT_PICTURE));
-		String categoryName = cursor.getString(cursor.getColumnIndex(MyDb.CAT_NAME));
+		int iconId = cursor.getInt(cursor.getColumnIndex("acc." + MyDb.ACCOUNT_PICTURE));
+		String categoryName = cursor.getString(cursor.getColumnIndex("cat." + MyDb.CAT_NAME));
 		return new TransactionItem(id, comment, accountId, amount, created, iconId, transactionType, categoryId, categoryName);
 	}
 
@@ -76,8 +76,8 @@ public class TransactionDao extends BasicDao<TransactionItem> {
 
 	@Override
 	protected JoinTableItem[] getJoinTables() {
-		JoinTableItem categoryItem = new JoinTableItem(MyDb.TRX_CATEGORY_ID, MyDb.CAT_TABLE_NAME);
-		JoinTableItem accountItem = new JoinTableItem(MyDb.TRX_ACCOUNT_ID, MyDb.ACCOUNT_TABLE_NAME);
+		JoinTableItem categoryItem = new JoinTableItem(MyDb.TRX_CATEGORY_ID, MyDb.CAT_TABLE_NAME, "cat");
+		JoinTableItem accountItem = new JoinTableItem(MyDb.TRX_ACCOUNT_ID, MyDb.ACCOUNT_TABLE_NAME, "acc");
 		return new JoinTableItem[] { categoryItem, accountItem };
 	}
 
