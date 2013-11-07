@@ -87,13 +87,15 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:id="@+id/exchangeListImageButton"
-        android:layout_marginTop="54dp"
+        android:layout_marginTop="30dp"
         android:layout_below="@+id/textView"
+        android:src="@drawable/refresh"
         android:layout_alignLeft="@+id/statImageButton"
         android:onClick="onExchangeButtonClick" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="90dp"
+        android:gravity="center_horizontal"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/title_activity_exchange_list"

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.nordmine.crystalmoney.IconWithTextAdapter;
-import ru.nordmine.crystalmoney.MainActivity;
 import ru.nordmine.crystalmoney.NumberWithText;
 import ru.nordmine.crystalmoney.R;
 
@@ -117,8 +116,7 @@ public class AccountActivity extends Activity {
 		boolean isCard = isCardCheckBox.isChecked();
 		int iconId = accountTypeSpinner.getSelectedItemPosition();
 
-		AccountItem item = new AccountItem(id, name, iconId, amount, isCard,
-				comment);
+		AccountItem item = new AccountItem(id, name, iconId, amount, isCard, comment);
 		dao.save(id, item);
 
 		setResult(RESULT_OK);

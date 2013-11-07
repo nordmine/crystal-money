@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 
 import ru.nordmine.crystalmoney.NumberWithText;
 import ru.nordmine.crystalmoney.R;
@@ -20,7 +21,7 @@ public class ExchangeItemAdapter extends ArrayAdapter<ExchangeItem> {
     private Context context;
 
     public ExchangeItemAdapter(Context context, int textViewResourceId,
-                              ExchangeItem[] objects) {
+                               ExchangeItem[] objects) {
         super(context, textViewResourceId, objects);
         this.items = objects;
         this.context = context;
@@ -44,29 +45,19 @@ public class ExchangeItemAdapter extends ArrayAdapter<ExchangeItem> {
 
         NumberWithText[] icons = AccountActivity.getAccountIcons();
 
-        {
-            TextView fromTextView = (TextView) row.findViewById(R.id.fromAccountTextView);
-            fromTextView.setText(Integer.toString(items[position].getFromAccountId()));
-        }
+        TextView fromTextView = (TextView) row.findViewById(R.id.exchangeDateTextView);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        fromTextView.setText(sdf.format(items[position].getCreated()));
 
-        {
-            ImageView toAccountIconImageView = (ImageView) row.findViewById(R.id.toAccountIconImageView);
-            toAccountIconImageView.setImageResource(icons[items[position].getToAccountIconId()].getNumber());
-        }
+        ImageView toAccountIconImageView = (ImageView) row.findViewById(R.id.toAccountIconImageView);
+        toAccountIconImageView.setImageResource(icons[items[position].getToAccountIconId()].getNumber());
 
-        {
-            ImageView fromAccountIconImageView = (ImageView) row.findViewById(R.id.fromAccountIconImageView);
-            fromAccountIconImageView.setImageResource(icons[items[position].getFromAccountIconId()].getNumber());
-        }
+        ImageView fromAccountIconImageView = (ImageView) row.findViewById(R.id.fromAccountIconImageView);
+        fromAccountIconImageView.setImageResource(icons[items[position].getFromAccountIconId()].getNumber());
 
         DecimalFormat df = new DecimalFormat("0.00");
         TextView amountTextView = (TextView) row.findViewById(R.id.amountTextView);
         amountTextView.setText(df.format(items[position].getAmount()));
-
-        {
-            TextView toTextView = (TextView) row.findViewById(R.id.toAccountTextView);
-            toTextView.setText(Integer.toString(items[position].getToAccountId()));
-        }
 
         return row;
     }

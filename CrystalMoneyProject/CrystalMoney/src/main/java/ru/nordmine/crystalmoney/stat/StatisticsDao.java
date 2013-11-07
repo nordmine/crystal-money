@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import ru.nordmine.crystalmoney.db.MyDb;
+import ru.nordmine.crystalmoney.exchange.ExchangeDao;
+import ru.nordmine.crystalmoney.exchange.ExchangeItem;
 
 public class StatisticsDao {
 
@@ -38,6 +40,27 @@ public class StatisticsDao {
             } else {
                 amountsByAccountId.put(entry.getKey(), -1 * entry.getValue());
             }
+        }
+
+        ExchangeDao exchangeDao = new ExchangeDao(context);
+        List<ExchangeItem> exchanges = exchangeDao.getAll();
+        for(ExchangeItem exchange : exchanges)
+        {
+            double newAmount = exchange.getAmount();
+
+            double fromAmount = 0;
+            if(amountsByAccountId.containsKey(exchange.getFromAccountId()))
+            {
+                fromAmount = amountsByAccountId.get(exchange.getFromAccountId());
+            }
+            amountsByAccountId.put(exchange.getFromAccountId(), fromAmount - newAmount);
+
+            double toAmount = 0;
+            if(amountsByAccountId.containsKey(exchange.getToAccountId()))
+            {
+                toAmount = amountsByAccountId.get(exchange.getToAccountId());
+            }
+            amountsByAccountId.put(exchange.getToAccountId(), toAmount + newAmount);
         }
 
         return amountsByAccountId;
@@ -78,7 +101,7 @@ public class StatisticsDao {
         return amountsByAccountId;
     }
 
-    public double getAmountBetweenDate(Long createdFrom, Long createdTo)
+    public double getTotalOutcomeBetweenDate(Long createdFrom, Long createdTo)
     {
         double sumBetweenDate = 0.0;
 
@@ -86,8 +109,7 @@ public class StatisticsDao {
             MyDb sqh = new MyDb(context);
             SQLiteDatabase sqdb = sqh.getReadableDatabase();
 
-            double outcomeSum = getAmountSumByDate(sqdb, 2, createdFrom, createdTo);
-            sumBetweenDate = outcomeSum;
+            sumBetweenDate = getAmountSumByDate(sqdb, 2, createdFrom, createdTo);
 
             sqdb.close();
             sqh.close();
@@ -121,11 +143,13 @@ public class StatisticsDao {
         Cursor cursor = sqdb.rawQuery(queryString, null);
 
         while (cursor.moveToNext()) {
-            amountSum = cursor.getDouble(cursor.getColumnIndex("total_sum"));
+            amountSum += cursor.getDouble(cursor.getColumnIndex("total_sum"));
         }
         cursor.close();
 
         return amountSum;
     }
+
+
 
 }

@@ -88,11 +88,11 @@ public class AccountListActivity extends Activity {
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
-        double totalSumPerDay = statistics.getAmountBetweenDate(c.getTimeInMillis(), null);
+        double totalSumPerDay = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
         totalSumPerDayTextView.setText("Расходы за день: " + totalSumPerDay);
 
         c.set(Calendar.DAY_OF_MONTH, 1);
-        double totalSumPerMonth = statistics.getAmountBetweenDate(c.getTimeInMillis(), null);
+        double totalSumPerMonth = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
         totalSumPerMonthTextView.setText("Расходы за месяц: " + totalSumPerMonth);
 	}
 

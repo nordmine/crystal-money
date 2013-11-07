@@ -18,13 +18,13 @@ public class ExchangeDao extends BasicDao<ExchangeItem> {
     @Override
     protected String[] getSelectFields() {
         return new String[] {
-                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.UID,
-                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.EXCHANGE_CREATED,
-                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.EXCHANGE_FROM_ACCOUNT_ID,
-                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.EXCHANGE_TO_ACCOUNT_ID,
-                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.EXCHANGE_AMOUNT,
-                "acc1." + MyDb.ACCOUNT_PICTURE,
-                "acc2." + MyDb.ACCOUNT_PICTURE
+                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.UID + " as ex_id",
+                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.EXCHANGE_CREATED + " as ex_created",
+                MyDb.EXCHANGE_FROM_ACCOUNT_ID,
+                MyDb.EXCHANGE_TO_ACCOUNT_ID,
+                MyDb.EXCHANGE_TABLE_NAME + "." + MyDb.EXCHANGE_AMOUNT + " as ex_amount",
+                "acc1." + MyDb.ACCOUNT_PICTURE + " as acc1_icon",
+                "acc2." + MyDb.ACCOUNT_PICTURE + " as acc2_icon"
         };
     }
 
@@ -35,13 +35,13 @@ public class ExchangeDao extends BasicDao<ExchangeItem> {
 
     @Override
     protected ExchangeItem parseRow(Cursor cursor) {
-        int id = cursor.getInt(cursor.getColumnIndex(getTableName() + "." + MyDb.UID));
-        long created = cursor.getLong(cursor.getColumnIndex(getTableName() + "." + MyDb.EXCHANGE_CREATED));
-        int fromAccountId = cursor.getInt(cursor.getColumnIndex(getTableName() + "." + MyDb.EXCHANGE_FROM_ACCOUNT_ID));
-        int toAccountId = cursor.getInt(cursor.getColumnIndex(getTableName() + "." + MyDb.EXCHANGE_TO_ACCOUNT_ID));
-        double amount = cursor.getDouble(cursor.getColumnIndex(getTableName() + "." + MyDb.EXCHANGE_AMOUNT));
-        int fromAccountIconId = cursor.getInt(cursor.getColumnIndex("acc1." + MyDb.ACCOUNT_PICTURE));
-        int toAccountIconId = cursor.getInt(cursor.getColumnIndex("acc2." + MyDb.ACCOUNT_PICTURE));
+        int id = cursor.getInt(cursor.getColumnIndex("ex_id"));
+        long created = cursor.getLong(cursor.getColumnIndex("ex_created"));
+        int fromAccountId = cursor.getInt(cursor.getColumnIndex(MyDb.EXCHANGE_FROM_ACCOUNT_ID));
+        int toAccountId = cursor.getInt(cursor.getColumnIndex(MyDb.EXCHANGE_TO_ACCOUNT_ID));
+        double amount = cursor.getDouble(cursor.getColumnIndex("ex_amount"));
+        int fromAccountIconId = cursor.getInt(cursor.getColumnIndex("acc1_icon"));
+        int toAccountIconId = cursor.getInt(cursor.getColumnIndex("acc2_icon"));
         return new ExchangeItem(id, created, fromAccountId, toAccountId, amount, fromAccountIconId, toAccountIconId);
     }
 

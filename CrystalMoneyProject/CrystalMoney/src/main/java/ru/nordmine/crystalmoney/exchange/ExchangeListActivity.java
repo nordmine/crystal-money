@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import ru.nordmine.crystalmoney.MainActivity;
@@ -76,9 +77,9 @@ public class ExchangeListActivity extends Activity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v.getId() == R.id.exchangeListView) {
-            AdapterView.AdapterContextMenuInfo info =
-                    (AdapterView.AdapterContextMenuInfo) menuInfo;
-            menu.setHeaderTitle(Double.toString(items.get(info.position).getAmount())); // todo formatting
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            DecimalFormat df = new DecimalFormat("0.00");
+            menu.setHeaderTitle(df.format(items.get(info.position).getAmount()));
             menu.add(0, 0, 0, R.string.caption_delete);
         }
     }
