@@ -4,35 +4,45 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="С какого счёта:"
+        android:id="@+id/captionFromTextView" />
+
     <Spinner
         android:id="@+id/fromAccountSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="100dp" />
+        android:layout_alignParentTop="true" />
 
-    <ImageView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/arrow_down" />
+        android:layout_marginTop="10dp"
+        android:text="На какой счёт:"
+        android:id="@+id/captionToTextView" />
 
     <Spinner
         android:id="@+id/toAccountSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_gravity="center_horizontal"
         android:layout_alignParentTop="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сумма:"
+        android:id="@+id/captionAmountTextView" />
 
     <EditText
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:id="@+id/amountEditText"
-        android:layout_gravity="center_horizontal" />
+        android:id="@+id/amountEditText" />
 
     <Button
         android:layout_width="wrap_content"
@@ -40,7 +50,11 @@
         android:text="@string/caption_save"
         android:id="@+id/saveButton"
         android:onClick="onSaveButtonClick"
-        android:numeric="decimal"
-        android:layout_gravity="center_horizontal" />
+        android:numeric="decimal" />
+
+    <DatePicker
+        android:id="@+id/exchangeDatePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

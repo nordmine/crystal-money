@@ -58,11 +58,11 @@ public class AccountActivity extends Activity {
 		List<NumberWithText> list = new ArrayList<NumberWithText>();
 		list.add(new NumberWithText(R.drawable.cash, "Наличные"));
 		list.add(new NumberWithText(R.drawable.wallet_icon, "Кошелёк"));
-		list.add(new NumberWithText(R.drawable.safe, "Сейф"));
 		list.add(new NumberWithText(R.drawable.bank, "Банк"));
-		list.add(new NumberWithText(R.drawable.coins, "Монеты"));
 		list.add(new NumberWithText(R.drawable.dollar, "Доллары"));
-		list.add(new NumberWithText(R.drawable.visa, "Visa"));		
+		list.add(new NumberWithText(R.drawable.visa, "Visa"));
+        list.add(new NumberWithText(R.drawable.smartcard, "Смарткарта"));
+        list.add(new NumberWithText(R.drawable.money_envelope, "Конверт"));
 		return list.toArray(new NumberWithText[list.size()]);
 	}
 

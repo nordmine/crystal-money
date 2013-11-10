@@ -17,10 +17,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import ru.nordmine.crystalmoney.MainActivity;
 import ru.nordmine.crystalmoney.R;
@@ -51,7 +53,24 @@ public class StatActivity extends Activity {
         List<StatItem> items = dao.getTotalSumByCategories(c.getTimeInMillis(), null);
         linear.addView(new MyGraphView(this, items, parentWidth), 0);
 
-        SimpleDateFormat df = new SimpleDateFormat("MMMM");
+        String[] monthNames = {
+                "Январь",
+                "Февраль",
+                "Март",
+                "Апрель",
+                "Май",
+                "Июнь",
+                "Июль",
+                "Август",
+                "Сентябрь",
+                "Октябрь",
+                "Ноябрь",
+                "Декабрь"
+        };
+        DateFormatSymbols russSymbol = new DateFormatSymbols();
+        russSymbol.setMonths(monthNames);
+
+        SimpleDateFormat df = new SimpleDateFormat("MMMM yyyy", russSymbol);
         TextView monthNameTextView = (TextView) findViewById(R.id.monthNameTextView);
         monthNameTextView.setText(df.format(new Date(c.getTimeInMillis())));
 
@@ -97,18 +116,19 @@ public class StatActivity extends Activity {
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
 
-            float temp = 0;
+            // начинаем рисовать диаграмму с верхней точки круга (с 12-ти часов)
+            float startAngle = -90;
             for (int i = 0; i < items.size(); i++) {
                 StatItem item = items.get(i);
                 Log.d(this.getClass().getName(),  "value = " + item.getDegree());
                 if (i == 0) {
                     paint.setColor(item.getColor());
-                    canvas.drawArc(rectf, 0, (float) item.getDegree(), true, paint);
+                    canvas.drawArc(rectf, startAngle, (float) item.getDegree(), true, paint);
                 } else {
-                    temp += items.get(i - 1).getDegree();
+                    startAngle += items.get(i - 1).getDegree();
                     // todo что будет, если категорий будет больше десяти?
                     paint.setColor(item.getColor());
-                    canvas.drawArc(rectf, temp, (float) item.getDegree(), true, paint);
+                    canvas.drawArc(rectf, startAngle, (float) item.getDegree(), true, paint);
                 }
             }
         }

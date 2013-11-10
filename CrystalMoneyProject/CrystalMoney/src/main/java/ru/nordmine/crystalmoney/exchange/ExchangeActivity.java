@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class ExchangeActivity extends Activity {
 
     private Spinner fromAccountSpinner, toAccountSpinner;
     private EditText amountEditText;
+    private DatePicker datePicker;
 
     private ExchangeItem loadedItem;
 
@@ -58,6 +61,9 @@ public class ExchangeActivity extends Activity {
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        datePicker = (DatePicker) findViewById(R.id.exchangeDatePicker);
+        datePicker.setCalendarViewShown(false);
 
         accountItems = accountDao.getAll();
 
@@ -104,6 +110,11 @@ public class ExchangeActivity extends Activity {
         setSelection(fromAccountSpinner, accountItems, item.getFromAccountId());
         setSelection(toAccountSpinner, anotherItems, item.getToAccountId());
 
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(item.getCreated());
+        datePicker.init(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+                c.get(Calendar.DAY_OF_MONTH), null);
+
         return item;
     }
 
@@ -121,12 +132,11 @@ public class ExchangeActivity extends Activity {
         int fromAccountId = accountItems.get(fromAccountSpinner.getSelectedItemPosition()).getId();
         int toAccountId = anotherItems.get(toAccountSpinner.getSelectedItemPosition()).getId();
         double amount = Double.parseDouble(amountEditText.getText().toString());
-        long created;
-        if (loadedItem != null) {
-            created = loadedItem.getCreated();
-        } else {
-            created = new Date().getTime();
-        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+        long created = cal.getTimeInMillis();
+
         ExchangeItem item = new ExchangeItem(id, created, fromAccountId, toAccountId, amount, null, null);
         exchangeDao.save(id, item);
         setResult(RESULT_OK);

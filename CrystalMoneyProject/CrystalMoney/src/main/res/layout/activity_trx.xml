@@ -42,12 +42,21 @@
         android:ems="10"
         android:inputType="numberDecimal" />
 
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/categoryButton"
+        android:layout_below="@+id/amountEditText"
+        android:onClick="onSaveButtonClick"
+        android:text="@string/caption_save" />
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/categoryButton"
-        android:layout_below="@+id/amountEditText"
+        android:layout_below="@+id/saveButton"
         android:text="@string/caption_comment"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -60,20 +69,11 @@
         android:ems="10"
         android:inputType="textMultiLine" />
 
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/categoryButton"
-        android:layout_below="@+id/commentEditText"
-        android:onClick="onSaveButtonClick"
-        android:text="@string/caption_save" />
-
     <DatePicker
         android:id="@+id/datePicker3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/categoryButton"
-        android:layout_below="@+id/saveButton" />
+        android:layout_below="@+id/commentEditText" />
 
 </RelativeLayout>

@@ -45,12 +45,12 @@ public class TransactionItemAdapter extends ArrayAdapter<TransactionItem> {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View row = inflater.inflate(R.layout.row_trx_item, parent, false);
 		
-		TextView label1 = (TextView) row.findViewById(R.id.text1);
-		label1.setText(items[position].getCategoryName());
+		TextView categoryTextView = (TextView) row.findViewById(R.id.categoryTextView);
+		categoryTextView.setText(items[position].getCategoryName());
 		
 		DecimalFormat df = new DecimalFormat("0.00");
-		TextView label2 = (TextView) row.findViewById(R.id.text2);
-		label2.setText(df.format(items[position].getAmount()));
+		TextView amountTextView = (TextView) row.findViewById(R.id.amountTextView);
+		amountTextView.setText(df.format(items[position].getAmount()));
 
 		NumberWithText[] accountTypes = AccountActivity.getAccountIcons();
 		
@@ -59,8 +59,8 @@ public class TransactionItemAdapter extends ArrayAdapter<TransactionItem> {
 		
 		SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
 		
-		TextView amountTextView = (TextView) row.findViewById(R.id.dateText);
-		amountTextView.setText(f.format(items[position].getCreated()));
+		TextView createdTextView = (TextView) row.findViewById(R.id.dateText);
+        createdTextView.setText(f.format(items[position].getCreated()));
 
 		return row;
 	}

@@ -41,15 +41,18 @@ public class AccountItemAdapter extends ArrayAdapter<AccountItem> {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View row = inflater.inflate(R.layout.row_account_item, parent, false);
 		
-		TextView label = (TextView) row.findViewById(R.id.text);
+		TextView label = (TextView) row.findViewById(R.id.nameTextView);
 		label.setText(items[position].getName());
 
-		ImageView icon = (ImageView) row.findViewById(R.id.icon);
+		ImageView icon = (ImageView) row.findViewById(R.id.iconImageView);
 		icon.setImageResource(items[position].getIconId());
 		
 		DecimalFormat df = new DecimalFormat("0.00");
-		TextView amountTextView = (TextView) row.findViewById(R.id.amount);
+		TextView amountTextView = (TextView) row.findViewById(R.id.amountTextView);
 		amountTextView.setText(df.format(items[position].getAmount()));
+
+        TextView comment = (TextView) row.findViewById(R.id.commentTextView);
+        comment.setText(items[position].getComment());
 
 		return row;
 	}

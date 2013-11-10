@@ -76,7 +76,7 @@ public class AccountListActivity extends Activity {
 		for (AccountItem ai : items) {
 			NumberWithText item = iconsOriginal[ai.getIconId()];
             Double statAmount = totalAmount.containsKey(ai.getId()) ? totalAmount.get(ai.getId()) : 0;
-			icons.add(new AccountItem(ai.getId(), ai.getName(), item.getNumber(), statAmount));
+			icons.add(new AccountItem(ai.getId(), ai.getName(), item.getNumber(), statAmount, ai.isCard(), ai.getComment()));
 		}
 
 		listView.setAdapter(new AccountItemAdapter(this,

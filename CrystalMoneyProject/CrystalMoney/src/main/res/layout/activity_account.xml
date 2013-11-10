@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,15 +6,13 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".AccountActivity" >
+    tools:context=".AccountActivity"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="34dp"
         android:layout_marginTop="17dp"
         android:text="@string/account_name_caption" />
 
@@ -22,8 +20,6 @@
         android:id="@+id/editAccountName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
         android:ems="10" >
 
         <requestFocus />
@@ -33,16 +29,12 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editAccountName"
-        android:layout_below="@+id/editAccountName"
         android:text="@string/account_amount_caption" />
 
     <EditText
         android:id="@+id/editAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_below="@+id/textView2"
         android:ems="10"
         android:inputType="numberDecimal" />
 
@@ -50,36 +42,35 @@
         android:id="@+id/isCardCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editAmount"
-        android:layout_below="@+id/editAmount"
         android:layout_marginTop="18dp"
         android:text="@string/account_is_card" />
-
-    <EditText
-        android:id="@+id/accountCommentEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:ems="10"
-        android:inputType="textMultiLine" />
 
     <Button
         android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
         android:onClick="onSaveClick"
         android:text="@string/account_button_save" />
+
+    <TextView
+        android:id="@+id/commentLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/caption_comment" />
+
+    <EditText
+        android:id="@+id/accountCommentEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textMultiLine" />
 
     <Spinner
         android:id="@+id/accountSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/accountCommentEditText"
-        android:layout_below="@+id/accountCommentEditText"
-        android:layout_marginTop="26dp" />
+        android:layout_marginTop="24dp" />
 
-</RelativeLayout>
+</LinearLayout>

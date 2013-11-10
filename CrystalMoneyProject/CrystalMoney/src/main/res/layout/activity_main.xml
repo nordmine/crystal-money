@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,101 +6,142 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity" >
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
-    <ImageButton
-        android:id="@+id/accountListImageButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:onClick="onAccountsButtonClick"
-        android:src="@drawable/credit_cards" />
 
-    <TextView
-        android:id="@+id/textView1"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/accountListImageButton"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:onClick="onAccountsButtonClick"
+                android:src="@drawable/credit_cards" />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/title_activity_account_list" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+
+            <ImageButton
+                android:id="@+id/outgoingImageButton"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:onClick="onOutcomeListButtonClick"
+                android:src="@drawable/safe_out" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_activity_outcome_list" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageButton
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/exchangeListImageButton"
+                android:src="@drawable/refresh"
+                android:onClick="onExchangeButtonClick" />
+
+            <TextView
+                android:layout_width="80dp"
+                android:gravity="center_horizontal"
+                android:layout_height="wrap_content"
+                android:text="@string/title_activity_exchange_list"
+                android:id="@+id/textView4" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/incomeListButton"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:onClick="onIncomeButtonClick"
+                android:src="@drawable/safe_into" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_activity_income_list" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left">
+
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/accountListImageButton"
-        android:layout_below="@+id/accountListImageButton"
-        android:text="@string/title_activity_account_list" />
+        android:gravity="center"
+        android:layout_marginTop="30dp">
 
-    <ImageButton
-        android:id="@+id/outgoingImageButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_alignRight="@+id/textView2"
-        android:layout_below="@+id/textView1"
-        android:layout_marginRight="17dp"
-        android:layout_marginTop="30dp"
-        android:onClick="onOutcomeListButtonClick"
-        android:src="@drawable/safe_out" />
+        <ImageButton
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:id="@+id/statImageButton"
+            android:src="@drawable/chart_pie2"
+            android:onClick="onStatButtonClick" />
 
-    <ImageButton
-        android:id="@+id/incomeListButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_above="@+id/textView2"
-        android:layout_alignLeft="@+id/outgoingImageButton"
-        android:onClick="onIncomeButtonClick"
-        android:src="@drawable/safe_into" />
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="@string/title_activity_stat"
+            android:id="@+id/textView" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_below="@+id/outgoingImageButton"
-        android:text="@string/title_activity_outcome_list" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/outgoingImageButton"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="44dp"
-        android:text="@string/title_activity_income_list" />
+    </LinearLayout>
 
-    <ImageButton
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:id="@+id/statImageButton"
-        android:layout_alignTop="@+id/outgoingImageButton"
-        android:layout_alignLeft="@+id/accountListImageButton"
-        android:layout_alignBottom="@+id/outgoingImageButton"
-        android:layout_alignRight="@+id/accountListImageButton"
-        android:src="@drawable/chart_pie2"
-        android:onClick="onStatButtonClick" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_activity_stat"
-        android:id="@+id/textView"
-        android:layout_alignTop="@+id/textView3"
-        android:layout_alignLeft="@+id/textView1" />
-
-    <ImageButton
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:id="@+id/exchangeListImageButton"
-        android:layout_marginTop="30dp"
-        android:layout_below="@+id/textView"
-        android:src="@drawable/refresh"
-        android:layout_alignLeft="@+id/statImageButton"
-        android:onClick="onExchangeButtonClick" />
-
-    <TextView
-        android:layout_width="90dp"
-        android:gravity="center_horizontal"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/title_activity_exchange_list"
-        android:id="@+id/textView4"
-        android:layout_below="@+id/exchangeListImageButton"
-        android:layout_alignParentLeft="true" />
-
-</RelativeLayout>
+</LinearLayout>

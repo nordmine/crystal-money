@@ -45,6 +45,7 @@ public class TransactionActivity extends Activity {
 	
 	private AccountDao accountDao = new AccountDao(this);
 	private TransactionDao trxDao;
+    private Long created;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +143,7 @@ public class TransactionActivity extends Activity {
 
 		commentEditText.setText(trxItem.getComment());
 		amountEditText.setText(Double.toString(trxItem.getAmount()));
+        this.created = trxItem.getCreated();
 		final Calendar c = Calendar.getInstance();
 		c.setTimeInMillis(trxItem.getCreated());
 		datePicker.init(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
@@ -176,8 +178,10 @@ public class TransactionActivity extends Activity {
 		int accountId = accountItems.get(
 				accountSpinner.getSelectedItemPosition()).getId();
 		Calendar cal = Calendar.getInstance();
-		cal.set(datePicker.getYear(), datePicker.getMonth(),
-				datePicker.getDayOfMonth(), 0, 0, 0);
+        if (this.created != null) {
+            cal.setTimeInMillis(this.created);
+        }
+        cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
 		long created = cal.getTimeInMillis();
 
 		TransactionItem trxItem = new TransactionItem(id, comment, accountId,

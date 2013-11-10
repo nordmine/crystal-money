@@ -49,8 +49,7 @@ public class AccountDao extends BasicDao<AccountItem> {
 	@Override
 	protected ContentValues getValuesForSave(AccountItem t) {
 		ContentValues cv = new ContentValues();
-		cv.put(MyDb.ACCOUNT_NAME, t.getName()
-				.toString());
+		cv.put(MyDb.ACCOUNT_NAME, t.getName());
 		cv.put(MyDb.ACCOUNT_AMOUNT, Double.toString(t.getAmount()));
 		cv.put(MyDb.ACCOUNT_COMMENT, t.getComment());
 		cv.put(MyDb.ACCOUNT_IS_CARD, t.isCard());

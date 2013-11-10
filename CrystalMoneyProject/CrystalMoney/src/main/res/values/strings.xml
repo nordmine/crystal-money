@@ -49,4 +49,6 @@
     <string name="caption_add">Добавить</string>
     <string name="title_activity_exchange">Перевод между счетами</string>
     <string name="title_activity_exchange_list">Переводы между счетами</string>
+    <string name="message_empty_category_name">Пустое имя категории</string>
+    <string name="message_category_already_exists">Категория с таким именем уже существует</string>
 </resources>

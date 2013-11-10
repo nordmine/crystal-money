@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -101,12 +102,34 @@ public class CategoryListActivity extends Activity {
 	
 	public void addNewCategory(View v)
 	{
-		String categoryName = categoryNameEditText.getText().toString();
-		CategoryItem item = new CategoryItem(0, categoryType, categoryName);
+		String categoryName = categoryNameEditText.getText().toString().trim();
+        categoryNameEditText.setText("");
+
+        if (!checkCategoryName(categoryName)) {
+            return;
+        }
+
+        CategoryItem item = new CategoryItem(0, categoryType, categoryName);
 		dao.save(0, item);
-		
-		categoryNameEditText.setText("");
+
 		loadCategoriesFromDatabase();
 	}
+
+    private boolean checkCategoryName(String categoryName) {
+        if (categoryName.length() == 0) {
+            Toast.makeText(this, R.string.message_empty_category_name, Toast.LENGTH_LONG).show();
+            return false;
+        }
+        // todo поиск категории по имени выполнять средствами БД
+        List<CategoryItem> categories = dao.getAll();
+        for (CategoryItem categoryItem : categories) {
+            String catName = categoryItem.getName();
+            if (catName.equals(catName)) {
+                Toast.makeText(this, R.string.message_category_already_exists, Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+        return true;
+    }
 
 }
