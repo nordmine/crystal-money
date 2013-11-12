@@ -124,7 +124,7 @@ public class CategoryListActivity extends Activity {
         List<CategoryItem> categories = dao.getAll();
         for (CategoryItem categoryItem : categories) {
             String catName = categoryItem.getName();
-            if (catName.equals(catName)) {
+            if (catName.equals(categoryName)) {
                 Toast.makeText(this, R.string.message_category_already_exists, Toast.LENGTH_LONG).show();
                 return false;
             }
