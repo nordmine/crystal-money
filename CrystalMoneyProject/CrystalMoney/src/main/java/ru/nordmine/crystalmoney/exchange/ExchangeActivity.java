@@ -14,7 +14,6 @@ import android.widget.Spinner;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import ru.nordmine.crystalmoney.R;
@@ -70,10 +69,11 @@ public class ExchangeActivity extends Activity {
         addItemsOnAccountTypeSpinner(fromAccountSpinner, accountItems);
 
         Bundle bundle = getIntent().getExtras();
-        int fromAccountId = bundle.getInt("fromAccountId");
-        onFromAccountSpinnerSelectionChanged(fromAccountId);
-        if(bundle.containsKey("id"))
-        {
+        if (bundle.containsKey("fromAccountId")) {
+            int fromAccountId = bundle.getInt("fromAccountId");
+            onFromAccountSpinnerSelectionChanged(fromAccountId);
+        }
+        if (bundle.containsKey("id")) {
             this.id = bundle.getInt("id");
             loadedItem = loadRecordById(id);
         }

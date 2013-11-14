@@ -38,26 +38,24 @@
 
         </LinearLayout>
 
-
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center">
 
-
             <ImageButton
-                android:id="@+id/outgoingImageButton"
+                android:id="@+id/incomeListButton"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:onClick="onOutcomeListButtonClick"
-                android:src="@drawable/safe_out" />
+                android:onClick="onIncomeButtonClick"
+                android:src="@drawable/safe_into" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/title_activity_outcome_list" />
+                android:text="@string/title_activity_income_list" />
 
         </LinearLayout>
 
@@ -97,18 +95,19 @@
             android:layout_height="wrap_content"
             android:gravity="center">
 
+
             <ImageButton
-                android:id="@+id/incomeListButton"
+                android:id="@+id/outgoingImageButton"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:onClick="onIncomeButtonClick"
-                android:src="@drawable/safe_into" />
+                android:onClick="onOutcomeListButtonClick"
+                android:src="@drawable/safe_out" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/title_activity_income_list" />
+                android:text="@string/title_activity_outcome_list" />
 
         </LinearLayout>
 

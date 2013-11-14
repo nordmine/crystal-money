@@ -40,6 +40,7 @@
     <string name="caption_delete">Удалить</string>
     <string name="caption_constraint_exception">Ошибка при удалении: от этого элемента зависят другие записи</string>
     <string name="caption_zero_account_exception">Перед добавлением транзакций необходимо создать хотя бы один счёт</string>
+    <string name="caption_zero_account_exception_in_exchange">Перед выполнением перевода средств нужно создать хотя бы два счёта</string>
     <string name="caption_no_selected_category">Вы не указали категорию</string>
     <string name="title_activity_outcome_list">Список расходов</string>
     <string name="caption_move_to_another_account">Перевод средств</string>

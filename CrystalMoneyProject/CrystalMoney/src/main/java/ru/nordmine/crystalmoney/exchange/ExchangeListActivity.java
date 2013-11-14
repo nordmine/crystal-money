@@ -5,16 +5,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.util.List;
 
 import ru.nordmine.crystalmoney.MainActivity;
 import ru.nordmine.crystalmoney.R;
+import ru.nordmine.crystalmoney.account.AccountDao;
 
 public class ExchangeListActivity extends Activity {
 
@@ -23,6 +26,7 @@ public class ExchangeListActivity extends Activity {
     private ListView listView;
     private List<ExchangeItem> items;
     private ExchangeDao dao = new ExchangeDao(this);
+    private AccountDao accountDao = new AccountDao(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +71,34 @@ public class ExchangeListActivity extends Activity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 break;
+            case R.id.action_add:
+                onAddButtonClick();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    private void onAddButtonClick() {
+        if (!checkAccountListForEmpty()) {
+            return;
+        }
+        Intent intent = new Intent();
+        intent.setClass(ExchangeListActivity.this, ExchangeActivity.class);
+        Bundle b = new Bundle();
+        b.putInt("fromAccountId", accountDao.getAll().get(0).getId());
+        intent.putExtras(b);
+        startActivityForResult(intent, EXCHANGE_AMOUNT_EDIT);
+    }
+
+    private boolean checkAccountListForEmpty() {
+        if (accountDao.getTotalCount() >= 2) {
+            return true;
+        }
+        Toast.makeText(this, R.string.caption_zero_account_exception_in_exchange,
+                Toast.LENGTH_LONG).show();
+        return false;
     }
 
     @Override
@@ -106,6 +134,13 @@ public class ExchangeListActivity extends Activity {
         if (requestCode == EXCHANGE_AMOUNT_EDIT && resultCode == RESULT_OK) {
             loadExchangesFromDatabase();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.exchange_list, menu);
+        return true;
     }
 
 }
