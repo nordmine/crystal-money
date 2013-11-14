@@ -28,6 +28,8 @@ public class CategoryListActivity extends Activity {
 	private EditText categoryNameEditText;
 	private CategoryDao dao;
 
+    public static final int EDIT_CATEGORY = 56;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,7 +43,7 @@ public class CategoryListActivity extends Activity {
 					long id) {
 				Intent intent = new Intent();
 				intent.putExtra("categoryId", items.get(position).getId());
-				intent.putExtra("categoryName", items.get(position).getName());
+                intent.putExtra("categoryName", items.get(position).getName());
 				setResult(RESULT_OK, intent);
 				finish();
 			}
@@ -81,19 +83,29 @@ public class CategoryListActivity extends Activity {
 		if (v.getId() == R.id.categoryListView) {
 			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 			menu.setHeaderTitle(items.get(info.position).getName());
-            // todo добавить возможность переименовать категорию
-			menu.add(R.string.caption_delete);
+            menu.add(0, 0, 0, R.string.caption_edit);
+            menu.add(0, 1, 1, R.string.caption_delete);
 		}
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		int menuItemIndex = item.getItemId();
-		if (menuItemIndex == 0) {
-			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
-					.getMenuInfo();
-			deleteRecordById(items.get(info.position).getId());
-		}
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        if(menuItemIndex == 0)
+        {
+            // todo добавить возможность переименовать категорию
+            CategoryItem category = items.get(info.position);
+            Intent intent = new Intent(CategoryListActivity.this, CategoryActivity.class);
+            Bundle b = new Bundle();
+            b.putString("categoryName", category.getName());
+            b.putInt("categoryId", category.getId());
+            intent.putExtras(b);
+            startActivityForResult(intent, EDIT_CATEGORY);
+        }
+        if (menuItemIndex == 1) {
+            deleteRecordById(items.get(info.position).getId());
+        }
 		return super.onContextItemSelected(item);
 	}
 
@@ -132,4 +144,19 @@ public class CategoryListActivity extends Activity {
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_CATEGORY && resultCode == RESULT_OK) {
+            Bundle bundle = data.getExtras();
+            String categoryName = bundle.getString("categoryName");
+            int categoryId = bundle.getInt("categoryId");
+
+            CategoryItem category = dao.getById(categoryId);
+            category.setName(categoryName);
+            dao.save(category.getId(), category);
+
+            loadCategoriesFromDatabase();
+        }
+    }
 }
