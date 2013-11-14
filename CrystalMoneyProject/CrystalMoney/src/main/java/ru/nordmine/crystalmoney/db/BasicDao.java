@@ -24,10 +24,6 @@ public abstract class BasicDao<T> {
 
     protected abstract String[] getSelectFields();
 
-    protected WhereClauseItem[] getClauseForList() {
-        return null;
-    }
-
     protected String getOrderByFieldName() {
         return null;
     }
@@ -112,7 +108,9 @@ public abstract class BasicDao<T> {
         return result;
     }
 
-    public List<T> getAll() {
+    public abstract List<T> getAll();
+
+    protected List<T> getAll(WhereClauseItem[] whereClause) {
         List<T> items = new ArrayList<T>();
 
         try {
@@ -126,7 +124,6 @@ public abstract class BasicDao<T> {
             addJoinTables(query);
 
             List<String> whereArgs = new ArrayList<String>();
-            WhereClauseItem[] whereClause = getClauseForList();
             query.append(clauseToString(whereArgs, whereClause));
 
             String orderByFieldName = getOrderByFieldName();
@@ -197,18 +194,28 @@ public abstract class BasicDao<T> {
     }
 
     public int getTotalCount() {
+        return this.getTotalCountWithClause(null);
+    }
+
+    public int getTotalCountWithClause(WhereClauseItem[] whereClause) {
         int totalCount = 0;
 
         try {
             MyDb sqh = new MyDb(context);
             SQLiteDatabase sqdb = sqh.getReadableDatabase();
 
-            String query = "select count(" + MyDb.UID + ") as count_id FROM "
-                    + getTableName();
+            StringBuilder query = new StringBuilder("select count(");
+            query.append(MyDb.UID).append(") as count_id FROM ").append(getTableName());
 
-            Log.d(this.getClass().getName(), query);
+            List<String> whereArgs = new ArrayList<String>();
+            query.append(clauseToString(whereArgs, whereClause));
 
-            Cursor cursor = sqdb.rawQuery(query, null);
+            String queryString = query.toString();
+
+
+            Log.d(this.getClass().getName(), queryString);
+
+            Cursor cursor = sqdb.rawQuery(queryString, whereArgs.toArray(new String[0]));
 
             while (cursor.moveToNext()) {
                 totalCount = cursor.getInt(cursor.getColumnIndex("count_id"));

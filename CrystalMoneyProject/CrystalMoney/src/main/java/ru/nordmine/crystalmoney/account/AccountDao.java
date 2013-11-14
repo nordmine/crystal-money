@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.List;
+
 import ru.nordmine.crystalmoney.db.BasicDao;
 import ru.nordmine.crystalmoney.db.MyDb;
 
@@ -26,23 +28,12 @@ public class AccountDao extends BasicDao<AccountItem> {
 
 	@Override
 	protected AccountItem parseRow(Cursor cursor) {
-
 		int id = cursor.getInt(cursor.getColumnIndex(MyDb.UID));
-
-		String accountName = cursor.getString(cursor
-				.getColumnIndex(MyDb.ACCOUNT_NAME));
-
-		String comment = cursor.getString(cursor
-				.getColumnIndex(MyDb.ACCOUNT_COMMENT));
-
+		String accountName = cursor.getString(cursor.getColumnIndex(MyDb.ACCOUNT_NAME));
+		String comment = cursor.getString(cursor.getColumnIndex(MyDb.ACCOUNT_COMMENT));
 		int iconId = cursor.getInt(cursor.getColumnIndex(MyDb.ACCOUNT_PICTURE));
-
-		Double amount = cursor.getDouble(cursor
-				.getColumnIndex(MyDb.ACCOUNT_AMOUNT));
-
-		boolean isCard = cursor.getInt(cursor
-				.getColumnIndex(MyDb.ACCOUNT_IS_CARD)) == 0 ? false : true;
-
+		Double amount = cursor.getDouble(cursor.getColumnIndex(MyDb.ACCOUNT_AMOUNT));
+		boolean isCard = cursor.getInt(cursor.getColumnIndex(MyDb.ACCOUNT_IS_CARD)) == 0 ? false : true;
 		return new AccountItem(id, accountName, iconId, amount, isCard, comment);
 	}
 
@@ -56,5 +47,10 @@ public class AccountDao extends BasicDao<AccountItem> {
 		cv.put(MyDb.ACCOUNT_PICTURE, t.getIconId());
 		return cv;
 	}
+
+    @Override
+    public List<AccountItem> getAll() {
+        return super.getAll(null);
+    }
 
 }

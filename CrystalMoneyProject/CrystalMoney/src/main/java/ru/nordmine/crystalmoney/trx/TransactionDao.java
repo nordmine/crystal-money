@@ -4,6 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.nordmine.crystalmoney.db.BasicDao;
 import ru.nordmine.crystalmoney.db.JoinTableItem;
 import ru.nordmine.crystalmoney.db.MyDb;
@@ -30,11 +33,13 @@ public class TransactionDao extends BasicDao<TransactionItem> {
 				"acc." + MyDb.ACCOUNT_PICTURE + " as acc_icon",
 				"cat." + MyDb.CAT_NAME + " as cat_name" };
 	}
-	
-	@Override
-	protected WhereClauseItem[] getClauseForList() {
-		return new WhereClauseItem[] {new WhereClauseItem(MyDb.TRX_TYPE, "=", Integer.toString(this.transactionType))};
-	}
+
+    @Override
+    public List<TransactionItem> getAll() {
+        List<WhereClauseItem> whereClause = new ArrayList<WhereClauseItem>();
+        whereClause.add(new WhereClauseItem(MyDb.TRX_TYPE, "=", Integer.toString(this.transactionType)));
+        return super.getAll(whereClause.toArray(new WhereClauseItem[0]));
+    }
 
 	@Override
 	protected String getTableName() {

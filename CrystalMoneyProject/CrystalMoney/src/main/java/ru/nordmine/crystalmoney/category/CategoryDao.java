@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.List;
+
 import ru.nordmine.crystalmoney.db.BasicDao;
 import ru.nordmine.crystalmoney.db.MyDb;
 import ru.nordmine.crystalmoney.db.WhereClauseItem;
@@ -43,11 +45,10 @@ public class CategoryDao extends BasicDao<CategoryItem> {
 		return cv;
 	}
 
-	@Override
-	protected WhereClauseItem[] getClauseForList() {
-		return new WhereClauseItem[] { new WhereClauseItem(MyDb.CAT_TYPE, "=",
-				Integer.toString(categoryType)) };
-	}
+    @Override
+    public List<CategoryItem> getAll() {
+        return super.getAll(new WhereClauseItem[]{new WhereClauseItem(MyDb.CAT_TYPE, "=", Integer.toString(categoryType))});
+    }
 
 	@Override
 	protected String getOrderByFieldName() {

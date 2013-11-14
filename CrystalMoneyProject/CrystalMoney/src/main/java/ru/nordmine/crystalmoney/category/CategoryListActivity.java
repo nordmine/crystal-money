@@ -17,6 +17,8 @@ import android.widget.Toast;
 import java.util.List;
 
 import ru.nordmine.crystalmoney.R;
+import ru.nordmine.crystalmoney.db.MyDb;
+import ru.nordmine.crystalmoney.db.WhereClauseItem;
 
 public class CategoryListActivity extends Activity {
 
@@ -120,15 +122,13 @@ public class CategoryListActivity extends Activity {
             Toast.makeText(this, R.string.message_empty_category_name, Toast.LENGTH_LONG).show();
             return false;
         }
-        // todo поиск категории по имени выполнять средствами БД
-        List<CategoryItem> categories = dao.getAll();
-        for (CategoryItem categoryItem : categories) {
-            String catName = categoryItem.getName();
-            if (catName.equals(categoryName)) {
-                Toast.makeText(this, R.string.message_category_already_exists, Toast.LENGTH_LONG).show();
-                return false;
-            }
+
+        int categoryNameCount = dao.getTotalCountWithClause(new WhereClauseItem[]{new WhereClauseItem(MyDb.CAT_NAME, "like", categoryName)});
+        if (categoryNameCount > 0) {
+            Toast.makeText(this, R.string.message_category_already_exists, Toast.LENGTH_LONG).show();
+            return false;
         }
+
         return true;
     }
 

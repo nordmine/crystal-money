@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.List;
+
 import ru.nordmine.crystalmoney.db.BasicDao;
 import ru.nordmine.crystalmoney.db.JoinTableItem;
 import ru.nordmine.crystalmoney.db.MyDb;
@@ -69,5 +71,10 @@ public class ExchangeDao extends BasicDao<ExchangeItem> {
     protected JoinTableItem[] getJoinTables() {
         return new JoinTableItem[] {new JoinTableItem(MyDb.EXCHANGE_FROM_ACCOUNT_ID, MyDb.ACCOUNT_TABLE_NAME, "acc1"),
                                     new JoinTableItem(MyDb.EXCHANGE_TO_ACCOUNT_ID, MyDb.ACCOUNT_TABLE_NAME, "acc2")};
+    }
+
+    @Override
+    public List<ExchangeItem> getAll() {
+        return super.getAll(null);
     }
 }
