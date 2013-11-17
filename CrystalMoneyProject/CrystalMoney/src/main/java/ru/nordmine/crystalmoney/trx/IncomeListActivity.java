@@ -2,12 +2,10 @@ package ru.nordmine.crystalmoney.trx;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import ru.nordmine.crystalmoney.R;
 
@@ -32,6 +30,7 @@ public class IncomeListActivity extends TransactionListActivity {
 				intent.setClass(IncomeListActivity.this, TransactionActivity.class);
 				Bundle b = new Bundle();
 				b.putInt("defStrID", trxItems.get(position).getId());
+                b.putLong("selectedDate", startDate);
 				intent.putExtras(b);
 				startActivityForResult(intent, EDIT_INCOME);
 			}
@@ -46,9 +45,9 @@ public class IncomeListActivity extends TransactionListActivity {
 		if (!super.checkAccountListForEmpty()) {
 			return;
 		}
-		Intent intent = new Intent(IncomeListActivity.this,
-				TransactionActivity.class);
-		intent.putExtra("transactionType", transactionType);		
+		Intent intent = new Intent(IncomeListActivity.this,	TransactionActivity.class);
+		intent.putExtra("transactionType", transactionType);
+        intent.putExtra("selectedDate", startDate);
 		startActivityForResult(intent, EDIT_INCOME);
 	}
 

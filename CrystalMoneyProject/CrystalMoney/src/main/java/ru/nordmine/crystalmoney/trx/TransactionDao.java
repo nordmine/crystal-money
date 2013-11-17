@@ -37,7 +37,15 @@ public class TransactionDao extends BasicDao<TransactionItem> {
     @Override
     public List<TransactionItem> getAll() {
         List<WhereClauseItem> whereClause = new ArrayList<WhereClauseItem>();
-        whereClause.add(new WhereClauseItem(MyDb.TRX_TYPE, "=", Integer.toString(this.transactionType)));
+        whereClause.add(new WhereClauseItem(getTableName() + "." + MyDb.TRX_TYPE, "=", Integer.toString(this.transactionType)));
+        return super.getAll(whereClause.toArray(new WhereClauseItem[0]));
+    }
+
+    public List<TransactionItem> getAll(long startDate, long finishDate) {
+        List<WhereClauseItem> whereClause = new ArrayList<WhereClauseItem>();
+        whereClause.add(new WhereClauseItem(getTableName() + "." + MyDb.TRX_TYPE, "=", Integer.toString(this.transactionType)));
+        whereClause.add(new WhereClauseItem(getTableName() + "." + MyDb.TRX_CREATED, ">=", Long.toString(startDate)));
+        whereClause.add(new WhereClauseItem(getTableName() + "." + MyDb.TRX_CREATED, "<", Long.toString(finishDate)));
         return super.getAll(whereClause.toArray(new WhereClauseItem[0]));
     }
 
@@ -88,7 +96,7 @@ public class TransactionDao extends BasicDao<TransactionItem> {
 
 	@Override
 	protected String getOrderByFieldName() {		
-		return MyDb.TRX_CREATED;
+		return getTableName() + "." + MyDb.TRX_CREATED;
 	}
 
 	@Override

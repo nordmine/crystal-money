@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -12,9 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import ru.nordmine.crystalmoney.MainActivity;
@@ -24,27 +27,49 @@ import ru.nordmine.crystalmoney.account.AccountDao;
 public abstract class TransactionListActivity extends Activity {
 	
 	protected ListView listView;
+    protected TextView pagerTextView;
 	protected int categoryType = 0;
 	protected int transactionType = 0;
 	protected List<TransactionItem> trxItems;
 	protected TransactionDao dao;
 	protected AccountDao accountDao = new AccountDao(this);
+    protected long startDate;
+
+    private static final long ONE_DAY = 1000 * 3600 * 24;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_trx_list);
 
+        pagerTextView = (TextView) findViewById(R.id.pagerTextView);
+
+        Bundle bundle = getIntent().getExtras();
+
+        Calendar c = Calendar.getInstance();
+        if (bundle != null && bundle.containsKey("selectedDate")) {
+            startDate = bundle.getLong("selectedDate");
+            c.setTimeInMillis(startDate);
+        }
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        startDate = c.getTimeInMillis();
+
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 	}
 	
 	protected void refreshItems() {
-		trxItems = dao.getAll();
+		trxItems = dao.getAll(startDate, startDate + ONE_DAY);
+
+        Date d = new Date(startDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
+        pagerTextView.setText(sdf.format(d));
 		
-		listView.setAdapter(new TransactionItemAdapter(this,
-				android.R.layout.simple_list_item_1, trxItems
-						.toArray(new TransactionItem[trxItems.size()])));
+		listView.setAdapter(new TransactionItemAdapter(this, android.R.layout.simple_list_item_1,
+                            trxItems.toArray(new TransactionItem[trxItems.size()])));
 	}
 	
 	protected void deleteRecordById(int id) {
@@ -110,5 +135,16 @@ public abstract class TransactionListActivity extends Activity {
     }
 
     protected abstract void onAddButtonClick();
+
+    public void onPrevButtonClick(View v) {
+        startDate -= ONE_DAY;
+        refreshItems();
+    }
+
+    public void onNextButtonClick(View v) {
+        startDate += ONE_DAY;
+        refreshItems();
+    }
+
 
 }

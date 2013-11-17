@@ -121,7 +121,7 @@ public class AccountListActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == EDIT_ACCOUNT && resultCode == RESULT_OK) {
+		if ((requestCode == EDIT_ACCOUNT || requestCode == EXCHANGE_AMOUNT) && resultCode == RESULT_OK) {
 			loadAccountsFromDatabase();
 		}
 	}

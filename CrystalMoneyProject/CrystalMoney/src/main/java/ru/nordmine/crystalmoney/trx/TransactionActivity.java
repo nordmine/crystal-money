@@ -17,7 +17,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import ru.nordmine.crystalmoney.MainActivity;
 import ru.nordmine.crystalmoney.R;
 import ru.nordmine.crystalmoney.account.AccountDao;
 import ru.nordmine.crystalmoney.account.AccountItem;
@@ -37,6 +36,7 @@ public class TransactionActivity extends Activity {
 	private Button categoryButton;
 
 	private List<AccountItem> accountItems;
+    private long selectedDate;
 
 	private int id = 0;
 	private int categoryId = 0;
@@ -59,19 +59,25 @@ public class TransactionActivity extends Activity {
 		categoryButton = (Button) findViewById(R.id.categoryButton);
 
 		addItemsOnAccountTypeSpinner();
-		final Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
-		int year = c.get(Calendar.YEAR);
-		int month = c.get(Calendar.MONTH);
-		int day = c.get(Calendar.DAY_OF_MONTH);
-		datePicker.init(year, month, day, null);		
-		datePicker.setCalendarViewShown(false);
 
 		Bundle bundle = getIntent().getExtras();
 		transactionType = bundle.getInt("transactionType");
+
+        Calendar c = Calendar.getInstance();
+        if (bundle.containsKey("selectedDate")) {
+            this.selectedDate = bundle.getLong("selectedDate");
+            c.setTimeInMillis(selectedDate);
+        } else {
+            c.setTime(new Date());
+        }
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        datePicker.init(year, month, day, null);
+        datePicker.setCalendarViewShown(false);
 		
 		trxDao = new TransactionDao(this, transactionType);
-		if (bundle != null && bundle.containsKey("defStrID")) {
+		if (bundle.containsKey("defStrID")) {
 			id = bundle.getInt("defStrID");
 			loadRecordById(id);
 		} else {
@@ -130,6 +136,10 @@ public class TransactionActivity extends Activity {
                     intent = new Intent(this, OutcomeListActivity.class);
                 }
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                if (this.selectedDate > 0) {
+                    // чтобы список транзакций был открыт на той же дате
+                    intent.putExtra("selectedDate", this.selectedDate);
+                }
                 startActivity(intent);
                 break;
             default:
