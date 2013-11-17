@@ -11,7 +11,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -105,8 +104,7 @@ public class ExchangeActivity extends Activity {
     private ExchangeItem loadRecordById(int id) {
         ExchangeItem item = exchangeDao.getById(id);
 
-        DecimalFormat df = new DecimalFormat("0.00");
-        amountEditText.setText(df.format(item.getAmount()));
+        amountEditText.setText(Double.toString(item.getAmount()));
         setSelection(fromAccountSpinner, accountItems, item.getFromAccountId());
         setSelection(toAccountSpinner, anotherItems, item.getToAccountId());
 
@@ -131,7 +129,13 @@ public class ExchangeActivity extends Activity {
     public void onSaveButtonClick(View v) {
         int fromAccountId = accountItems.get(fromAccountSpinner.getSelectedItemPosition()).getId();
         int toAccountId = anotherItems.get(toAccountSpinner.getSelectedItemPosition()).getId();
-        double amount = Double.parseDouble(amountEditText.getText().toString());
+
+        String amountText = amountEditText.getText().toString();
+        if (amountText.trim().isEmpty()) {
+            amountText = "0.00";
+        }
+
+        double amount = Double.parseDouble(amountText);
 
         Calendar cal = Calendar.getInstance();
         cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());

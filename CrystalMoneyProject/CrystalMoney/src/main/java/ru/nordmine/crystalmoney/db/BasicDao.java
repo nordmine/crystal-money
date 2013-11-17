@@ -134,7 +134,7 @@ public abstract class BasicDao<T> {
 
             String queryString = query.toString();
 
-//            Log.d(this.getClass().getName(), queryString);
+            Log.d(this.getClass().getName(), queryString);
 
             System.out.println(queryString);
 

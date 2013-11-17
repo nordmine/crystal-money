@@ -66,8 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/categoryButton"
         android:layout_below="@+id/textView2"
-        android:ems="10"
-        android:inputType="textMultiLine" />
+        android:ems="10" />
 
     <DatePicker
         android:id="@+id/datePicker3"
