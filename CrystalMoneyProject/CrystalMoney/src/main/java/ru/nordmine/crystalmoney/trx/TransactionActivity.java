@@ -3,6 +3,7 @@ package ru.nordmine.crystalmoney.trx;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,6 +48,11 @@ public class TransactionActivity extends Activity {
 	private TransactionDao trxDao;
     private Long created;
 
+    private static final String MY_PREFS = "my_prefs";
+    private SharedPreferences preferences;
+
+    private static String defaultCategoryPreferenceName;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,8 +66,12 @@ public class TransactionActivity extends Activity {
 
 		addItemsOnAccountTypeSpinner();
 
+        this.preferences = getSharedPreferences(MY_PREFS, Activity.MODE_PRIVATE);
+
 		Bundle bundle = getIntent().getExtras();
 		transactionType = bundle.getInt("transactionType");
+
+        defaultCategoryPreferenceName = "defaultCategoryId" + transactionType;
 
         Calendar c = Calendar.getInstance();
         if (bundle.containsKey("selectedDate")) {
@@ -96,24 +106,32 @@ public class TransactionActivity extends Activity {
         }
 	}
 
-	private void setDefaultCategory() {
-		CategoryDao categoryDao = new CategoryDao(this, transactionType);
-		List<CategoryItem> categories = categoryDao.getAll();
-		if (!categories.isEmpty()) {
-			CategoryItem categoryItem = categories.get(0);
-			this.categoryId = categoryItem.getId();
-			categoryButton.setText(categoryItem.getName());
-		}
-	}
+    private void setDefaultCategory() {
+        CategoryDao categoryDao = new CategoryDao(this, transactionType);
+        CategoryItem categoryItem = null;
+        // сначала пытаемся получить категорию из общих настроек
+        if (preferences.contains(defaultCategoryPreferenceName)) {
+            categoryItem = categoryDao.getById(preferences.getInt(defaultCategoryPreferenceName, 0));
+        }
+        // затем можно попробовать получить первую из доступных категорий
+        if (categoryItem == null) {
+            List<CategoryItem> categories = categoryDao.getAll();
+            if (!categories.isEmpty()) {
+                categoryItem = categories.get(0);
+            }
+        }
+
+        if (categoryItem != null) {
+            this.categoryId = categoryItem.getId();
+            categoryButton.setText(categoryItem.getName());
+        }
+    }
 
 	private void addItemsOnAccountTypeSpinner() {		
 		accountItems = accountDao.getAll();
-
-		AccountItemSimpleAdapter dataAdapter = new AccountItemSimpleAdapter(this,
-				R.layout.row_with_icon, accountItems.toArray(new AccountItem[accountItems
-						.size()]));
-		dataAdapter
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		AccountItemSimpleAdapter dataAdapter = new AccountItemSimpleAdapter(this, R.layout.row_with_icon,
+                accountItems.toArray(new AccountItem[accountItems.size()]));
+		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		accountSpinner.setAdapter(dataAdapter);
 	}
 
@@ -217,6 +235,10 @@ public class TransactionActivity extends Activity {
 			String categoryName = bundle.getString("categoryName");
 			this.categoryId = bundle.getInt("categoryId");
 			categoryButton.setText(categoryName);
+            // установка категории по умолчанию
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putInt(defaultCategoryPreferenceName, this.categoryId);
+            editor.apply();
 		}
 	}
 
