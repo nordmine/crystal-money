@@ -13,10 +13,12 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import ru.nordmine.crystalmoney.IconWithTextAdapter;
 import ru.nordmine.crystalmoney.NumberWithText;
 import ru.nordmine.crystalmoney.R;
+import ru.nordmine.crystalmoney.stat.StatisticsDao;
 
 public class AccountActivity extends Activity {
 
@@ -26,6 +28,8 @@ public class AccountActivity extends Activity {
 	private CheckBox isCardCheckBox;
 	private Spinner accountTypeSpinner;
 	private AccountDao dao = new AccountDao(this);
+
+    private double amountFromStat;
 
 	private int id = 0;
 
@@ -45,6 +49,11 @@ public class AccountActivity extends Activity {
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null && bundle.containsKey("defStrID")) {
 			id = bundle.getInt("defStrID");
+
+            StatisticsDao statistics = new StatisticsDao(this);
+            Map<Integer, Double> totalAmount = statistics.getTotalAmount();
+            amountFromStat = totalAmount.containsKey(id) ? totalAmount.get(id) : 0;
+
 			loadRecordById(id);
 		} else {
 			editAmount.setText("0");
@@ -77,7 +86,7 @@ public class AccountActivity extends Activity {
 	private void loadRecordById(int id) {
 		AccountItem item = dao.getById(id);
 		editAccountName.setText(item.getName());
-		editAmount.setText(Double.toString(item.getAmount()));
+		editAmount.setText(Double.toString(amountFromStat + item.getAmount()));
 		editComment.setText(item.getComment());
 		isCardCheckBox.setChecked(item.isCard());
 		accountTypeSpinner.setSelection(item.getIconId());
@@ -111,6 +120,8 @@ public class AccountActivity extends Activity {
 			amountText = "0.00";
 		}
 		Double amount = Double.parseDouble(amountText);
+        // корректировка баланса с учётом существующих транзакций
+        amount -= amountFromStat;
 
 		String comment = editComment.getText().toString();
 		boolean isCard = isCardCheckBox.isChecked();

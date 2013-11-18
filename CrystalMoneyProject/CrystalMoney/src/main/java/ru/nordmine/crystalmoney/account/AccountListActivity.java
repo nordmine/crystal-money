@@ -14,6 +14,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -76,7 +77,7 @@ public class AccountListActivity extends Activity {
 		for (AccountItem ai : items) {
 			NumberWithText item = iconsOriginal[ai.getIconId()];
             Double statAmount = totalAmount.containsKey(ai.getId()) ? totalAmount.get(ai.getId()) : 0;
-			icons.add(new AccountItem(ai.getId(), ai.getName(), item.getNumber(), statAmount, ai.isCard(), ai.getComment()));
+			icons.add(new AccountItem(ai.getId(), ai.getName(), item.getNumber(), ai.getAmount() + statAmount, ai.isCard(), ai.getComment()));
 		}
 
 		listView.setAdapter(new AccountItemAdapter(this,
@@ -88,12 +89,15 @@ public class AccountListActivity extends Activity {
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
+
+        DecimalFormat df = new DecimalFormat("0.00");
+
         double totalSumPerDay = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
-        totalSumPerDayTextView.setText("Расходы за день: " + totalSumPerDay);
+        totalSumPerDayTextView.setText("Расходы за день: " + df.format(totalSumPerDay));
 
         c.set(Calendar.DAY_OF_MONTH, 1);
         double totalSumPerMonth = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
-        totalSumPerMonthTextView.setText("Расходы за месяц: " + totalSumPerMonth);
+        totalSumPerMonthTextView.setText("Расходы за месяц: " + df.format(totalSumPerMonth));
 	}
 
     @Override
