@@ -1,6 +1,8 @@
 package ru.nordmine.crystalmoney.category;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -27,8 +29,6 @@ public class CategoryListActivity extends Activity {
 	private int categoryType = 0;
 	private EditText categoryNameEditText;
 	private CategoryDao dao;
-
-    public static final int EDIT_CATEGORY = 56;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +83,7 @@ public class CategoryListActivity extends Activity {
 		if (v.getId() == R.id.categoryListView) {
 			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 			menu.setHeaderTitle(items.get(info.position).getName());
-            menu.add(0, 0, 0, R.string.caption_edit);
+            menu.add(0, 0, 0, R.string.caption_rename);
             menu.add(0, 1, 1, R.string.caption_delete);
 		}
 	}
@@ -92,16 +92,29 @@ public class CategoryListActivity extends Activity {
 	public boolean onContextItemSelected(MenuItem item) {
 		int menuItemIndex = item.getItemId();
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        if(menuItemIndex == 0)
-        {
-            // todo добавить возможность переименовать категорию
-            CategoryItem category = items.get(info.position);
-            Intent intent = new Intent(CategoryListActivity.this, CategoryActivity.class);
-            Bundle b = new Bundle();
-            b.putString("categoryName", category.getName());
-            b.putInt("categoryId", category.getId());
-            intent.putExtras(b);
-            startActivityForResult(intent, EDIT_CATEGORY);
+        if(menuItemIndex == 0) {
+            final CategoryItem category = items.get(info.position);
+            final AlertDialog.Builder categoryNameAlert = new AlertDialog.Builder(this);
+            final EditText categoryNameEditText = new EditText(this);
+            categoryNameEditText.setText(category.getName());
+            categoryNameAlert.setTitle(R.string.caption_rename);
+            categoryNameAlert.setMessage(R.string.caption_category_name);
+            categoryNameAlert.setView(categoryNameEditText);
+            categoryNameAlert.setPositiveButton(R.string.caption_save, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    String value = categoryNameEditText.getText().toString().trim();
+                    category.setName(value);
+                    dao.save(category.getId(), category);
+                    loadCategoriesFromDatabase();
+                }
+            });
+
+            categoryNameAlert.setNegativeButton(R.string.caption_cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    dialog.cancel();
+                }
+            });
+            categoryNameAlert.show();
         }
         if (menuItemIndex == 1) {
             deleteRecordById(items.get(info.position).getId());
@@ -144,19 +157,4 @@ public class CategoryListActivity extends Activity {
         return true;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == EDIT_CATEGORY && resultCode == RESULT_OK) {
-            Bundle bundle = data.getExtras();
-            String categoryName = bundle.getString("categoryName");
-            int categoryId = bundle.getInt("categoryId");
-
-            CategoryItem category = dao.getById(categoryId);
-            category.setName(categoryName);
-            dao.save(category.getId(), category);
-
-            loadCategoriesFromDatabase();
-        }
-    }
 }
