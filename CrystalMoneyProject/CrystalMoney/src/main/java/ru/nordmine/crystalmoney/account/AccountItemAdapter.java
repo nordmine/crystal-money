@@ -13,20 +13,16 @@ import java.text.DecimalFormat;
 import ru.nordmine.crystalmoney.R;
 
 public class AccountItemAdapter extends ArrayAdapter<AccountItem> {
-	
-	private AccountItem[] items;
+
 	private Context context;
 
-	public AccountItemAdapter(Context context, int textViewResourceId,
-			AccountItem[] objects) {
+	public AccountItemAdapter(Context context, int textViewResourceId, AccountItem[] objects) {
 		super(context, textViewResourceId, objects);
-		this.items = objects;
 		this.context = context;
 	}
 
 	@Override
-	public View getDropDownView(int position, View convertView,
-			ViewGroup parent) {
+	public View getDropDownView(int position, View convertView, ViewGroup parent) {
 		return getCustomView(position, convertView, parent);
 	}
 
@@ -35,24 +31,25 @@ public class AccountItemAdapter extends ArrayAdapter<AccountItem> {
 		return getCustomView(position, convertView, parent);
 	}
 
-	public View getCustomView(int position, View convertView,
-			ViewGroup parent) {
+	public View getCustomView(int position, View convertView, ViewGroup parent) {
 
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View row = inflater.inflate(R.layout.row_account_item, parent, false);
+
+        AccountItem item = getItem(position);
 		
 		TextView label = (TextView) row.findViewById(R.id.nameTextView);
-		label.setText(items[position].getName());
+		label.setText(item.getName());
 
 		ImageView icon = (ImageView) row.findViewById(R.id.iconImageView);
-		icon.setImageResource(items[position].getIconId());
+		icon.setImageResource(item.getIconId());
 		
 		DecimalFormat df = new DecimalFormat("0.00");
 		TextView amountTextView = (TextView) row.findViewById(R.id.amountTextView);
-		amountTextView.setText(df.format(items[position].getAmount()));
+		amountTextView.setText(df.format(item.getAmount()));
 
         TextView comment = (TextView) row.findViewById(R.id.commentTextView);
-        comment.setText(items[position].getComment());
+        comment.setText(item.getComment());
 
 		return row;
 	}

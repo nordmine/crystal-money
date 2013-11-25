@@ -17,8 +17,14 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/dateText"
+            android:id="@+id/dateTextView"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/commentTextView"
+            android:layout_width="wrap_content"
+            android:textColor="@android:color/darker_gray"
             android:layout_height="wrap_content" />
 
     </LinearLayout>
@@ -36,7 +42,7 @@
             android:layout_gravity="right" />
 
         <ImageView
-            android:id="@+id/iconImage"
+            android:id="@+id/iconImageView"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_gravity="right" />

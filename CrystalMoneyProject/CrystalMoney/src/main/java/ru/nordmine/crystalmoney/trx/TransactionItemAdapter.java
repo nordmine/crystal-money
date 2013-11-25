@@ -17,20 +17,16 @@ import ru.nordmine.crystalmoney.R;
 import ru.nordmine.crystalmoney.account.AccountActivity;
 
 public class TransactionItemAdapter extends ArrayAdapter<TransactionItem> {
-	
-	private TransactionItem[] items;
+
 	private Context context;
 
-	public TransactionItemAdapter(Context context, int textViewResourceId,
-			TransactionItem[] objects) {
+	public TransactionItemAdapter(Context context, int textViewResourceId, TransactionItem[] objects) {
 		super(context, textViewResourceId, objects);
-		this.items = objects;
 		this.context = context;
 	}
 
 	@Override
-	public View getDropDownView(int position, View convertView,
-			ViewGroup parent) {
+	public View getDropDownView(int position, View convertView,	ViewGroup parent) {
 		return getCustomView(position, convertView, parent);
 	}
 
@@ -39,28 +35,32 @@ public class TransactionItemAdapter extends ArrayAdapter<TransactionItem> {
 		return getCustomView(position, convertView, parent);
 	}
 
-	public View getCustomView(int position, View convertView,
-			ViewGroup parent) {
+	public View getCustomView(int position, View convertView, ViewGroup parent) {
 
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View row = inflater.inflate(R.layout.row_trx_item, parent, false);
+
+        TransactionItem item = getItem(position);
 		
 		TextView categoryTextView = (TextView) row.findViewById(R.id.categoryTextView);
-		categoryTextView.setText(items[position].getCategoryName());
+		categoryTextView.setText(item.getCategoryName());
 		
 		DecimalFormat df = new DecimalFormat("0.00");
 		TextView amountTextView = (TextView) row.findViewById(R.id.amountTextView);
-		amountTextView.setText(df.format(items[position].getAmount()));
+		amountTextView.setText(df.format(item.getAmount()));
+
+        TextView commentTextView = (TextView)row.findViewById(R.id.commentTextView);
+        commentTextView.setText(item.getComment());
 
 		NumberWithText[] accountTypes = AccountActivity.getAccountIcons();
 		
-		ImageView icon = (ImageView) row.findViewById(R.id.iconImage);
-		icon.setImageResource(accountTypes[items[position].getAccountIconId()].getNumber());
+		ImageView icon = (ImageView) row.findViewById(R.id.iconImageView);
+		icon.setImageResource(accountTypes[item.getAccountIconId()].getNumber());
 		
 		SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
 		
-		TextView createdTextView = (TextView) row.findViewById(R.id.dateText);
-        createdTextView.setText(f.format(items[position].getCreated()));
+		TextView createdTextView = (TextView) row.findViewById(R.id.dateTextView);
+        createdTextView.setText(f.format(item.getCreated()));
 
 		return row;
 	}

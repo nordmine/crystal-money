@@ -8,20 +8,16 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class CategoryItemAdapter extends ArrayAdapter<CategoryItem> {
-	
-	private CategoryItem[] items;
+
 	private Context context;
 
-	public CategoryItemAdapter(Context context, int textViewResourceId,
-			CategoryItem[] objects) {
+	public CategoryItemAdapter(Context context, int textViewResourceId, CategoryItem[] objects) {
 		super(context, textViewResourceId, objects);
-		this.items = objects;
 		this.context = context;
 	}
 
 	@Override
-	public View getDropDownView(int position, View convertView,
-			ViewGroup parent) {
+	public View getDropDownView(int position, View convertView,	ViewGroup parent) {
 		return getCustomView(position, convertView, parent);
 	}
 
@@ -30,13 +26,15 @@ public class CategoryItemAdapter extends ArrayAdapter<CategoryItem> {
 		return getCustomView(position, convertView, parent);
 	}
 
-	public View getCustomView(int position, View convertView,
-			ViewGroup parent) {
+	public View getCustomView(int position, View convertView, ViewGroup parent) {
 
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View row = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+
+        CategoryItem item = getItem(position);
+
 		TextView label = (TextView) row.findViewById(android.R.id.text1);
-		label.setText(items[position].getName());
+		label.setText(item.getName());
 		return row;
 	}
 

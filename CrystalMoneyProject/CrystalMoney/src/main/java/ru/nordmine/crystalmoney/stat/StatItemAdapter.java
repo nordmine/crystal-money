@@ -14,19 +14,15 @@ import ru.nordmine.crystalmoney.R;
 
 public class StatItemAdapter extends ArrayAdapter<StatItem> {
 
-    private StatItem[] items;
     private Context context;
 
-    public StatItemAdapter(Context context, int textViewResourceId,
-                              StatItem[] objects) {
+    public StatItemAdapter(Context context, int textViewResourceId, StatItem[] objects) {
         super(context, textViewResourceId, objects);
-        this.items = objects;
         this.context = context;
     }
 
     @Override
-    public View getDropDownView(int position, View convertView,
-                                ViewGroup parent) {
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
         return getCustomView(position, convertView, parent);
     }
 
@@ -35,13 +31,12 @@ public class StatItemAdapter extends ArrayAdapter<StatItem> {
         return getCustomView(position, convertView, parent);
     }
 
-    public View getCustomView(int position, View convertView,
-                              ViewGroup parent) {
+    public View getCustomView(int position, View convertView, ViewGroup parent) {
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(R.layout.row_stat_item, parent, false);
 
-        StatItem item = items[position];
+        StatItem item = getItem(position);
 
         TextView colorTextView = (TextView) row.findViewById(R.id.colorTextView);
         colorTextView.setBackgroundColor(item.getColor());
