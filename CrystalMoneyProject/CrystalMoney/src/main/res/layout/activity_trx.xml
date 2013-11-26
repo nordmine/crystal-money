@@ -68,11 +68,30 @@
         android:layout_below="@+id/textView2"
         android:ems="10" />
 
-    <DatePicker
-        android:id="@+id/datePicker3"
+    <!--<DatePicker-->
+        <!--android:id="@+id/datePicker3"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignLeft="@+id/categoryButton"-->
+        <!--android:layout_below="@+id/commentEditText" />-->
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/categoryButton"
-        android:layout_below="@+id/commentEditText" />
+        android:orientation="horizontal"
+        android:layout_below="@+id/commentEditText">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Дата" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dateButton"
+                android:onClick="onDateButtonClick"/>
+
+        </LinearLayout>
 
 </RelativeLayout>
