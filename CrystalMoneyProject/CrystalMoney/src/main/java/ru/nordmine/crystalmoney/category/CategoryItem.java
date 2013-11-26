@@ -1,6 +1,8 @@
 package ru.nordmine.crystalmoney.category;
 
-public class CategoryItem {
+import java.io.Serializable;
+
+public class CategoryItem implements Serializable {
 	
 	private int id;
 	private int categoryType;

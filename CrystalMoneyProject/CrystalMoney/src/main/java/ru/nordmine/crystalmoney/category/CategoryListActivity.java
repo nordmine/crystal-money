@@ -1,8 +1,7 @@
 package ru.nordmine.crystalmoney.category;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -22,7 +21,7 @@ import ru.nordmine.crystalmoney.R;
 import ru.nordmine.crystalmoney.db.MyDb;
 import ru.nordmine.crystalmoney.db.WhereClauseItem;
 
-public class CategoryListActivity extends Activity {
+public class CategoryListActivity extends Activity implements CategoryDialog.OnCategoryRenameListener {
 
 	private ListView listView;
 	private List<CategoryItem> items;
@@ -92,32 +91,12 @@ public class CategoryListActivity extends Activity {
 	public boolean onContextItemSelected(MenuItem item) {
 		int menuItemIndex = item.getItemId();
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final CategoryItem category = items.get(info.position);
         if(menuItemIndex == 0) {
-            final CategoryItem category = items.get(info.position);
-            final AlertDialog.Builder categoryNameAlert = new AlertDialog.Builder(this);
-            final EditText categoryNameEditText = new EditText(this);
-            categoryNameEditText.setText(category.getName());
-            categoryNameAlert.setTitle(R.string.caption_rename);
-            categoryNameAlert.setMessage(R.string.caption_category_name);
-            categoryNameAlert.setView(categoryNameEditText);
-            categoryNameAlert.setPositiveButton(R.string.caption_save, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    String value = categoryNameEditText.getText().toString().trim();
-                    category.setName(value);
-                    dao.save(category.getId(), category);
-                    loadCategoriesFromDatabase();
-                }
-            });
-
-            categoryNameAlert.setNegativeButton(R.string.caption_cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    dialog.cancel();
-                }
-            });
-            categoryNameAlert.show();
+            showCategoryDialog(category);
         }
         if (menuItemIndex == 1) {
-            deleteRecordById(items.get(info.position).getId());
+            deleteRecordById(category.getId());
         }
 		return super.onContextItemSelected(item);
 	}
@@ -157,4 +136,16 @@ public class CategoryListActivity extends Activity {
         return true;
     }
 
+    void showCategoryDialog(CategoryItem item) {
+        DialogFragment dialog = CategoryDialog.newInstance(item);
+        dialog.show(getFragmentManager(), "dialog");
+    }
+
+    @Override
+    public void onCategoryRenamed(CategoryItem category) {
+        if (checkCategoryName(category.getName())) {
+            dao.save(category.getId(), category);
+            loadCategoriesFromDatabase();
+        }
+    }
 }
