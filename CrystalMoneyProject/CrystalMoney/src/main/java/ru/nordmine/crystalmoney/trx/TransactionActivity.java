@@ -33,7 +33,6 @@ public class TransactionActivity extends Activity {
 	public static final int EDIT_CATEGORY_LIST = 20;
 
 	private Spinner accountSpinner;
-//	private DatePicker datePicker;
 	private EditText amountEditText;
 	private EditText commentEditText;
 	private Button categoryButton;
@@ -41,7 +40,7 @@ public class TransactionActivity extends Activity {
 
 	private List<AccountItem> accountItems;
     private long selectedDate;
-    private Calendar calendar;
+    private Calendar calendar = Calendar.getInstance();
 
 	private int id = 0;
 	private int categoryId = 0;
@@ -50,7 +49,6 @@ public class TransactionActivity extends Activity {
 	
 	private AccountDao accountDao = new AccountDao(this);
 	private TransactionDao trxDao;
-    private Long created;
 
     private static final String MY_PREFS = "my_prefs";
     private SharedPreferences preferences;
@@ -63,7 +61,6 @@ public class TransactionActivity extends Activity {
 		setContentView(R.layout.activity_trx);
 
 		accountSpinner = (Spinner) findViewById(R.id.accountSpinner);
-//		datePicker = (DatePicker) findViewById(R.id.datePicker3);
 		amountEditText = (EditText) findViewById(R.id.amountEditText);
 		commentEditText = (EditText) findViewById(R.id.commentEditText);
 		categoryButton = (Button) findViewById(R.id.categoryButton);
@@ -78,18 +75,12 @@ public class TransactionActivity extends Activity {
 
         defaultCategoryPreferenceName = "defaultCategoryId" + transactionType;
 
-        calendar = Calendar.getInstance();
         if (bundle.containsKey("selectedDate")) {
             this.selectedDate = bundle.getLong("selectedDate");
             calendar.setTimeInMillis(selectedDate);
         } else {
             calendar.setTime(new Date());
         }
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-//        datePicker.init(year, month, day, null);
-//        datePicker.setCalendarViewShown(false);
         setTextForDateButton();
 		
 		trxDao = new TransactionDao(this, transactionType);
@@ -113,7 +104,7 @@ public class TransactionActivity extends Activity {
 	}
 
     private void setTextForDateButton() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
         dateButton.setText(sdf.format(new Date(calendar.getTimeInMillis())));
     }
 
@@ -182,10 +173,7 @@ public class TransactionActivity extends Activity {
 
 		commentEditText.setText(trxItem.getComment());
 		amountEditText.setText(Double.toString(trxItem.getAmount()));
-        this.created = trxItem.getCreated();
-		calendar = Calendar.getInstance();
         calendar.setTimeInMillis(trxItem.getCreated());
-//		datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), null);
 		for (int i = 0; i < accountItems.size(); i++) {
 			AccountItem kvi = accountItems.get(i);
 			if (kvi.getId() == trxItem.getAccountId()) {
@@ -213,14 +201,8 @@ public class TransactionActivity extends Activity {
 		}
 		Double amount = Double.parseDouble(amountText);
 		
-		int accountId = accountItems.get(
-				accountSpinner.getSelectedItemPosition()).getId();
-		Calendar cal = Calendar.getInstance();
-        if (this.created != null) {
-            cal.setTimeInMillis(this.created);
-        }
-//        cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
-		long created = cal.getTimeInMillis();
+		int accountId = accountItems.get(accountSpinner.getSelectedItemPosition()).getId();
+		long created = calendar.getTimeInMillis();
 
 		TransactionItem trxItem = new TransactionItem(id, comment, accountId,
 				amount, created, accountId, transactionType, categoryId, null);
@@ -259,7 +241,10 @@ public class TransactionActivity extends Activity {
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-                        Toast.makeText(TransactionActivity.this, dayOfMonth + "." + (++monthOfYear) + "." + year, Toast.LENGTH_LONG).show();
+                        calendar.set(Calendar.YEAR, year);
+                        calendar.set(Calendar.MONTH, monthOfYear);
+                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        setTextForDateButton();
                     }
                 },
                 calendar.get(Calendar.YEAR),
