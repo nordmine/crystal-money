@@ -95,9 +95,9 @@ public abstract class TransactionListActivity extends Activity {
 		if (v.getId() == R.id.categoryListView) {
 			AdapterView.AdapterContextMenuInfo info = 
 					(AdapterView.AdapterContextMenuInfo) menuInfo;
-			DecimalFormat df = new DecimalFormat("0.00");
-			menu.setHeaderTitle(df.format(trxItems.get(info.position).getAmount()));
-			menu.add(R.string.caption_delete);		
+			DecimalFormat df = new DecimalFormat("###,##0.00");
+			menu.setHeaderTitle(df.format(trxItems.get(info.position).getAmount().toPlainString()));
+			menu.add(R.string.caption_delete);
 		}		
 	}
 	
@@ -145,6 +145,5 @@ public abstract class TransactionListActivity extends Activity {
         startDate += ONE_DAY;
         refreshItems();
     }
-
 
 }

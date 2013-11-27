@@ -106,8 +106,8 @@ public class ExchangeListActivity extends Activity {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v.getId() == R.id.exchangeListView) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            DecimalFormat df = new DecimalFormat("0.00");
-            menu.setHeaderTitle(df.format(items.get(info.position).getAmount()));
+            DecimalFormat df = new DecimalFormat("###,##0.00");
+            menu.setHeaderTitle(df.format(items.get(info.position).getAmount().doubleValue()));
             menu.add(0, 0, 0, R.string.caption_delete);
         }
     }

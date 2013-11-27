@@ -5,7 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,22 +24,22 @@ public class StatisticsDao {
         this.context = context;
     }
 
-    public Map<Integer, Double> getTotalAmount() {
-        Map<Integer, Double> amountsByAccountId = new HashMap<Integer, Double>();
+    public Map<Integer, BigDecimal> getTotalAmount() {
+        Map<Integer, BigDecimal> amountsByAccountId = new HashMap<Integer, BigDecimal>();
 
-        Map<Integer, Double> incomesByAccountId = getTrxSumGroupedByAccounts(1);
-        Map<Integer, Double> outcomesByAccountId = getTrxSumGroupedByAccounts(2);
+        Map<Integer, BigDecimal> incomesByAccountId = getTrxSumGroupedByAccounts(1);
+        Map<Integer, BigDecimal> outcomesByAccountId = getTrxSumGroupedByAccounts(2);
 
-        for (Map.Entry<Integer, Double> entry : incomesByAccountId.entrySet()) {
+        for (Map.Entry<Integer, BigDecimal> entry : incomesByAccountId.entrySet()) {
             amountsByAccountId.put(entry.getKey(), entry.getValue());
         }
 
-        for (Map.Entry<Integer, Double> entry : outcomesByAccountId.entrySet()) {
+        for (Map.Entry<Integer, BigDecimal> entry : outcomesByAccountId.entrySet()) {
             if (amountsByAccountId.containsKey(entry.getKey())) {
-                Double incomeSum = amountsByAccountId.get(entry.getKey());
-                amountsByAccountId.put(entry.getKey(), incomeSum - entry.getValue());
-            } else {
-                amountsByAccountId.put(entry.getKey(), -1 * entry.getValue());
+                BigDecimal incomeSum = amountsByAccountId.get(entry.getKey());
+                amountsByAccountId.put(entry.getKey(), incomeSum.subtract(entry.getValue()).setScale(2, RoundingMode.HALF_UP));
+            } else { // todo нужна ли эта ветка?
+                amountsByAccountId.put(entry.getKey(), entry.getValue().multiply(new BigDecimal(-1)).setScale(2, RoundingMode.HALF_UP));
             }
         }
 
@@ -46,29 +47,29 @@ public class StatisticsDao {
         List<ExchangeItem> exchanges = exchangeDao.getAll();
         for(ExchangeItem exchange : exchanges)
         {
-            double newAmount = exchange.getAmount();
+            BigDecimal newAmount = exchange.getAmount();
 
-            double fromAmount = 0;
+            BigDecimal fromAmount = BigDecimal.ZERO;
             if(amountsByAccountId.containsKey(exchange.getFromAccountId()))
             {
                 fromAmount = amountsByAccountId.get(exchange.getFromAccountId());
             }
-            amountsByAccountId.put(exchange.getFromAccountId(), fromAmount - newAmount);
+            amountsByAccountId.put(exchange.getFromAccountId(), fromAmount.subtract(newAmount).setScale(2, RoundingMode.HALF_UP));
 
-            double toAmount = 0;
+            BigDecimal toAmount = BigDecimal.ZERO;
             if(amountsByAccountId.containsKey(exchange.getToAccountId()))
             {
                 toAmount = amountsByAccountId.get(exchange.getToAccountId());
             }
-            amountsByAccountId.put(exchange.getToAccountId(), toAmount + newAmount);
+            amountsByAccountId.put(exchange.getToAccountId(), toAmount.add(newAmount).setScale(2, RoundingMode.HALF_UP));
         }
 
         return amountsByAccountId;
     }
 
-    private Map<Integer, Double> getTrxSumGroupedByAccounts(int trxId) {
+    private Map<Integer, BigDecimal> getTrxSumGroupedByAccounts(int trxId) {
 
-        Map<Integer, Double> amountsByAccountId = new HashMap<Integer, Double>();
+        Map<Integer, BigDecimal> amountsByAccountId = new HashMap<Integer, BigDecimal>();
 
         try {
             MyDb sqh = new MyDb(context);
@@ -88,7 +89,8 @@ public class StatisticsDao {
 
             while (cursor.moveToNext()) {
                 int accountId = cursor.getInt(cursor.getColumnIndex(MyDb.TRX_ACCOUNT_ID));
-                double amount = cursor.getDouble(cursor.getColumnIndex("amount_sum"));
+                String amountString = cursor.getString(cursor.getColumnIndex("amount_sum"));
+                BigDecimal amount = new BigDecimal(amountString).setScale(2, RoundingMode.HALF_UP);
                 amountsByAccountId.put(accountId, amount);
             }
             cursor.close();
@@ -101,15 +103,15 @@ public class StatisticsDao {
         return amountsByAccountId;
     }
 
-    public double getTotalOutcomeBetweenDate(Long createdFrom, Long createdTo)
+    public BigDecimal getTotalOutcomeBetweenDate(Long createdFrom, Long createdTo)
     {
-        double sumBetweenDate = 0.0;
+        BigDecimal sumBetweenDate = BigDecimal.ZERO;
 
         try {
             MyDb sqh = new MyDb(context);
             SQLiteDatabase sqdb = sqh.getReadableDatabase();
 
-            sumBetweenDate = getAmountSumByDate(sqdb, 2, createdFrom, createdTo);
+            sumBetweenDate = getAmountSumBetweenDate(sqdb, 2, createdFrom, createdTo);
 
             sqdb.close();
             sqh.close();
@@ -120,9 +122,9 @@ public class StatisticsDao {
         return sumBetweenDate;
     }
 
-    private Double getAmountSumByDate(SQLiteDatabase sqdb, int trxId, Long createdFrom, Long createdTo)
+    private BigDecimal getAmountSumBetweenDate(SQLiteDatabase sqdb, int trxId, Long createdFrom, Long createdTo)
     {
-        double amountSum = 0.0;
+        BigDecimal amountSum = BigDecimal.ZERO;
 
         StringBuilder query = new StringBuilder("select ");
         query.append("sum(").append(MyDb.TRX_AMOUNT).append(") as total_sum");
@@ -143,7 +145,8 @@ public class StatisticsDao {
         Cursor cursor = sqdb.rawQuery(queryString, null);
 
         while (cursor.moveToNext()) {
-            amountSum += cursor.getDouble(cursor.getColumnIndex("total_sum"));
+            String totalSumString = cursor.getString(cursor.getColumnIndex("total_sum"));
+            amountSum = amountSum.add(new BigDecimal(totalSumString).setScale(2, RoundingMode.HALF_UP));
         }
         cursor.close();
 

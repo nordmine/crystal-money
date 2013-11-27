@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,7 +25,7 @@ import java.util.List;
 import ru.nordmine.crystalmoney.R;
 import ru.nordmine.crystalmoney.account.AccountDao;
 import ru.nordmine.crystalmoney.account.AccountItem;
-import ru.nordmine.crystalmoney.account.AccountItemSimpleAdapter;
+import ru.nordmine.crystalmoney.account.AccountItemSpinnerAdapter;
 import ru.nordmine.crystalmoney.category.CategoryDao;
 import ru.nordmine.crystalmoney.category.CategoryItem;
 import ru.nordmine.crystalmoney.category.CategoryListActivity;
@@ -131,7 +133,7 @@ public class TransactionActivity extends Activity {
 
 	private void addItemsOnAccountTypeSpinner() {		
 		accountItems = accountDao.getAll();
-		AccountItemSimpleAdapter dataAdapter = new AccountItemSimpleAdapter(this, R.layout.row_with_icon,
+		AccountItemSpinnerAdapter dataAdapter = new AccountItemSpinnerAdapter(this, R.layout.row_with_icon,
                 accountItems.toArray(new AccountItem[accountItems.size()]));
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		accountSpinner.setAdapter(dataAdapter);
@@ -172,7 +174,7 @@ public class TransactionActivity extends Activity {
 		TransactionItem trxItem = trxDao.getById(id);
 
 		commentEditText.setText(trxItem.getComment());
-		amountEditText.setText(Double.toString(trxItem.getAmount()));
+		amountEditText.setText(trxItem.getAmount().toPlainString());
         calendar.setTimeInMillis(trxItem.getCreated());
 		for (int i = 0; i < accountItems.size(); i++) {
 			AccountItem kvi = accountItems.get(i);
@@ -199,7 +201,7 @@ public class TransactionActivity extends Activity {
 		if (amountText.trim().isEmpty()) {
 			amountText = "0.00";
 		}
-		Double amount = Double.parseDouble(amountText);
+		BigDecimal amount = new BigDecimal(amountText).setScale(2, RoundingMode.HALF_UP);
 		
 		int accountId = accountItems.get(accountSpinner.getSelectedItemPosition()).getId();
 		long created = calendar.getTimeInMillis();

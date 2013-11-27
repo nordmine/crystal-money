@@ -13,6 +13,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,7 +24,7 @@ import java.util.List;
 import ru.nordmine.crystalmoney.R;
 import ru.nordmine.crystalmoney.account.AccountDao;
 import ru.nordmine.crystalmoney.account.AccountItem;
-import ru.nordmine.crystalmoney.account.AccountItemSimpleAdapter;
+import ru.nordmine.crystalmoney.account.AccountItemSpinnerAdapter;
 
 public class ExchangeActivity extends Activity {
 
@@ -96,7 +98,7 @@ public class ExchangeActivity extends Activity {
     }
 
     private void addItemsOnAccountTypeSpinner(Spinner spinner, List<AccountItem> dataSource) {
-        AccountItemSimpleAdapter dataAdapter = new AccountItemSimpleAdapter(this,
+        AccountItemSpinnerAdapter dataAdapter = new AccountItemSpinnerAdapter(this,
                 R.layout.row_with_icon, dataSource.toArray(new AccountItem[dataSource.size()]));
         dataAdapter
                 .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -106,7 +108,7 @@ public class ExchangeActivity extends Activity {
     private void loadRecordById(int id) {
         ExchangeItem item = exchangeDao.getById(id);
 
-        amountEditText.setText(Double.toString(item.getAmount()));
+        amountEditText.setText(item.getAmount().toPlainString());
         setSelection(fromAccountSpinner, accountItems, item.getFromAccountId());
         setSelection(toAccountSpinner, anotherItems, item.getToAccountId());
 
@@ -137,7 +139,7 @@ public class ExchangeActivity extends Activity {
             amountText = "0.00";
         }
 
-        double amount = Double.parseDouble(amountText);
+        BigDecimal amount = new BigDecimal(amountText).setScale(2, RoundingMode.HALF_UP);
 
         long created = calendar.getTimeInMillis();
 

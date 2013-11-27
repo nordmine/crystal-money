@@ -1,21 +1,14 @@
 package ru.nordmine.crystalmoney.stat;
 
+import java.math.BigDecimal;
+
 public class StatItem {
 
     private int categoryId;
     private String categoryName;
-    private double sum;
-    private double percent;
-
-    public double getDegree() {
-        return degree;
-    }
-
-    public void setDegree(double degree) {
-        this.degree = degree;
-    }
-
-    private double degree;
+    private BigDecimal sum;
+    private BigDecimal percent;
+    private BigDecimal degree;
     private int color;
 
     public int getCategoryId() {
@@ -34,22 +27,6 @@ public class StatItem {
         this.categoryName = categoryName;
     }
 
-    public double getSum() {
-        return sum;
-    }
-
-    public void setSum(double sum) {
-        this.sum = sum;
-    }
-
-    public double getPercent() {
-        return percent;
-    }
-
-    public void setPercent(double percent) {
-        this.percent = percent;
-    }
-
     public int getColor() {
         return color;
     }
@@ -58,4 +35,27 @@ public class StatItem {
         this.color = color;
     }
 
+    public BigDecimal getSum() {
+        return sum;
+    }
+
+    public void setSum(BigDecimal sum) {
+        this.sum = sum;
+    }
+
+    public BigDecimal getPercent() {
+        return percent;
+    }
+
+    public void setPercent(BigDecimal percent) {
+        this.percent = percent;
+    }
+
+    public BigDecimal getDegree() {
+        return degree;
+    }
+
+    public void setDegree(BigDecimal degree) {
+        this.degree = degree;
+    }
 }

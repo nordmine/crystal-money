@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,18 +59,13 @@ public class TransactionDao extends BasicDao<TransactionItem> {
 	@Override
 	protected TransactionItem parseRow(Cursor cursor) {
 		int id = cursor.getInt(cursor.getColumnIndex("trx_id"));
-		String comment = cursor.getString(cursor
-				.getColumnIndex(MyDb.TRX_COMMENT));
-		Double amount = cursor.getDouble(cursor
-				.getColumnIndex("trx_amount"));
-		int categoryId = cursor.getInt(cursor
-				.getColumnIndex(MyDb.TRX_CATEGORY_ID));
-		int transactionType = cursor.getInt(cursor
-				.getColumnIndex(MyDb.TRX_TYPE));
-		long created = cursor.getLong(cursor
-				.getColumnIndex("trx_created"));
-		int accountId = cursor.getInt(cursor
-				.getColumnIndex(MyDb.TRX_ACCOUNT_ID));
+		String comment = cursor.getString(cursor.getColumnIndex(MyDb.TRX_COMMENT));
+		String amountString = cursor.getString(cursor.getColumnIndex("trx_amount"));
+        BigDecimal amount = new BigDecimal(amountString).setScale(2, RoundingMode.HALF_UP);
+		int categoryId = cursor.getInt(cursor.getColumnIndex(MyDb.TRX_CATEGORY_ID));
+		int transactionType = cursor.getInt(cursor.getColumnIndex(MyDb.TRX_TYPE));
+		long created = cursor.getLong(cursor.getColumnIndex("trx_created"));
+		int accountId = cursor.getInt(cursor.getColumnIndex(MyDb.TRX_ACCOUNT_ID));
 		
 		int iconId = cursor.getInt(cursor.getColumnIndex("acc_icon"));
 		String categoryName = cursor.getString(cursor.getColumnIndex("cat_name"));
@@ -79,7 +76,7 @@ public class TransactionDao extends BasicDao<TransactionItem> {
 	protected ContentValues getValuesForSave(TransactionItem t) {		
 		ContentValues cv = new ContentValues();
 		cv.put(MyDb.TRX_COMMENT, t.getComment());
-		cv.put(MyDb.TRX_AMOUNT, t.getAmount());
+		cv.put(MyDb.TRX_AMOUNT, t.getAmount().toPlainString());
 		cv.put(MyDb.TRX_ACCOUNT_ID, t.getAccountId());
 		cv.put(MyDb.TRX_CATEGORY_ID, t.getCategoryId());
 		cv.put(MyDb.TRX_CREATED, t.getCreated());

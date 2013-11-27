@@ -44,9 +44,9 @@ public class AccountItemAdapter extends ArrayAdapter<AccountItem> {
 		ImageView icon = (ImageView) row.findViewById(R.id.iconImageView);
 		icon.setImageResource(item.getIconId());
 		
-		DecimalFormat df = new DecimalFormat("0.00");
+		DecimalFormat df = new DecimalFormat("###,##0.00");
 		TextView amountTextView = (TextView) row.findViewById(R.id.amountTextView);
-		amountTextView.setText(df.format(item.getAmount()));
+		amountTextView.setText(df.format(item.getAmount().doubleValue()));
 
         TextView comment = (TextView) row.findViewById(R.id.commentTextView);
         comment.setText(item.getComment());

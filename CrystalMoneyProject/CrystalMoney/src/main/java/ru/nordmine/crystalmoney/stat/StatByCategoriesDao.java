@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.util.Log;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +73,8 @@ public class StatByCategoriesDao {
 
             while (cursor.moveToNext()) {
                 int categoryId = cursor.getInt(cursor.getColumnIndex(MyDb.TRX_CATEGORY_ID));
-                double sum = cursor.getDouble(cursor.getColumnIndex("amount_sum"));
+                String sumString = cursor.getString(cursor.getColumnIndex("amount_sum"));
+                BigDecimal sum = new BigDecimal(sumString).setScale(2, RoundingMode.HALF_UP);
                 StatItem item = new StatItem();
                 item.setCategoryId(categoryId);
                 item.setSum(sum);
@@ -118,17 +121,17 @@ public class StatByCategoriesDao {
     }
 
     private static void normalizeData(List<StatItem> items) {
-        double total = 0;
+        BigDecimal total = BigDecimal.ZERO;
 
         for (StatItem item : items) {
-            total += item.getSum();
+            total = total.add(item.getSum()).setScale(2, RoundingMode.HALF_UP);
         }
 
         Queue<Integer> queue = getColors();
 
         for (StatItem item : items) {
-            item.setPercent(100 * (item.getSum() / total));
-            item.setDegree(360 * (item.getSum() / total));
+            item.setPercent(new BigDecimal(100).multiply((item.getSum().divide(total, 2, RoundingMode.HALF_UP))));
+            item.setDegree (new BigDecimal(360).multiply((item.getSum().divide(total, 2, RoundingMode.HALF_UP))));
             item.setColor(queue.remove());
         }
     }

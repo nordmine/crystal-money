@@ -53,9 +53,9 @@ public class ExchangeItemAdapter extends ArrayAdapter<ExchangeItem> {
         ImageView fromAccountIconImageView = (ImageView) row.findViewById(R.id.fromAccountIconImageView);
         fromAccountIconImageView.setImageResource(icons[item.getFromAccountIconId()].getNumber());
 
-        DecimalFormat df = new DecimalFormat("0.00");
+        DecimalFormat df = new DecimalFormat("###,##0.00");
         TextView amountTextView = (TextView) row.findViewById(R.id.amountTextView);
-        amountTextView.setText(df.format(item.getAmount()));
+        amountTextView.setText(df.format(item.getAmount().doubleValue()));
 
         return row;
     }

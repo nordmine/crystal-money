@@ -1,19 +1,17 @@
 package ru.nordmine.crystalmoney.account;
 
+import java.math.BigDecimal;
+
 public class AccountItem {
 	
 	private int id;
 	private String name;
-	private Double amount;
+	private BigDecimal amount;
 	private int iconId;
 	private boolean isCard;
 	private String comment;
 	
-	public AccountItem(int id, String name, int icon) {
-		this(id, name, icon, null);
-	}
-	
-	public AccountItem(int id, String name, int icon, Double amount) {
+	public AccountItem(int id, String name, int icon, BigDecimal amount) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -21,7 +19,7 @@ public class AccountItem {
 		this.amount = amount;
 	}
 	
-	public AccountItem(int id, String name, int iconId, Double amount, 
+	public AccountItem(int id, String name, int iconId, BigDecimal amount,
 			boolean isCard, String comment) {
 		this(id, name, iconId, amount);
 		this.isCard = isCard;
@@ -47,14 +45,6 @@ public class AccountItem {
 		this.iconId = icon;
 	}
 
-	public Double getAmount() {
-		return amount;
-	}
-
-	public void setAmount(Double amount) {
-		this.amount = amount;
-	}
-
 	public boolean isCard() {
 		return isCard;
 	}
@@ -71,4 +61,11 @@ public class AccountItem {
 		this.comment = comment;
 	}
 
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 }

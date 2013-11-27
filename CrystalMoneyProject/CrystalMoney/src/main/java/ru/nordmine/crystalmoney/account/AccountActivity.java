@@ -11,6 +11,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +31,7 @@ public class AccountActivity extends Activity {
 	private Spinner accountTypeSpinner;
 	private AccountDao dao = new AccountDao(this);
 
-    private double amountFromStat;
+    private BigDecimal amountFromStat;
 
 	private int id = 0;
 
@@ -51,8 +53,8 @@ public class AccountActivity extends Activity {
 			id = bundle.getInt("defStrID");
 
             StatisticsDao statistics = new StatisticsDao(this);
-            Map<Integer, Double> totalAmount = statistics.getTotalAmount();
-            amountFromStat = totalAmount.containsKey(id) ? totalAmount.get(id) : 0;
+            Map<Integer, BigDecimal> totalAmount = statistics.getTotalAmount();
+            amountFromStat = totalAmount.containsKey(id) ? totalAmount.get(id) : BigDecimal.ZERO;
 
 			loadRecordById(id);
 		} else {
@@ -86,7 +88,7 @@ public class AccountActivity extends Activity {
 	private void loadRecordById(int id) {
 		AccountItem item = dao.getById(id);
 		editAccountName.setText(item.getName());
-		editAmount.setText(Double.toString(amountFromStat + item.getAmount()));
+		editAmount.setText(amountFromStat.add(item.getAmount()).toPlainString());
 		editComment.setText(item.getComment());
 		isCardCheckBox.setChecked(item.isCard());
 		accountTypeSpinner.setSelection(item.getIconId());
@@ -119,9 +121,9 @@ public class AccountActivity extends Activity {
 		if (amountText.trim().isEmpty()) {
 			amountText = "0.00";
 		}
-		Double amount = Double.parseDouble(amountText);
+		BigDecimal amount = new BigDecimal(amountText).setScale(2, RoundingMode.HALF_UP);
         // корректировка баланса с учётом существующих транзакций
-        amount -= amountFromStat;
+        amount = amount.subtract(amountFromStat);
 
 		String comment = editComment.getText().toString();
 		boolean isCard = isCardCheckBox.isChecked();

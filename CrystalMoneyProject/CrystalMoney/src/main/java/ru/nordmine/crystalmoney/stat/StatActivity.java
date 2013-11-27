@@ -15,14 +15,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import ru.nordmine.crystalmoney.MainActivity;
 import ru.nordmine.crystalmoney.R;
@@ -120,15 +119,15 @@ public class StatActivity extends Activity {
             float startAngle = -90;
             for (int i = 0; i < items.size(); i++) {
                 StatItem item = items.get(i);
-                Log.d(this.getClass().getName(),  "value = " + item.getDegree());
+                Log.d(this.getClass().getName(),  "value = " + item.getDegree().toPlainString());
                 if (i == 0) {
                     paint.setColor(item.getColor());
-                    canvas.drawArc(rectf, startAngle, (float) item.getDegree(), true, paint);
+                    canvas.drawArc(rectf, startAngle, item.getDegree().floatValue(), true, paint);
                 } else {
-                    startAngle += items.get(i - 1).getDegree();
+                    startAngle += items.get(i - 1).getDegree().floatValue();
                     // todo что будет, если категорий будет больше десяти?
                     paint.setColor(item.getColor());
-                    canvas.drawArc(rectf, startAngle, (float) item.getDegree(), true, paint);
+                    canvas.drawArc(rectf, startAngle, item.getDegree().floatValue(), true, paint);
                 }
             }
         }

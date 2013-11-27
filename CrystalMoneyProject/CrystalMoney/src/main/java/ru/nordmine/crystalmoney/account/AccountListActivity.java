@@ -14,6 +14,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -72,12 +74,12 @@ public class AccountListActivity extends Activity {
 		List<AccountItem> icons = new ArrayList<AccountItem>();
 
         StatisticsDao statistics = new StatisticsDao(this);
-        Map<Integer, Double> totalAmount = statistics.getTotalAmount();
+        Map<Integer, BigDecimal> totalAmount = statistics.getTotalAmount();
 		
 		for (AccountItem ai : items) {
 			NumberWithText item = iconsOriginal[ai.getIconId()];
-            Double statAmount = totalAmount.containsKey(ai.getId()) ? totalAmount.get(ai.getId()) : 0;
-			icons.add(new AccountItem(ai.getId(), ai.getName(), item.getNumber(), ai.getAmount() + statAmount, ai.isCard(), ai.getComment()));
+            BigDecimal statAmount = totalAmount.containsKey(ai.getId()) ? totalAmount.get(ai.getId()) : BigDecimal.ZERO;
+			icons.add(new AccountItem(ai.getId(), ai.getName(), item.getNumber(), ai.getAmount().add(statAmount), ai.isCard(), ai.getComment()));
 		}
 
 		listView.setAdapter(new AccountItemAdapter(this,
@@ -90,14 +92,14 @@ public class AccountListActivity extends Activity {
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
-        DecimalFormat df = new DecimalFormat("0.00");
+        DecimalFormat df = new DecimalFormat("###,##0.00");
 
-        double totalSumPerDay = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
-        totalSumPerDayTextView.setText("Расходы за день: " + df.format(totalSumPerDay));
+        BigDecimal totalSumPerDay = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
+        totalSumPerDayTextView.setText("Расходы за день: " + df.format(totalSumPerDay.doubleValue()));
 
         c.set(Calendar.DAY_OF_MONTH, 1);
-        double totalSumPerMonth = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
-        totalSumPerMonthTextView.setText("Расходы за месяц: " + df.format(totalSumPerMonth));
+        BigDecimal totalSumPerMonth = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
+        totalSumPerMonthTextView.setText("Расходы за месяц: " + df.format(totalSumPerMonth.doubleValue()));
 	}
 
     @Override

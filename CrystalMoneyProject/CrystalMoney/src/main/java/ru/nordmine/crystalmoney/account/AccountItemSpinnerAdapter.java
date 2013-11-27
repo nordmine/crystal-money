@@ -11,21 +11,17 @@ import android.widget.TextView;
 import ru.nordmine.crystalmoney.NumberWithText;
 import ru.nordmine.crystalmoney.R;
 
-public class AccountItemSimpleAdapter extends ArrayAdapter<AccountItem> {
-	
-	private AccountItem[] items;
+public class AccountItemSpinnerAdapter extends ArrayAdapter<AccountItem> {
+
 	private Context context;
 
-	public AccountItemSimpleAdapter(Context context, int textViewResourceId,
-			AccountItem[] objects) {
+	public AccountItemSpinnerAdapter(Context context, int textViewResourceId, AccountItem[] objects) {
 		super(context, textViewResourceId, objects);
-		this.items = objects;
 		this.context = context;
 	}
 
 	@Override
-	public View getDropDownView(int position, View convertView,
-			ViewGroup parent) {
+	public View getDropDownView(int position, View convertView,	ViewGroup parent) {
 		return getCustomView(position, convertView, parent);
 	}
 
@@ -34,17 +30,19 @@ public class AccountItemSimpleAdapter extends ArrayAdapter<AccountItem> {
 		return getCustomView(position, convertView, parent);
 	}
 
-	public View getCustomView(int position, View convertView,
-			ViewGroup parent) {
+	public View getCustomView(int position, View convertView, ViewGroup parent) {
 
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View row = inflater.inflate(R.layout.row_with_icon, parent, false);
+
+        AccountItem item = getItem(position);
+
 		TextView label = (TextView) row.findViewById(R.id.text);
-		label.setText(items[position].getName());
+		label.setText(item.getName());
 
 		NumberWithText[] accountTypes = AccountActivity.getAccountIcons();
 		ImageView icon = (ImageView) row.findViewById(R.id.icon);
-		icon.setImageResource(accountTypes[items[position].getIconId()].getNumber());
+		icon.setImageResource(accountTypes[item.getIconId()].getNumber());
 
 		return row;
 	}

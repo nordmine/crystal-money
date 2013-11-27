@@ -45,9 +45,9 @@ public class TransactionItemAdapter extends ArrayAdapter<TransactionItem> {
 		TextView categoryTextView = (TextView) row.findViewById(R.id.categoryTextView);
 		categoryTextView.setText(item.getCategoryName());
 		
-		DecimalFormat df = new DecimalFormat("0.00");
+		DecimalFormat df = new DecimalFormat("###,##0.00");
 		TextView amountTextView = (TextView) row.findViewById(R.id.amountTextView);
-		amountTextView.setText(df.format(item.getAmount()));
+		amountTextView.setText(df.format(item.getAmount().doubleValue()));
 
         TextView commentTextView = (TextView)row.findViewById(R.id.commentTextView);
         commentTextView.setText(item.getComment());

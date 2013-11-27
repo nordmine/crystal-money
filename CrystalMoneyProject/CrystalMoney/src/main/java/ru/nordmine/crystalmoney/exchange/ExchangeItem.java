@@ -1,16 +1,19 @@
 package ru.nordmine.crystalmoney.exchange;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 public class ExchangeItem {
 
     private int id;
     private long created;
     private int fromAccountId;
     private int toAccountId;
-    private double amount;
+    private BigDecimal amount;
     private Integer fromAccountIconId;
     private Integer toAccountIconId;
 
-    public ExchangeItem(int id, long created, int fromAccountId, int toAccountId, double amount, Integer fromAccountIconId, Integer toAccountIconId) {
+    public ExchangeItem(int id, long created, int fromAccountId, int toAccountId, BigDecimal amount, Integer fromAccountIconId, Integer toAccountIconId) {
         this.id = id;
         this.created = created;
         this.fromAccountId = fromAccountId;
@@ -52,14 +55,6 @@ public class ExchangeItem {
         this.toAccountId = toAccountId;
     }
 
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
     public Integer getFromAccountIconId() {
         return fromAccountIconId;
     }
@@ -74,5 +69,13 @@ public class ExchangeItem {
 
     public void setToAccountIconId(Integer toAccountIconId) {
         this.toAccountIconId = toAccountIconId;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 }

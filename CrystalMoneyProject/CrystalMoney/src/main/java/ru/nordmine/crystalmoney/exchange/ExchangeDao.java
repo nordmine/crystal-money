@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import ru.nordmine.crystalmoney.db.BasicDao;
@@ -41,7 +43,8 @@ public class ExchangeDao extends BasicDao<ExchangeItem> {
         long created = cursor.getLong(cursor.getColumnIndex("ex_created"));
         int fromAccountId = cursor.getInt(cursor.getColumnIndex(MyDb.EXCHANGE_FROM_ACCOUNT_ID));
         int toAccountId = cursor.getInt(cursor.getColumnIndex(MyDb.EXCHANGE_TO_ACCOUNT_ID));
-        double amount = cursor.getDouble(cursor.getColumnIndex("ex_amount"));
+        String amountString = cursor.getString(cursor.getColumnIndex("ex_amount"));
+        BigDecimal amount = new BigDecimal(amountString).setScale(2, RoundingMode.HALF_UP);
         int fromAccountIconId = cursor.getInt(cursor.getColumnIndex("acc1_icon"));
         int toAccountIconId = cursor.getInt(cursor.getColumnIndex("acc2_icon"));
         return new ExchangeItem(id, created, fromAccountId, toAccountId, amount, fromAccountIconId, toAccountIconId);
@@ -53,7 +56,7 @@ public class ExchangeDao extends BasicDao<ExchangeItem> {
         cv.put(MyDb.EXCHANGE_CREATED, exchangeItem.getCreated());
         cv.put(MyDb.EXCHANGE_FROM_ACCOUNT_ID, exchangeItem.getFromAccountId());
         cv.put(MyDb.EXCHANGE_TO_ACCOUNT_ID, exchangeItem.getToAccountId());
-        cv.put(MyDb.EXCHANGE_AMOUNT, exchangeItem.getAmount());
+        cv.put(MyDb.EXCHANGE_AMOUNT, exchangeItem.getAmount().toPlainString());
         return cv;
     }
 

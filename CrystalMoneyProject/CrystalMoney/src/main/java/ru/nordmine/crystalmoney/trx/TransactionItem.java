@@ -1,11 +1,13 @@
 package ru.nordmine.crystalmoney.trx;
 
 
+import java.math.BigDecimal;
+
 public class TransactionItem {
 
 	private int id;
 	private String comment;
-	private Double amount;
+	private BigDecimal amount;
 	private int accountId;
 	private long created;
 
@@ -18,7 +20,7 @@ public class TransactionItem {
 	private int categoryId;
 
 	public TransactionItem(int id, String comment, int accountId,
-			Double amount, long created) {
+			BigDecimal amount, long created) {
 		super();
 		this.id = id;
 		this.comment = comment;
@@ -28,7 +30,7 @@ public class TransactionItem {
 	}
 
 	public TransactionItem(int id, String comment, int accountId,
-			Double amount, long created, int accountIconId,
+			BigDecimal amount, long created, int accountIconId,
 			int transactionType, int categoryId, String categoryName) {
 		this(id, comment, accountId, amount, created);
 		this.categoryName = categoryName;
@@ -59,14 +61,6 @@ public class TransactionItem {
 
 	public void setComment(String name) {
 		this.comment = name;
-	}
-
-	public Double getAmount() {
-		return amount;
-	}
-
-	public void setAmount(Double amount) {
-		this.amount = amount;
 	}
 
 	public int getAccountId() {
@@ -109,4 +103,11 @@ public class TransactionItem {
 		this.categoryId = categoryId;
 	}
 
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 }
