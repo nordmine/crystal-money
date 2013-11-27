@@ -38,7 +38,7 @@ public class StatisticsDao {
             if (amountsByAccountId.containsKey(entry.getKey())) {
                 BigDecimal incomeSum = amountsByAccountId.get(entry.getKey());
                 amountsByAccountId.put(entry.getKey(), incomeSum.subtract(entry.getValue()).setScale(2, RoundingMode.HALF_UP));
-            } else { // todo нужна ли эта ветка?
+            } else { // если для данного счёта не было ни одного прихода средств
                 amountsByAccountId.put(entry.getKey(), entry.getValue().multiply(new BigDecimal(-1)).setScale(2, RoundingMode.HALF_UP));
             }
         }
@@ -152,7 +152,5 @@ public class StatisticsDao {
 
         return amountSum;
     }
-
-
 
 }

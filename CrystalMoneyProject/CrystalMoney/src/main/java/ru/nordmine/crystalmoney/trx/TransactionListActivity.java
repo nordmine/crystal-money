@@ -65,7 +65,7 @@ public abstract class TransactionListActivity extends Activity {
 		trxItems = dao.getAll(startDate, startDate + ONE_DAY);
 
         Date d = new Date(startDate);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy");
         pagerTextView.setText(sdf.format(d));
 		
 		listView.setAdapter(new TransactionItemAdapter(this, android.R.layout.simple_list_item_1,

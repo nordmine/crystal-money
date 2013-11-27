@@ -130,25 +130,34 @@ public class StatByCategoriesDao {
         Queue<Integer> queue = getColors();
 
         for (StatItem item : items) {
-            item.setPercent(new BigDecimal(100).multiply((item.getSum().divide(total, 2, RoundingMode.HALF_UP))));
-            item.setDegree (new BigDecimal(360).multiply((item.getSum().divide(total, 2, RoundingMode.HALF_UP))));
+            item.setPercent(new BigDecimal(100).multiply((item.getSum().divide(total, 4, RoundingMode.HALF_UP))));
+            item.setDegree (new BigDecimal(360).multiply((item.getSum().divide(total, 4, RoundingMode.HALF_UP))));
             item.setColor(queue.remove());
         }
     }
 
-    private static Queue<Integer> getColors()
-    {
+    private static Queue<Integer> getColors() {
         Queue<Integer> colorList = new PriorityQueue<Integer>();
         colorList.add(Color.rgb(102, 205, 170));
-        colorList.add(Color.rgb(127,255,212));
-        colorList.add(Color.rgb(0,100,0));
-        colorList.add(Color.rgb(85,107,47));
-        colorList.add(Color.rgb(143,188,143));
-        colorList.add(Color.rgb(46,139,87));
-        colorList.add(Color.rgb(60,179,113));
-        colorList.add(Color.rgb(32,178,170));
-        colorList.add(Color.rgb(152,251,152));
-        colorList.add(Color.rgb(0,255,127));
+        colorList.add(Color.rgb(127, 255, 212));
+        colorList.add(Color.rgb(85, 107, 47));
+        colorList.add(Color.rgb(46, 139, 87));
+        colorList.add(Color.rgb(32, 178, 170));
+        colorList.add(Color.rgb(0, 255, 127));
+        colorList.add(Color.rgb(250, 235, 215));
+        colorList.add(Color.rgb(143, 188, 143));
+        colorList.add(Color.rgb(139, 131, 120));
+        colorList.add(Color.rgb(255, 228, 225));
+        colorList.add(Color.rgb(49, 79, 79));
+        colorList.add(Color.rgb(100, 149, 237));
+        colorList.add(Color.rgb(175, 238, 238));
+        colorList.add(Color.rgb(152, 251, 152));
+        colorList.add(Color.rgb(189, 183, 107));
+        colorList.add(Color.rgb(0, 100, 0));
+        colorList.add(Color.rgb(238, 221, 130));
+        colorList.add(Color.rgb(60, 179, 113));
+        colorList.add(Color.rgb(188, 143, 143));
+        colorList.add(Color.rgb(147, 112, 219));
         return colorList;
     }
 
