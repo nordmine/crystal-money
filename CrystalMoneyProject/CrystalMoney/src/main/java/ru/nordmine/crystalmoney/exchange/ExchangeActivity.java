@@ -2,17 +2,21 @@ package ru.nordmine.crystalmoney.exchange;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import ru.nordmine.crystalmoney.R;
@@ -32,9 +36,8 @@ public class ExchangeActivity extends Activity {
 
     private Spinner fromAccountSpinner, toAccountSpinner;
     private EditText amountEditText;
-    private DatePicker datePicker;
-
-    private ExchangeItem loadedItem;
+    private Button dateButton;
+    private Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,7 @@ public class ExchangeActivity extends Activity {
         fromAccountSpinner = (Spinner) findViewById(R.id.fromAccountSpinner);
         toAccountSpinner = (Spinner) findViewById(R.id.toAccountSpinner);
         amountEditText = (EditText) findViewById(R.id.amountEditText);
+        dateButton = (Button) findViewById(R.id.dateButton);
 
         fromAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -60,9 +64,6 @@ public class ExchangeActivity extends Activity {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        datePicker = (DatePicker) findViewById(R.id.exchangeDatePicker);
-        datePicker.setCalendarViewShown(false);
-
         accountItems = accountDao.getAll();
 
         addItemsOnAccountTypeSpinner(fromAccountSpinner, accountItems);
@@ -74,8 +75,9 @@ public class ExchangeActivity extends Activity {
         }
         if (bundle.containsKey("id")) {
             this.id = bundle.getInt("id");
-            loadedItem = loadRecordById(id);
+            loadRecordById(id);
         }
+        setTextForDateButton();
     }
 
     private void onFromAccountSpinnerSelectionChanged(int fromAccountId) {
@@ -101,19 +103,19 @@ public class ExchangeActivity extends Activity {
         spinner.setAdapter(dataAdapter);
     }
 
-    private ExchangeItem loadRecordById(int id) {
+    private void loadRecordById(int id) {
         ExchangeItem item = exchangeDao.getById(id);
 
         amountEditText.setText(Double.toString(item.getAmount()));
         setSelection(fromAccountSpinner, accountItems, item.getFromAccountId());
         setSelection(toAccountSpinner, anotherItems, item.getToAccountId());
 
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(item.getCreated());
-        datePicker.init(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
-                c.get(Calendar.DAY_OF_MONTH), null);
+        calendar.setTimeInMillis(item.getCreated());
+    }
 
-        return item;
+    private void setTextForDateButton() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
+        dateButton.setText(sdf.format(new Date(calendar.getTimeInMillis())));
     }
 
     private static void setSelection(Spinner spinner, List<AccountItem> items, int itemId) {
@@ -137,9 +139,7 @@ public class ExchangeActivity extends Activity {
 
         double amount = Double.parseDouble(amountText);
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
-        long created = cal.getTimeInMillis();
+        long created = calendar.getTimeInMillis();
 
         ExchangeItem item = new ExchangeItem(id, created, fromAccountId, toAccountId, amount, null, null);
         exchangeDao.save(id, item);
@@ -161,4 +161,21 @@ public class ExchangeActivity extends Activity {
         return true;
     }
 
+    public void onDateButtonClick(View view) {
+        new DatePickerDialog(
+                this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
+                        calendar.set(Calendar.YEAR, year);
+                        calendar.set(Calendar.MONTH, monthOfYear);
+                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        setTextForDateButton();
+                    }
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        ).show();
+    }
 }
