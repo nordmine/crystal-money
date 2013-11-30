@@ -41,6 +41,8 @@ public class ExchangeActivity extends Activity {
     private Button dateButton;
     private Calendar calendar = Calendar.getInstance();
 
+    private int selectedToAccountId = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +57,7 @@ public class ExchangeActivity extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 int selectedAccountId = accountItems.get(fromAccountSpinner.getSelectedItemPosition()).getId();
-                onFromAccountSpinnerSelectionChanged(selectedAccountId);
+                onFromAccountSpinnerSelectionChanged(selectedAccountId, selectedToAccountId);
             }
 
             @Override
@@ -68,13 +70,15 @@ public class ExchangeActivity extends Activity {
 
         accountItems = accountDao.getAll();
 
-        addItemsOnAccountTypeSpinner(fromAccountSpinner, accountItems);
+        addItemsOnAccountTypeSpinner(fromAccountSpinner, accountItems, 0);
 
         Bundle bundle = getIntent().getExtras();
+        // переход из списка счетов
         if (bundle.containsKey("fromAccountId")) {
             int fromAccountId = bundle.getInt("fromAccountId");
-            onFromAccountSpinnerSelectionChanged(fromAccountId);
+            onFromAccountSpinnerSelectionChanged(fromAccountId, 0);
         }
+        // редактирование существующего перевода
         if (bundle.containsKey("id")) {
             this.id = bundle.getInt("id");
             loadRecordById(id);
@@ -82,7 +86,7 @@ public class ExchangeActivity extends Activity {
         setTextForDateButton();
     }
 
-    private void onFromAccountSpinnerSelectionChanged(int fromAccountId) {
+    private void onFromAccountSpinnerSelectionChanged(int fromAccountId, int toAccountId) {
         anotherItems = new ArrayList<AccountItem>();
 
         for (int i = 0; i < accountItems.size(); i++) {
@@ -94,23 +98,30 @@ public class ExchangeActivity extends Activity {
             }
         }
 
-        addItemsOnAccountTypeSpinner(toAccountSpinner, anotherItems);
+        addItemsOnAccountTypeSpinner(toAccountSpinner, anotherItems, toAccountId);
     }
 
-    private void addItemsOnAccountTypeSpinner(Spinner spinner, List<AccountItem> dataSource) {
+    private void addItemsOnAccountTypeSpinner(Spinner spinner, List<AccountItem> dataSource, int selectedItemId) {
         AccountItemSpinnerAdapter dataAdapter = new AccountItemSpinnerAdapter(this,
                 R.layout.row_with_icon, dataSource.toArray(new AccountItem[dataSource.size()]));
-        dataAdapter
-                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(dataAdapter);
+
+        for (int i = 0; i < dataSource.size(); i++) {
+            AccountItem item = dataSource.get(i);
+            if (item.getId() == selectedItemId) {
+                spinner.setSelection(i);
+                break;
+            }
+        }
     }
 
     private void loadRecordById(int id) {
         ExchangeItem item = exchangeDao.getById(id);
 
         amountEditText.setText(item.getAmount().toPlainString());
-        setSelection(fromAccountSpinner, accountItems, item.getFromAccountId());
-        setSelection(toAccountSpinner, anotherItems, item.getToAccountId());
+        selectedToAccountId = item.getToAccountId();
+        onFromAccountSpinnerSelectionChanged(item.getFromAccountId(), selectedToAccountId);
 
         calendar.setTimeInMillis(item.getCreated());
     }
@@ -118,16 +129,6 @@ public class ExchangeActivity extends Activity {
     private void setTextForDateButton() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
         dateButton.setText(sdf.format(new Date(calendar.getTimeInMillis())));
-    }
-
-    private static void setSelection(Spinner spinner, List<AccountItem> items, int itemId) {
-        for (int i = 0; i < items.size(); i++) {
-            AccountItem item = items.get(i);
-            if (item.getId() == itemId) {
-                spinner.setSelection(i);
-                break;
-            }
-        }
     }
 
     public void onSaveButtonClick(View v) {

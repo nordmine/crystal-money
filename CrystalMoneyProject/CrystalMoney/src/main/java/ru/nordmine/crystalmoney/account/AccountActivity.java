@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +32,7 @@ public class AccountActivity extends Activity {
 	private Spinner accountTypeSpinner;
 	private AccountDao dao = new AccountDao(this);
 
-    private BigDecimal amountFromStat;
+    private BigDecimal amountFromStat = BigDecimal.ZERO;
 
 	private int id = 0;
 
@@ -123,6 +124,7 @@ public class AccountActivity extends Activity {
 		}
 		BigDecimal amount = new BigDecimal(amountText).setScale(2, RoundingMode.HALF_UP);
         // корректировка баланса с учётом существующих транзакций
+        Log.d(this.getClass().toString(), "* * * amountFromStat = " + amountFromStat);
         amount = amount.subtract(amountFromStat);
 
 		String comment = editComment.getText().toString();
