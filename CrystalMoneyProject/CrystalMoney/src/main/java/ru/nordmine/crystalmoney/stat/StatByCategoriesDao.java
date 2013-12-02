@@ -25,13 +25,11 @@ public class StatByCategoriesDao {
         this.context = context;
     }
 
-    public List<StatItem> getTotalSumByCategories(Long createdFrom, Long createdTo)
-    {
+    public List<StatItem> getTotalSumByCategories(Long createdFrom, Long createdTo) {
         List<StatItem> items = getTrxSumGroupedByCategories(2, createdFrom, createdTo, "amount_sum desc");
         Map<Integer, String> categoryMap = getCategoryMap();
 
-        for(StatItem item : items)
-        {
+        for (StatItem item : items) {
             item.setCategoryName(categoryMap.get(item.getCategoryId()));
         }
 
@@ -52,17 +50,14 @@ public class StatByCategoriesDao {
             query.append(") as amount_sum");
             query.append(" from ").append(MyDb.TRX_TABLE_NAME);
             query.append(" where ").append(MyDb.TRX_TYPE).append(" = ").append(trxId);
-            if(createdFrom != null)
-            {
+            if (createdFrom != null) {
                 query.append(" and ").append(MyDb.TRX_CREATED).append(" >= ").append(createdFrom);
             }
-            if(createdTo != null)
-            {
-                query.append(" and ").append(MyDb.TRX_CREATED).append(" <= ").append(createdTo);
+            if (createdTo != null) {
+                query.append(" and ").append(MyDb.TRX_CREATED).append(" < ").append(createdTo);
             }
             query.append(" group by ").append(MyDb.TRX_CATEGORY_ID);
-            if(orderByExpression != null)
-            {
+            if (orderByExpression != null) {
                 query.append(" order by ").append(orderByExpression);
             }
             String queryString = query.toString();

@@ -21,6 +21,7 @@ import java.util.Map;
 import ru.nordmine.crystalmoney.IconWithTextAdapter;
 import ru.nordmine.crystalmoney.NumberWithText;
 import ru.nordmine.crystalmoney.R;
+import ru.nordmine.crystalmoney.common.OnAmountFocusChangeListener;
 import ru.nordmine.crystalmoney.stat.StatisticsDao;
 
 public class AccountActivity extends Activity {
@@ -42,10 +43,12 @@ public class AccountActivity extends Activity {
 		setContentView(R.layout.activity_account);
 
 		editAccountName = (EditText) findViewById(R.id.editAccountName);
-		editAmount = (EditText) findViewById(R.id.editAmount);
 		editComment = (EditText) findViewById(R.id.accountCommentEditText);
 		isCardCheckBox = (CheckBox) findViewById(R.id.isCardCheckBox);
 		accountTypeSpinner = (Spinner) findViewById(R.id.accountSpinner);
+
+        editAmount = (EditText) findViewById(R.id.editAmount);
+        editAmount.setOnFocusChangeListener(new OnAmountFocusChangeListener());
 
 		addItemsOnAccountTypeSpinner();
 

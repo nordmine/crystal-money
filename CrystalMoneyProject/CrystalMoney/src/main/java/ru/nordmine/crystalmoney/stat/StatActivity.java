@@ -4,18 +4,19 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -29,56 +30,66 @@ import ru.nordmine.crystalmoney.R;
 public class StatActivity extends Activity {
 
     private ListView percentByCategoryListView;
+    private LinearLayout linear;
+    private Calendar calendar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stat);
 
-        LinearLayout linear = (LinearLayout) findViewById(R.id.linear);
+        linear = (LinearLayout) findViewById(R.id.linear);
         this.percentByCategoryListView = (ListView) findViewById(R.id.percentByCategoryListView);
 
+        calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+        drawChart();
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void drawChart() {
         DisplayMetrics metrics = this.getResources().getDisplayMetrics();
         int parentWidth = metrics.widthPixels;
         StatByCategoriesDao dao = new StatByCategoriesDao(this);
 
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        c.set(Calendar.DAY_OF_MONTH, 1);
+        long fromDate = calendar.getTimeInMillis();
 
-        List<StatItem> items = dao.getTotalSumByCategories(c.getTimeInMillis(), null);
-        linear.addView(new MyGraphView(this, items, parentWidth), 0);
+        Calendar toCalendar = (Calendar) calendar.clone();
+        toCalendar.set(Calendar.MONTH, toCalendar.get(Calendar.MONTH) + 1);
+        long toDate = toCalendar.getTimeInMillis();
 
-        String[] monthNames = {
-                "Январь",
-                "Февраль",
-                "Март",
-                "Апрель",
-                "Май",
-                "Июнь",
-                "Июль",
-                "Август",
-                "Сентябрь",
-                "Октябрь",
-                "Ноябрь",
-                "Декабрь"
-        };
+        linear.removeAllViews();
+
+        List<StatItem> items = dao.getTotalSumByCategories(fromDate, toDate);
+        if (items.isEmpty()) {
+            TextView noItemsTextView = new TextView(this);
+            noItemsTextView.setText(R.string.caption_empty_month_stat);
+            noItemsTextView.setGravity(Gravity.CENTER);
+            linear.addView(noItemsTextView);
+        } else {
+            linear.addView(new MyGraphView(this, items, parentWidth), 0);
+        }
+
+        Resources res = getResources();
+        String[] monthNames = res.getStringArray(R.array.month_names);
+
         DateFormatSymbols russSymbol = new DateFormatSymbols();
         russSymbol.setMonths(monthNames);
 
         SimpleDateFormat df = new SimpleDateFormat("MMMM yyyy", russSymbol);
         TextView monthNameTextView = (TextView) findViewById(R.id.monthNameTextView);
-        monthNameTextView.setText(df.format(new Date(c.getTimeInMillis())));
+        monthNameTextView.setText(df.format(new Date(calendar.getTimeInMillis())));
 
         percentByCategoryListView.setAdapter(
                 new StatItemAdapter(this, android.R.layout.simple_list_item_1,
                         items.toArray(new StatItem[0])));
-
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -93,6 +104,16 @@ public class StatActivity extends Activity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    public void onPrevButtonClick(View view) {
+        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1);
+        drawChart();
+    }
+
+    public void onNextButtonClick(View view) {
+        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
+        drawChart();
     }
 
     public class MyGraphView extends View {

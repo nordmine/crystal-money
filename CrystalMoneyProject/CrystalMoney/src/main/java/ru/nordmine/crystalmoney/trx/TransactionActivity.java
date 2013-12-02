@@ -29,6 +29,7 @@ import ru.nordmine.crystalmoney.account.AccountItemSpinnerAdapter;
 import ru.nordmine.crystalmoney.category.CategoryDao;
 import ru.nordmine.crystalmoney.category.CategoryItem;
 import ru.nordmine.crystalmoney.category.CategoryListActivity;
+import ru.nordmine.crystalmoney.common.OnAmountFocusChangeListener;
 
 public class TransactionActivity extends Activity {
 	
@@ -63,10 +64,12 @@ public class TransactionActivity extends Activity {
 		setContentView(R.layout.activity_trx);
 
 		accountSpinner = (Spinner) findViewById(R.id.accountSpinner);
-		amountEditText = (EditText) findViewById(R.id.amountEditText);
 		commentEditText = (EditText) findViewById(R.id.commentEditText);
 		categoryButton = (Button) findViewById(R.id.categoryButton);
         dateButton = (Button) findViewById(R.id.dateButton);
+
+        amountEditText = (EditText) findViewById(R.id.amountEditText);
+        amountEditText.setOnFocusChangeListener(new OnAmountFocusChangeListener());
 
 		addItemsOnAccountTypeSpinner();
 

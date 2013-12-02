@@ -17,20 +17,43 @@
         android:layout_alignParentLeft="true"
         android:id="@+id/parent_linear">
 
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
-            android:id="@+id/monthNameTextView"
-            android:layout_gravity="center_horizontal" />
+            android:layout_marginBottom="10dp"
+            android:gravity="center">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/caption_prev"
+                android:onClick="onPrevButtonClick"
+                android:id="@+id/prevButton" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Large Text"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:id="@+id/monthNameTextView" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/caption_next"
+                android:onClick="onNextButtonClick"
+                android:id="@+id/nextButton" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="220dp"
-            android:id="@+id/linear"></LinearLayout>
+            android:id="@+id/linear" />
 
         <ListView
             android:layout_width="wrap_content"
