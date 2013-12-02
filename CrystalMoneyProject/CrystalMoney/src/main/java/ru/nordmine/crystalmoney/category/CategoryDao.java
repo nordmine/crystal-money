@@ -50,6 +50,13 @@ public class CategoryDao extends BasicDao<CategoryItem> {
         return super.getAll(new WhereClauseItem[]{new WhereClauseItem(MyDb.CAT_TYPE, "=", Integer.toString(categoryType))});
     }
 
+    public List<CategoryItem> getByName(String name) {
+        return super.getAll(new WhereClauseItem[]{
+                new WhereClauseItem(MyDb.CAT_TYPE, "=", Integer.toString(categoryType)),
+                new WhereClauseItem(MyDb.CAT_NAME, " like ", name)
+        });
+    }
+
 	@Override
 	protected String getOrderByFieldName() {
 		return MyDb.CAT_NAME;
