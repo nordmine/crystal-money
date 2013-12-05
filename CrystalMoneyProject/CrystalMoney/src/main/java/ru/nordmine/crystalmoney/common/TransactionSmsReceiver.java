@@ -9,7 +9,9 @@ import android.util.Log;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,8 +26,13 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
 
     private static final String CATEGORY_NAME_FOR_SMS = "разное";
     private static final int TRX_TYPE = 2; // расход
-    private static final String SENDER = "900"; // Сбербанк
-    private static final String MESSAGE_PATTERN = " на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\.";
+    private static final String SBERBANK = "900"; // Сбербанк
+
+    private Map<String, SmsParserInfo> populatePatterns() {
+        Map<String, SmsParserInfo> patterns = new HashMap<String, SmsParserInfo>();
+        patterns.put(SBERBANK, new SberbankParserInfo());
+        return patterns;
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -54,32 +61,42 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
                 return;
             }
 
-            if (from.equals(SENDER)) {
+            Map<String, SmsParserInfo> patterns = populatePatterns();
+
+            if (patterns.containsKey(from)) {
                 String completeMessage = completeTextMessage.toString();
 
-                Pattern r = Pattern.compile(MESSAGE_PATTERN);
-                Matcher m = r.matcher(completeMessage);
+                // получаем паттерны
+                List<String> messagePatterns = patterns.get(from).getMessagePatterns();
 
-                if (m.find()) {
-                    for (int i = 0; i <= m.groupCount(); i++) {
-                        Log.d(this.getClass().toString(), "Found value " + i + ": " + m.group(i));
-                    }
-                    if (m.groupCount() == 2) {
-                        BigDecimal amount = new BigDecimal(m.group(1));
-                        String comment = m.group(2);
+                // получаем аккаунт
+                AccountItem selectedAccount = getAccount(context, from);
+                if (selectedAccount == null) {
+                    Log.d(this.getClass().toString(), "No selected account");
+                    return;
+                }
 
-                        AccountItem selectedAccount = getAccount(context);
-                        if (selectedAccount == null) {
-                            Log.d(this.getClass().toString(), "No selected account");
-                            return;
+                for (String messagePattern : messagePatterns) {
+
+                    Pattern r = Pattern.compile(messagePattern);
+                    Matcher m = r.matcher(completeMessage);
+
+                    if (m.find()) {
+                        for (int i = 0; i <= m.groupCount(); i++) {
+                            Log.d(this.getClass().toString(), "Found value " + i + ": " + m.group(i));
                         }
+                        if (m.groupCount() == 2) {
+                            BigDecimal amount = new BigDecimal(m.group(1));
+                            String comment = m.group(2);
 
-                        CategoryItem selectedCategory = getCategory(context);
+                            CategoryItem selectedCategory = getCategory(context, CATEGORY_NAME_FOR_SMS);
 
-                        saveTransaction(context, amount, comment, selectedCategory, selectedAccount);
+                            saveTransaction(context, amount, comment, selectedCategory, selectedAccount);
+                            break;
+                        }
+                    } else {
+                        Log.d(this.getClass().toString(), "No match");
                     }
-                } else {
-                    Log.d(this.getClass().toString(), "No match");
                 }
             }
         }
@@ -102,24 +119,23 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
         trxDao.save(0, trxItem);
     }
 
-    private CategoryItem getCategory(Context context) {
+    private static CategoryItem getCategory(Context context, String categoryNameForSms) {
         CategoryDao categoryDao = new CategoryDao(context, TRX_TYPE);
-        List<CategoryItem> categories = categoryDao.getByName(CATEGORY_NAME_FOR_SMS);
+        List<CategoryItem> categories = categoryDao.getByName(categoryNameForSms);
         if (categories.isEmpty()) {
-            categoryDao.save(0, new CategoryItem(0, TRX_TYPE, CATEGORY_NAME_FOR_SMS));
-            categories = categoryDao.getByName(CATEGORY_NAME_FOR_SMS);
-            Log.d(this.getClass().toString(), "created misc category");
+            categoryDao.save(0, new CategoryItem(0, TRX_TYPE, categoryNameForSms));
+            categories = categoryDao.getByName(categoryNameForSms);
         }
         return categories.get(0);
     }
 
-    private AccountItem getAccount(Context context) {
+    private static AccountItem getAccount(Context context, String senderAddress) {
         AccountItem selectedAccount = null;
         AccountDao accountDao = new AccountDao(context);
         List<AccountItem> accounts = accountDao.getAll();
 
         for (AccountItem item : accounts) {
-            if (item.getComment().equals(SENDER)) {
+            if (item.getComment().equals(senderAddress)) {
                 selectedAccount = item;
                 break;
             }
