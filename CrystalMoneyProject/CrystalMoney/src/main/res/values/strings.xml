@@ -45,4 +45,5 @@
     <string name="message_category_already_exists">Категория с таким именем уже существует</string>
     <string name="caption_current_amount">Актуальный баланс</string>
     <string name="caption_empty_month_stat">Статистика за выбранный месяц отсутствует</string>
+    <string name="default_category_name_for_sms">разное</string>
 </resources>

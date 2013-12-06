@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ru.nordmine.crystalmoney.R;
 import ru.nordmine.crystalmoney.account.AccountDao;
 import ru.nordmine.crystalmoney.account.AccountItem;
 import ru.nordmine.crystalmoney.category.CategoryDao;
@@ -24,7 +25,6 @@ import ru.nordmine.crystalmoney.trx.TransactionItem;
 
 public class TransactionSmsReceiver extends BroadcastReceiver {
 
-    private static final String CATEGORY_NAME_FOR_SMS = "разное";
     private static final int TRX_TYPE = 2; // расход
     private static final String SBERBANK = "900"; // Сбербанк
 
@@ -89,9 +89,19 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
                             BigDecimal amount = new BigDecimal(m.group(1));
                             String comment = m.group(2);
 
-                            CategoryItem selectedCategory = getCategory(context, CATEGORY_NAME_FOR_SMS);
+                            TransactionDao trxDao = new TransactionDao(context, TRX_TYPE);
+                            List<TransactionItem> trxItems = trxDao.getAllByComment(comment);
 
-                            saveTransaction(context, amount, comment, selectedCategory, selectedAccount);
+                            int categoryId;
+                            if (trxItems.isEmpty()) {
+                                CategoryItem selectedCategory = getCategory(context);
+                                categoryId = selectedCategory.getId();
+                            } else {
+                                // установить ту категорию, которая уже была выбрана для этого имени магазина (комментария) ранее
+                                categoryId = trxItems.get(0).getCategoryId();
+                            }
+
+                            saveTransaction(context, amount, comment, categoryId, selectedAccount);
                             break;
                         }
                     } else {
@@ -111,15 +121,17 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
         return messages;
     }
 
-    private void saveTransaction(Context context, BigDecimal amount, String comment, CategoryItem selectedCategory, AccountItem selectedAccount) {
+    private void saveTransaction(Context context, BigDecimal amount, String comment, int categoryId, AccountItem selectedAccount) {
         TransactionDao trxDao = new TransactionDao(context, TRX_TYPE);
         TransactionItem trxItem = new TransactionItem(
                 0, comment, selectedAccount.getId(), amount, new Date().getTime(),
-                0, TRX_TYPE, selectedCategory.getId(), null);
+                0, TRX_TYPE, categoryId, null);
         trxDao.save(0, trxItem);
     }
 
-    private static CategoryItem getCategory(Context context, String categoryNameForSms) {
+    private static CategoryItem getCategory(Context context) {
+        String categoryNameForSms = context.getResources().getString(R.string.default_category_name_for_sms);
+
         CategoryDao categoryDao = new CategoryDao(context, TRX_TYPE);
         List<CategoryItem> categories = categoryDao.getByName(categoryNameForSms);
         if (categories.isEmpty()) {

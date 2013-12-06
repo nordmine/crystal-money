@@ -40,7 +40,7 @@ public class TransactionDao extends BasicDao<TransactionItem> {
     public List<TransactionItem> getAll() {
         List<WhereClauseItem> whereClause = new ArrayList<WhereClauseItem>();
         whereClause.add(new WhereClauseItem(getTableName() + "." + MyDb.TRX_TYPE, "=", Integer.toString(this.transactionType)));
-        return super.getAll(whereClause.toArray(new WhereClauseItem[0]));
+        return super.getAll(whereClause.toArray(new WhereClauseItem[whereClause.size()]));
     }
 
     public List<TransactionItem> getAll(long startDate, long finishDate) {
@@ -48,7 +48,14 @@ public class TransactionDao extends BasicDao<TransactionItem> {
         whereClause.add(new WhereClauseItem(getTableName() + "." + MyDb.TRX_TYPE, "=", Integer.toString(this.transactionType)));
         whereClause.add(new WhereClauseItem(getTableName() + "." + MyDb.TRX_CREATED, ">=", Long.toString(startDate)));
         whereClause.add(new WhereClauseItem(getTableName() + "." + MyDb.TRX_CREATED, "<", Long.toString(finishDate)));
-        return super.getAll(whereClause.toArray(new WhereClauseItem[0]));
+        return super.getAll(whereClause.toArray(new WhereClauseItem[whereClause.size()]));
+    }
+
+    public List<TransactionItem> getAllByComment(String comment) {
+        List<WhereClauseItem> whereClause = new ArrayList<WhereClauseItem>();
+        whereClause.add(new WhereClauseItem(getTableName() + "." + MyDb.TRX_TYPE, "=", Integer.toString(this.transactionType)));
+        whereClause.add(new WhereClauseItem(getTableName() + "." + MyDb.TRX_COMMENT, "=", comment));
+        return super.getAll(whereClause.toArray(new WhereClauseItem[whereClause.size()]));
     }
 
 	@Override
