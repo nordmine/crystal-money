@@ -96,7 +96,7 @@ public abstract class TransactionListActivity extends Activity {
 			AdapterView.AdapterContextMenuInfo info = 
 					(AdapterView.AdapterContextMenuInfo) menuInfo;
 			DecimalFormat df = new DecimalFormat("###,##0.00");
-			menu.setHeaderTitle(df.format(trxItems.get(info.position).getAmount().toPlainString()));
+			menu.setHeaderTitle(df.format(trxItems.get(info.position).getAmount().doubleValue()));
 			menu.add(R.string.caption_delete);
 		}		
 	}
@@ -104,7 +104,7 @@ public abstract class TransactionListActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.income_list, menu);
+		getMenuInflater().inflate(R.menu.trx_list, menu);
 		return true;
 	}
 	

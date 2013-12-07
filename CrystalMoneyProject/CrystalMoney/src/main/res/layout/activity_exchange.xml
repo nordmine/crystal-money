@@ -40,17 +40,10 @@
         android:id="@+id/captionAmountTextView" />
 
     <EditText
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:id="@+id/amountEditText" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/caption_save"
-        android:id="@+id/saveButton"
-        android:onClick="onSaveButtonClick" />
 
     <Button
         android:layout_width="wrap_content"

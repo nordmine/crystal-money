@@ -46,4 +46,6 @@
     <string name="caption_current_amount">Актуальный баланс</string>
     <string name="caption_empty_month_stat">Статистика за выбранный месяц отсутствует</string>
     <string name="default_category_name_for_sms">разное</string>
+    <string name="caption_card_number_last_four_digits">Последние 4 цифры из 16-значного номера</string>
+    <string name="caption_sms_sender">Имя отправителя sms-уведомлений</string>
 </resources>

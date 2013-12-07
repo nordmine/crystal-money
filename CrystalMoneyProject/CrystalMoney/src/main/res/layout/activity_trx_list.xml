@@ -16,25 +16,28 @@
         android:layout_marginBottom="10dp"
         android:gravity="center">
 
-        <Button
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/caption_prev"
+            android:contentDescription="@string/caption_prev"
             android:onClick="onPrevButtonClick"
+            android:src="@drawable/navigate_left"
             android:id="@+id/prevButton" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="New Text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:gravity="center"
             android:width="150dp"
             android:id="@+id/pagerTextView" />
 
-        <Button
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/caption_next"
+            android:contentDescription="@string/caption_next"
+            android:src="@drawable/navigate_right"
             android:onClick="onNextButtonClick"
             android:id="@+id/nextButton" />
 

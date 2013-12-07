@@ -79,7 +79,9 @@ public class AccountListActivity extends Activity {
 		for (AccountItem ai : items) {
 			NumberWithText item = iconsOriginal[ai.getIconId()];
             BigDecimal statAmount = totalAmount.containsKey(ai.getId()) ? totalAmount.get(ai.getId()) : BigDecimal.ZERO;
-			icons.add(new AccountItem(ai.getId(), ai.getName(), item.getNumber(), ai.getAmount().add(statAmount), ai.isCard(), ai.getComment()));
+			icons.add(new AccountItem(ai.getId(), ai.getName(), item.getNumber(),
+                    ai.getAmount().add(statAmount), ai.isCard(), ai.getComment(),
+                    ai.getCardNumber(), ai.getSmsSender()));
 		}
 
 		listView.setAdapter(new AccountItemAdapter(this,

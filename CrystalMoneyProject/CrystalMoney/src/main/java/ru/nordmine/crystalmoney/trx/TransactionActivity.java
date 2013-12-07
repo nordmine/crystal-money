@@ -29,7 +29,7 @@ import ru.nordmine.crystalmoney.account.AccountItemSpinnerAdapter;
 import ru.nordmine.crystalmoney.category.CategoryDao;
 import ru.nordmine.crystalmoney.category.CategoryItem;
 import ru.nordmine.crystalmoney.category.CategoryListActivity;
-import ru.nordmine.crystalmoney.common.OnAmountFocusChangeListener;
+import ru.nordmine.crystalmoney.handlers.OnAmountFocusChangeListener;
 
 public class TransactionActivity extends Activity {
 	
@@ -145,7 +145,7 @@ public class TransactionActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.income, menu);
+		getMenuInflater().inflate(R.menu.trx, menu);
 		return true;
 	}
 
@@ -166,6 +166,9 @@ public class TransactionActivity extends Activity {
                     intent.putExtra("selectedDate", this.selectedDate);
                 }
                 startActivity(intent);
+                break;
+            case R.id.action_save:
+                onSaveClick();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -191,7 +194,7 @@ public class TransactionActivity extends Activity {
 		this.transactionType = trxItem.getTransactionType();
 	}
 
-	public void onSaveButtonClick(View v) {
+	private void onSaveClick() {
 		if (this.categoryId == 0) {
 			Toast.makeText(this, R.string.caption_no_selected_category,
 					Toast.LENGTH_LONG).show();

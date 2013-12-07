@@ -4,13 +4,14 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,7 +22,7 @@ import java.util.Map;
 import ru.nordmine.crystalmoney.IconWithTextAdapter;
 import ru.nordmine.crystalmoney.NumberWithText;
 import ru.nordmine.crystalmoney.R;
-import ru.nordmine.crystalmoney.common.OnAmountFocusChangeListener;
+import ru.nordmine.crystalmoney.handlers.OnAmountFocusChangeListener;
 import ru.nordmine.crystalmoney.stat.StatisticsDao;
 
 public class AccountActivity extends Activity {
@@ -31,6 +32,11 @@ public class AccountActivity extends Activity {
 	private EditText editComment;
 	private CheckBox isCardCheckBox;
 	private Spinner accountTypeSpinner;
+    private TextView cardNumberTextView;
+    private EditText cardNumberEditText;
+    private TextView smsSenderTextView;
+    private EditText smsSenderEditText;
+
 	private AccountDao dao = new AccountDao(this);
 
     private BigDecimal amountFromStat = BigDecimal.ZERO;
@@ -46,9 +52,20 @@ public class AccountActivity extends Activity {
 		editComment = (EditText) findViewById(R.id.accountCommentEditText);
 		isCardCheckBox = (CheckBox) findViewById(R.id.isCardCheckBox);
 		accountTypeSpinner = (Spinner) findViewById(R.id.accountSpinner);
+        cardNumberTextView = (TextView) findViewById(R.id.cardNumberTextView);
+        cardNumberEditText = (EditText) findViewById(R.id.cardNumberEditText);
+        smsSenderTextView = (TextView) findViewById(R.id.smsSenderTextView);
+        smsSenderEditText = (EditText) findViewById(R.id.smsSenderEditText);
 
         editAmount = (EditText) findViewById(R.id.editAmount);
         editAmount.setOnFocusChangeListener(new OnAmountFocusChangeListener());
+
+        isCardCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                processIsCardCheckBox();
+            }
+        });
 
 		addItemsOnAccountTypeSpinner();
 
@@ -95,10 +112,27 @@ public class AccountActivity extends Activity {
 		editAmount.setText(amountFromStat.add(item.getAmount()).toPlainString());
 		editComment.setText(item.getComment());
 		isCardCheckBox.setChecked(item.isCard());
+        processIsCardCheckBox();
 		accountTypeSpinner.setSelection(item.getIconId());
+        cardNumberEditText.setText(item.getCardNumber());
+        smsSenderEditText.setText(item.getSmsSender());
 	}
 
-	@Override
+    private void processIsCardCheckBox() {
+        if (isCardCheckBox.isChecked()) {
+            cardNumberTextView.setVisibility(View.VISIBLE);
+            cardNumberEditText.setVisibility(View.VISIBLE);
+            smsSenderTextView.setVisibility(View.VISIBLE);
+            smsSenderEditText.setVisibility(View.VISIBLE);
+        } else {
+            cardNumberTextView.setVisibility(View.GONE);
+            cardNumberEditText.setVisibility(View.GONE);
+            smsSenderTextView.setVisibility(View.GONE);
+            smsSenderEditText.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.account, menu);
 		return true;
@@ -112,13 +146,16 @@ public class AccountActivity extends Activity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 break;
+            case R.id.action_save:
+                onSaveClick();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
     }
 
-	public void onSaveClick(View v) {
+	private void onSaveClick() {
 		String name = editAccountName.getText().toString();
 		
 		String amountText = editAmount.getText().toString();
@@ -127,14 +164,15 @@ public class AccountActivity extends Activity {
 		}
 		BigDecimal amount = new BigDecimal(amountText).setScale(2, RoundingMode.HALF_UP);
         // корректировка баланса с учётом существующих транзакций
-        Log.d(this.getClass().toString(), "* * * amountFromStat = " + amountFromStat);
         amount = amount.subtract(amountFromStat);
 
 		String comment = editComment.getText().toString();
 		boolean isCard = isCardCheckBox.isChecked();
 		int iconId = accountTypeSpinner.getSelectedItemPosition();
+        String cardNumber = cardNumberEditText.getText().toString();
+        String smsSender = smsSenderEditText.getText().toString();
 
-		AccountItem item = new AccountItem(id, name, iconId, amount, isCard, comment);
+		AccountItem item = new AccountItem(id, name, iconId, amount, isCard, comment, cardNumber, smsSender);
 		dao.save(id, item);
 
 		setResult(RESULT_OK);

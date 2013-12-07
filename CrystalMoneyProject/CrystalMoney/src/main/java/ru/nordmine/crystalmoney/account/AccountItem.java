@@ -10,18 +10,22 @@ public class AccountItem {
 	private int iconId;
 	private boolean isCard;
 	private String comment;
+    private String cardNumber;
+    private String smsSender;
 	
-	public AccountItem(int id, String name, int icon, BigDecimal amount) {
+	public AccountItem(int id, String name, int icon, BigDecimal amount, String cardNumber, String smsSender) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.iconId = icon;
 		this.amount = amount;
+        this.cardNumber = cardNumber;
+        this.smsSender = smsSender;
 	}
 	
 	public AccountItem(int id, String name, int iconId, BigDecimal amount,
-			boolean isCard, String comment) {
-		this(id, name, iconId, amount);
+			boolean isCard, String comment, String cardNumber, String smsSender) {
+		this(id, name, iconId, amount, cardNumber, smsSender);
 		this.isCard = isCard;
 		this.comment = comment;
 	}
@@ -67,5 +71,21 @@ public class AccountItem {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+
+    public String getSmsSender() {
+        return smsSender;
+    }
+
+    public void setSmsSender(String smsSender) {
+        this.smsSender = smsSender;
     }
 }

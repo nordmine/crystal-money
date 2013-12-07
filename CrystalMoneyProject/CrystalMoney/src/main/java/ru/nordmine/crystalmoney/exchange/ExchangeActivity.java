@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -131,7 +132,7 @@ public class ExchangeActivity extends Activity {
         dateButton.setText(sdf.format(new Date(calendar.getTimeInMillis())));
     }
 
-    public void onSaveButtonClick(View v) {
+    private void onSaveClick() {
         int fromAccountId = accountItems.get(fromAccountSpinner.getSelectedItemPosition()).getId();
         int toAccountId = anotherItems.get(toAccountSpinner.getSelectedItemPosition()).getId();
 
@@ -158,6 +159,9 @@ public class ExchangeActivity extends Activity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 break;
+            case R.id.action_save:
+                onSaveClick();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -180,5 +184,11 @@ public class ExchangeActivity extends Activity {
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
         ).show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.exchange, menu);
+        return true;
     }
 }

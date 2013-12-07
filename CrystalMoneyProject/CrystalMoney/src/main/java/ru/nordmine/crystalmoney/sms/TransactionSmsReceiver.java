@@ -1,4 +1,4 @@
-package ru.nordmine.crystalmoney.common;
+package ru.nordmine.crystalmoney.sms;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,11 +29,13 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
 
     private static final int TRX_TYPE = 2; // расход
     private static final String SBERBANK = "900"; // Сбербанк
+    public static final String TEST_SENDER = "12345678";
 
-    private Map<String, SmsParserInfo> populatePatterns() {
-        Map<String, SmsParserInfo> patterns = new HashMap<String, SmsParserInfo>();
-        patterns.put(SBERBANK, new SberbankParserInfo());
-        return patterns;
+    private Map<String, SmsParserInfo> getParsers() {
+        Map<String, SmsParserInfo> parsers = new HashMap<String, SmsParserInfo>();
+        parsers.put(SBERBANK, new SberbankParserInfo());
+        parsers.put(TEST_SENDER, new TestParserInfo());
+        return parsers;
     }
 
     @Override
@@ -61,13 +65,13 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
                 return;
             }
 
-            Map<String, SmsParserInfo> patterns = populatePatterns();
+            Map<String, SmsParserInfo> parsers = getParsers();
 
-            if (patterns.containsKey(from)) {
+            if (parsers.containsKey(from)) {
                 String completeMessage = completeTextMessage.toString();
 
                 // получаем паттерны
-                List<String> messagePatterns = patterns.get(from).getMessagePatterns();
+                List<String> messagePatterns = parsers.get(from).getMessagePatterns();
 
                 // получаем аккаунт
                 AccountItem selectedAccount = getAccount(context, from);
@@ -97,8 +101,9 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
                                 CategoryItem selectedCategory = getCategory(context);
                                 categoryId = selectedCategory.getId();
                             } else {
-                                // установить ту категорию, которая уже была выбрана для этого имени магазина (комментария) ранее
-                                categoryId = trxItems.get(0).getCategoryId();
+                                // установить ту категорию, которая чаще всего устанавливалась
+                                // для этого имени магазина (комментария) ранее
+                                categoryId = getMostFrequentCategoryId(trxItems);
                             }
 
                             saveTransaction(context, amount, comment, categoryId, selectedAccount);
@@ -110,6 +115,26 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
                 }
             }
         }
+    }
+
+    private int getMostFrequentCategoryId(List<TransactionItem> transactions) {
+        Map<String, Integer> counters = new HashMap<String, Integer>();
+        for (TransactionItem trx : transactions) {
+            String categoryId = Integer.toString(trx.getCategoryId());
+            if (!counters.containsKey(categoryId)) {
+                counters.put(categoryId, 1);
+            } else {
+                counters.put(categoryId, counters.get(categoryId) + 1);
+            }
+        }
+
+        int maxCount = Collections.max(counters.values());
+        for (Map.Entry<String, Integer> entry : counters.entrySet()) {
+            if (entry.getValue() == maxCount) {
+                return Integer.parseInt(entry.getKey());
+            }
+        }
+        return transactions.get(0).getCategoryId();
     }
 
     private SmsMessage[] getSmsMessages(Bundle bundle) {
@@ -147,7 +172,7 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
         List<AccountItem> accounts = accountDao.getAll();
 
         for (AccountItem item : accounts) {
-            if (item.getComment().equals(senderAddress)) {
+            if (item.getSmsSender().equalsIgnoreCase(senderAddress)) {
                 selectedAccount = item;
                 break;
             }

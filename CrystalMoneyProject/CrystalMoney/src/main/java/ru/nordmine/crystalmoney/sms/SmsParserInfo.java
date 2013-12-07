@@ -1,4 +1,4 @@
-package ru.nordmine.crystalmoney.common;
+package ru.nordmine.crystalmoney.sms;
 
 import java.util.List;
 

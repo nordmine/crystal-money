@@ -1,4 +1,4 @@
-package ru.nordmine.crystalmoney.common;
+package ru.nordmine.crystalmoney.handlers;
 
 import android.view.View;
 import android.widget.EditText;

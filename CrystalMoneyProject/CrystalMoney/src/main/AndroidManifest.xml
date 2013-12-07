@@ -59,7 +59,7 @@
             android:name="ru.nordmine.crystalmoney.exchange.ExchangeListActivity"
             android:label="@string/title_activity_exchange_list" >
         </activity>
-        <receiver android:name=".common.TransactionSmsReceiver">
+        <receiver android:name=".sms.TransactionSmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>

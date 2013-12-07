@@ -20,7 +20,8 @@ public class AccountDao extends BasicDao<AccountItem> {
 	@Override
 	protected String[] getSelectFields() {
 		return new String[] { MyDb.UID, MyDb.ACCOUNT_NAME, MyDb.ACCOUNT_COMMENT,
-				MyDb.ACCOUNT_IS_CARD, MyDb.ACCOUNT_PICTURE, MyDb.ACCOUNT_AMOUNT };
+				MyDb.ACCOUNT_IS_CARD, MyDb.ACCOUNT_PICTURE, MyDb.ACCOUNT_AMOUNT,
+                MyDb.ACCOUNT_CARD_NUMBER, MyDb.ACCOUNT_SMS_SENDER };
 	}
 
 	@Override
@@ -37,7 +38,9 @@ public class AccountDao extends BasicDao<AccountItem> {
 		String amountString = cursor.getString(cursor.getColumnIndex(MyDb.ACCOUNT_AMOUNT));
         BigDecimal amount = new BigDecimal(amountString).setScale(2, RoundingMode.HALF_UP);
 		boolean isCard = cursor.getInt(cursor.getColumnIndex(MyDb.ACCOUNT_IS_CARD)) == 0 ? false : true;
-		return new AccountItem(id, accountName, iconId, amount, isCard, comment);
+        String cardNumber = cursor.getString(cursor.getColumnIndex(MyDb.ACCOUNT_CARD_NUMBER));
+        String smsSender = cursor.getString(cursor.getColumnIndex(MyDb.ACCOUNT_SMS_SENDER));
+		return new AccountItem(id, accountName, iconId, amount, isCard, comment, cardNumber, smsSender);
 	}
 
 	@Override
@@ -48,6 +51,8 @@ public class AccountDao extends BasicDao<AccountItem> {
 		cv.put(MyDb.ACCOUNT_COMMENT, t.getComment());
 		cv.put(MyDb.ACCOUNT_IS_CARD, t.isCard());
 		cv.put(MyDb.ACCOUNT_PICTURE, t.getIconId());
+        cv.put(MyDb.ACCOUNT_CARD_NUMBER, t.getCardNumber());
+        cv.put(MyDb.ACCOUNT_SMS_SENDER, t.getSmsSender());
 		return cv;
 	}
 
