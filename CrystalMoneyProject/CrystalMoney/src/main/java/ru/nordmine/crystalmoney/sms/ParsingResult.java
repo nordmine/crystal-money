@@ -8,7 +8,7 @@ public class ParsingResult {
     private String cardNumber;
     private Date date;
     private BigDecimal amount;
-    private String comment;
+    private String comment = "";
 
     public String getCardNumber() {
         return cardNumber;

@@ -16,9 +16,10 @@ public class TestParser implements SmsParser {
     public List<PatternData> getMessagePatterns() {
         List<PatternData> patterns = new ArrayList<PatternData>();
         patterns.add(new PatternData(INCOME, "\\w+(\\d{4}): (\\d{2}\\.\\d{2}\\.\\d{4} \\d{2}:\\d{2}) amount (\\d+\\.\\d+) usd\\. Shop - (.*?) successful\\."));
+        patterns.add(new PatternData(INCOME, "Income to account \\w+ \\*(\\d{4}); ([\\s\\d,]+) RUB;"));
         return patterns;
     }
-
+/*
     @Override
     public ParsingResult getParsingResult(Matcher matcher) {
         if (matcher.groupCount() == 4) {
@@ -32,6 +33,18 @@ public class TestParser implements SmsParser {
             }
             result.setAmount(new BigDecimal(matcher.group(3)));
             result.setComment(matcher.group(4));
+            return result;
+        }
+        return null;
+    }
+    */
+
+    @Override
+    public ParsingResult getParsingResult(Matcher matcher) {
+        if (matcher.groupCount() == 2) {
+            ParsingResult result = new ParsingResult();
+            result.setCardNumber(matcher.group(1));
+            result.setAmount(new BigDecimal(matcher.group(2).replaceAll(" ", "").replace(",", ".")));
             return result;
         }
         return null;

@@ -26,13 +26,15 @@ import ru.nordmine.crystalmoney.trx.TransactionItem;
 
 public class TransactionSmsReceiver extends BroadcastReceiver {
 
-    private static final String SBERBANK = "900"; // Сбербанк
-    public static final String TEST_SENDER = "12345678";
+    private static final String TEST_SENDER = "+79660359487";
+    private static final String SBERBANK = "900";
+    private static final String MTS_BANK = "+7 966 035-94-88";
 
     private Map<String, SmsParser> getParsers() {
         Map<String, SmsParser> parsers = new HashMap<String, SmsParser>();
-        parsers.put(SBERBANK, new SberbankParser());
         parsers.put(TEST_SENDER, new TestParser());
+        parsers.put(SBERBANK, new SberbankParser());
+        parsers.put(MTS_BANK, new MtsBankParser());
         return parsers;
     }
 
@@ -116,6 +118,9 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
                         Log.d(this.getClass().toString(), "No match");
                     }
                 }
+            } else
+            {
+                Log.d(this.getClass().toString(), "Not found from: " + from);
             }
         }
     }
@@ -169,8 +174,9 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
         return categories.get(0);
     }
 
-    private static AccountItem getAccount(Context context, String senderAddress, String cardNumber) {
+    private AccountItem getAccount(Context context, String senderAddress, String cardNumber) {
         AccountItem selectedAccount = null;
+        Log.d(this.getClass().toString(), senderAddress);
         AccountDao accountDao = new AccountDao(context);
         List<AccountItem> accounts = accountDao.getAll();
 
