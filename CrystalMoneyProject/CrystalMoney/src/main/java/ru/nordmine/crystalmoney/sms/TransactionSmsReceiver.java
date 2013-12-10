@@ -9,7 +9,6 @@ import android.util.Log;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,14 +26,13 @@ import ru.nordmine.crystalmoney.trx.TransactionItem;
 
 public class TransactionSmsReceiver extends BroadcastReceiver {
 
-    private static final int TRX_TYPE = 2; // расход
     private static final String SBERBANK = "900"; // Сбербанк
     public static final String TEST_SENDER = "12345678";
 
-    private Map<String, SmsParserInfo> getParsers() {
-        Map<String, SmsParserInfo> parsers = new HashMap<String, SmsParserInfo>();
-        parsers.put(SBERBANK, new SberbankParserInfo());
-        parsers.put(TEST_SENDER, new TestParserInfo());
+    private Map<String, SmsParser> getParsers() {
+        Map<String, SmsParser> parsers = new HashMap<String, SmsParser>();
+        parsers.put(SBERBANK, new SberbankParser());
+        parsers.put(TEST_SENDER, new TestParser());
         return parsers;
     }
 
@@ -65,50 +63,55 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
                 return;
             }
 
-            Map<String, SmsParserInfo> parsers = getParsers();
+            Map<String, SmsParser> parsers = getParsers();
 
             if (parsers.containsKey(from)) {
                 String completeMessage = completeTextMessage.toString();
+                SmsParser smsParser = parsers.get(from);
 
                 // получаем паттерны
-                List<String> messagePatterns = parsers.get(from).getMessagePatterns();
+                List<PatternData> messagePatterns = smsParser.getMessagePatterns();
 
-                // получаем аккаунт
-                AccountItem selectedAccount = getAccount(context, from);
-                if (selectedAccount == null) {
-                    Log.d(this.getClass().toString(), "No selected account");
-                    return;
-                }
+                for (PatternData pattern : messagePatterns) {
 
-                for (String messagePattern : messagePatterns) {
-
-                    Pattern r = Pattern.compile(messagePattern);
+                    Pattern r = Pattern.compile(pattern.getMessagePattern());
                     Matcher m = r.matcher(completeMessage);
 
                     if (m.find()) {
                         for (int i = 0; i <= m.groupCount(); i++) {
                             Log.d(this.getClass().toString(), "Found value " + i + ": " + m.group(i));
                         }
-                        if (m.groupCount() == 2) {
-                            BigDecimal amount = new BigDecimal(m.group(1));
-                            String comment = m.group(2);
 
-                            TransactionDao trxDao = new TransactionDao(context, TRX_TYPE);
-                            List<TransactionItem> trxItems = trxDao.getAllByComment(comment);
-
-                            int categoryId;
-                            if (trxItems.isEmpty()) {
-                                CategoryItem selectedCategory = getCategory(context);
-                                categoryId = selectedCategory.getId();
-                            } else {
-                                // установить ту категорию, которая чаще всего устанавливалась
-                                // для этого имени магазина (комментария) ранее
-                                categoryId = getMostFrequentCategoryId(trxItems);
-                            }
-
-                            saveTransaction(context, amount, comment, categoryId, selectedAccount);
-                            break;
+                        ParsingResult result = smsParser.getParsingResult(m);
+                        if (result == null) {
+                            Log.d(this.getClass().toString(), "Match pattern error");
+                            return;
                         }
+
+                        // получаем аккаунт
+                        AccountItem selectedAccount = getAccount(context, from, result.getCardNumber());
+                        if (selectedAccount == null) {
+                            Log.d(this.getClass().toString(), "No selected account by sender and card number");
+                            return;
+                        }
+
+                        int trxType = pattern.getTransactionType();
+
+                        TransactionDao trxDao = new TransactionDao(context, pattern.getTransactionType());
+                        List<TransactionItem> trxItems = trxDao.getAllByComment(result.getComment());
+
+                        int categoryId;
+                        if (trxItems.isEmpty()) {
+                            CategoryItem selectedCategory = getCategory(context, trxType);
+                            categoryId = selectedCategory.getId();
+                        } else {
+                            // установить ту категорию, которая чаще всего устанавливалась
+                            // для этого имени магазина (комментария) ранее
+                            categoryId = getMostFrequentCategoryId(trxItems);
+                        }
+
+                        saveTransaction(context, trxType, result.getAmount(), result.getComment(), categoryId, selectedAccount);
+                        break;
                     } else {
                         Log.d(this.getClass().toString(), "No match");
                     }
@@ -146,33 +149,33 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
         return messages;
     }
 
-    private void saveTransaction(Context context, BigDecimal amount, String comment, int categoryId, AccountItem selectedAccount) {
-        TransactionDao trxDao = new TransactionDao(context, TRX_TYPE);
+    private void saveTransaction(Context context, int trxType, BigDecimal amount, String comment, int categoryId, AccountItem selectedAccount) {
+        TransactionDao trxDao = new TransactionDao(context, trxType);
         TransactionItem trxItem = new TransactionItem(
                 0, comment, selectedAccount.getId(), amount, new Date().getTime(),
-                0, TRX_TYPE, categoryId, null);
+                0, trxType, categoryId, null);
         trxDao.save(0, trxItem);
     }
 
-    private static CategoryItem getCategory(Context context) {
+    private static CategoryItem getCategory(Context context, int trxType) {
         String categoryNameForSms = context.getResources().getString(R.string.default_category_name_for_sms);
 
-        CategoryDao categoryDao = new CategoryDao(context, TRX_TYPE);
+        CategoryDao categoryDao = new CategoryDao(context, trxType);
         List<CategoryItem> categories = categoryDao.getByName(categoryNameForSms);
         if (categories.isEmpty()) {
-            categoryDao.save(0, new CategoryItem(0, TRX_TYPE, categoryNameForSms));
+            categoryDao.save(0, new CategoryItem(0, trxType, categoryNameForSms));
             categories = categoryDao.getByName(categoryNameForSms);
         }
         return categories.get(0);
     }
 
-    private static AccountItem getAccount(Context context, String senderAddress) {
+    private static AccountItem getAccount(Context context, String senderAddress, String cardNumber) {
         AccountItem selectedAccount = null;
         AccountDao accountDao = new AccountDao(context);
         List<AccountItem> accounts = accountDao.getAll();
 
         for (AccountItem item : accounts) {
-            if (item.getSmsSender().equalsIgnoreCase(senderAddress)) {
+            if (item.getSmsSender().equalsIgnoreCase(senderAddress) && item.getCardNumber().equals(cardNumber)) {
                 selectedAccount = item;
                 break;
             }
