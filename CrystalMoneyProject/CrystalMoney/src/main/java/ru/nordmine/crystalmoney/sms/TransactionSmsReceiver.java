@@ -28,13 +28,11 @@ import ru.nordmine.crystalmoney.trx.TransactionItem;
 
 public class TransactionSmsReceiver extends BroadcastReceiver {
 
-    private static final String TEST_SENDER = "+71234567890";
     private static final String SBERBANK = "900";
     private static final String MTS_BANK = "+79660359487";
 
     private Map<String, SmsParser> getParsers() {
         Map<String, SmsParser> parsers = new HashMap<String, SmsParser>();
-        parsers.put(TEST_SENDER, new TestParser());
         parsers.put(SBERBANK, new SberbankParser());
         parsers.put(MTS_BANK, new MtsBankParser());
         return parsers;
