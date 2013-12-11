@@ -21,14 +21,16 @@ import ru.nordmine.crystalmoney.account.AccountDao;
 import ru.nordmine.crystalmoney.account.AccountItem;
 import ru.nordmine.crystalmoney.category.CategoryDao;
 import ru.nordmine.crystalmoney.category.CategoryItem;
+import ru.nordmine.crystalmoney.exchange.ExchangeDao;
+import ru.nordmine.crystalmoney.exchange.ExchangeItem;
 import ru.nordmine.crystalmoney.trx.TransactionDao;
 import ru.nordmine.crystalmoney.trx.TransactionItem;
 
 public class TransactionSmsReceiver extends BroadcastReceiver {
 
-    private static final String TEST_SENDER = "+79660359487";
+    private static final String TEST_SENDER = "+71234567890";
     private static final String SBERBANK = "900";
-    private static final String MTS_BANK = "+7 966 035-94-88";
+    private static final String MTS_BANK = "+79660359487";
 
     private Map<String, SmsParser> getParsers() {
         Map<String, SmsParser> parsers = new HashMap<String, SmsParser>();
@@ -90,6 +92,8 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
                             return;
                         }
 
+                        int trxType = pattern.getTransactionType();
+
                         // получаем аккаунт
                         AccountItem selectedAccount = getAccount(context, from, result.getCardNumber());
                         if (selectedAccount == null) {
@@ -97,32 +101,61 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
                             return;
                         }
 
-                        int trxType = pattern.getTransactionType();
-
-                        TransactionDao trxDao = new TransactionDao(context, pattern.getTransactionType());
-                        List<TransactionItem> trxItems = trxDao.getAllByComment(result.getComment());
-
-                        int categoryId;
-                        if (trxItems.isEmpty()) {
-                            CategoryItem selectedCategory = getCategory(context, trxType);
-                            categoryId = selectedCategory.getId();
+                        if (pattern.isExchange()) {
+                            AccountDao accountDao = new AccountDao(context);
+                            List<AccountItem> cashAccounts = accountDao.getByName(context.getResources().getString(R.string.default_account_name));
+                            if (cashAccounts.isEmpty()) {
+                                processAsTransaction(context, pattern, result, trxType, selectedAccount);
+                            } else {
+                                processAsExchange(context, result, trxType, selectedAccount, cashAccounts);
+                            }
                         } else {
-                            // установить ту категорию, которая чаще всего устанавливалась
-                            // для этого имени магазина (комментария) ранее
-                            categoryId = getMostFrequentCategoryId(trxItems);
+                            processAsTransaction(context, pattern, result, trxType, selectedAccount);
                         }
 
-                        saveTransaction(context, trxType, result.getAmount(), result.getComment(), categoryId, selectedAccount);
                         break;
                     } else {
                         Log.d(this.getClass().toString(), "No match");
                     }
                 }
-            } else
-            {
+            } else {
                 Log.d(this.getClass().toString(), "Not found from: " + from);
             }
         }
+    }
+
+    private void processAsExchange(Context context, ParsingResult result, int trxType, AccountItem selectedAccount, List<AccountItem> cashAccounts) {
+        AccountItem fromAccount = null, toAccount = null;
+        if (trxType == SmsParser.INCOME) {
+            // внесение наличных на карту
+            fromAccount = cashAccounts.get(0);
+            toAccount = selectedAccount;
+        }
+        if (trxType == SmsParser.OUTCOME) {
+            // снятие наличных с карты
+            fromAccount = selectedAccount;
+            toAccount = cashAccounts.get(0);
+        }
+
+        ExchangeDao exchangeDao = new ExchangeDao(context);
+        exchangeDao.save(0, new ExchangeItem(0, new Date().getTime(), fromAccount.getId(), toAccount.getId(), result.getAmount()));
+    }
+
+    private void processAsTransaction(Context context, PatternData pattern, ParsingResult result, int trxType, AccountItem selectedAccount) {
+        TransactionDao trxDao = new TransactionDao(context, pattern.getTransactionType());
+        List<TransactionItem> trxItems = trxDao.getAllByComment(result.getComment());
+
+        int categoryId;
+        if (trxItems.isEmpty()) {
+            CategoryItem selectedCategory = getCategory(context, trxType);
+            categoryId = selectedCategory.getId();
+        } else {
+            // установить ту категорию, которая чаще всего устанавливалась
+            // для этого имени магазина (комментария) ранее
+            categoryId = getMostFrequentCategoryId(trxItems);
+        }
+
+        saveTransaction(context, trxType, result.getAmount(), result.getComment(), categoryId, selectedAccount);
     }
 
     private int getMostFrequentCategoryId(List<TransactionItem> transactions) {

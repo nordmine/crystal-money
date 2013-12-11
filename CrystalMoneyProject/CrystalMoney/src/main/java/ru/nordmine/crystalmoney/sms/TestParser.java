@@ -15,8 +15,8 @@ public class TestParser implements SmsParser {
     @Override
     public List<PatternData> getMessagePatterns() {
         List<PatternData> patterns = new ArrayList<PatternData>();
-        patterns.add(new PatternData(INCOME, "\\w+(\\d{4}): (\\d{2}\\.\\d{2}\\.\\d{4} \\d{2}:\\d{2}) amount (\\d+\\.\\d+) usd\\. Shop - (.*?) successful\\."));
-        patterns.add(new PatternData(INCOME, "Income to account \\w+ \\*(\\d{4}); ([\\s\\d,]+) RUB;"));
+        patterns.add(new PatternData(INCOME, false, "\\w+(\\d{4}): (\\d{2}\\.\\d{2}\\.\\d{4} \\d{2}:\\d{2}) amount (\\d+\\.\\d+) usd\\. Shop - (.*?) successful\\."));
+        patterns.add(new PatternData(OUTCOME, true, "Income to account \\w+ \\*(\\d{4}); ([\\s\\d,]+) RUB;"));
         return patterns;
     }
 /*

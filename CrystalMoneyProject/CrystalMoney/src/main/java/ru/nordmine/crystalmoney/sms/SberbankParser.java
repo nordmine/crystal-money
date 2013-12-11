@@ -11,9 +11,9 @@ public class SberbankParser implements SmsParser {
     public List<PatternData> getMessagePatterns() {
         List<PatternData> patterns = new ArrayList<PatternData>();
         String cardNumberWithDatePattern = "\\w+(\\d{4}): \\d{2}\\.\\d{2}\\.\\d{4} \\d{2}:\\d{2}";
-        patterns.add(new PatternData(OUTCOME, cardNumberWithDatePattern + " покупка на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\."));
-        patterns.add(new PatternData(OUTCOME, cardNumberWithDatePattern + " оплата услуг на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\."));
-        patterns.add(new PatternData(INCOME, cardNumberWithDatePattern + " операция зачисления на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\."));
+        patterns.add(new PatternData(OUTCOME, false, cardNumberWithDatePattern + " покупка на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\."));
+        patterns.add(new PatternData(OUTCOME, false, cardNumberWithDatePattern + " оплата услуг на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\."));
+        patterns.add(new PatternData(INCOME, false, cardNumberWithDatePattern + " операция зачисления на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\."));
         return patterns;
     }
 

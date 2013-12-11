@@ -10,7 +10,7 @@ public class MtsBankParser implements SmsParser {
     @Override
     public List<PatternData> getMessagePatterns() {
         List<PatternData> patterns = new ArrayList<PatternData>();
-        patterns.add(new PatternData(INCOME, "Приход по счету карты \\w+ \\*(\\d{4}); ([\\d\\s\\,]+) RUB;"));
+        patterns.add(new PatternData(INCOME, false, "Приход по счету карты \\w+ \\*(\\d{4}); ([\\s\\d,]+) RUB;"));
         return patterns;
     }
 
@@ -19,7 +19,7 @@ public class MtsBankParser implements SmsParser {
         if (matcher.groupCount() == 2) {
             ParsingResult result = new ParsingResult();
             result.setCardNumber(matcher.group(1));
-            result.setAmount(new BigDecimal(matcher.group(2)));
+            result.setAmount(new BigDecimal(matcher.group(2).replaceAll(" ", "").replace(",", ".")));
             return result;
         }
         return null;

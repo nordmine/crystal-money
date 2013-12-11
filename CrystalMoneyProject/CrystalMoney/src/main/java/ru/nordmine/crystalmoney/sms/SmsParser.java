@@ -7,7 +7,6 @@ public interface SmsParser {
 
     public static final int INCOME = 1;
     public static final int OUTCOME = 2;
-    public static final int EXCHANGE = 3;
 
     public List<PatternData> getMessagePatterns();
     public ParsingResult getParsingResult(Matcher matcher);

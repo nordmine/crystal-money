@@ -48,4 +48,5 @@
     <string name="default_category_name_for_sms">разное</string>
     <string name="caption_card_number_last_four_digits">Последние 4 цифры из 16-значного номера</string>
     <string name="caption_sms_sender">Имя отправителя sms-уведомлений</string>
+    <string name="default_account_name">наличные</string>
 </resources>

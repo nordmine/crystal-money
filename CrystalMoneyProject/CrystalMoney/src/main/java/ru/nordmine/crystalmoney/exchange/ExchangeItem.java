@@ -1,7 +1,6 @@
 package ru.nordmine.crystalmoney.exchange;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public class ExchangeItem {
 
@@ -13,12 +12,17 @@ public class ExchangeItem {
     private Integer fromAccountIconId;
     private Integer toAccountIconId;
 
-    public ExchangeItem(int id, long created, int fromAccountId, int toAccountId, BigDecimal amount, Integer fromAccountIconId, Integer toAccountIconId) {
+    // todo refactor all items to readable and writable (readable extends writable)
+    public ExchangeItem(int id, long created, int fromAccountId, int toAccountId, BigDecimal amount) {
         this.id = id;
         this.created = created;
         this.fromAccountId = fromAccountId;
         this.toAccountId = toAccountId;
         this.amount = amount;
+    }
+
+    public ExchangeItem(int id, long created, int fromAccountId, int toAccountId, BigDecimal amount, Integer fromAccountIconId, Integer toAccountIconId) {
+        this(id, created, fromAccountId, toAccountId, amount);
         this.fromAccountIconId = fromAccountIconId;
         this.toAccountIconId = toAccountIconId;
     }

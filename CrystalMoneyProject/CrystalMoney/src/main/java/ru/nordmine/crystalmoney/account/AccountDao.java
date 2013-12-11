@@ -10,6 +10,7 @@ import java.util.List;
 
 import ru.nordmine.crystalmoney.db.BasicDao;
 import ru.nordmine.crystalmoney.db.MyDb;
+import ru.nordmine.crystalmoney.db.WhereClauseItem;
 
 public class AccountDao extends BasicDao<AccountItem> {
 
@@ -59,6 +60,12 @@ public class AccountDao extends BasicDao<AccountItem> {
     @Override
     public List<AccountItem> getAll() {
         return super.getAll(null);
+    }
+
+    public List<AccountItem> getByName(String name) {
+        return super.getAll(new WhereClauseItem[]{
+                new WhereClauseItem(MyDb.ACCOUNT_NAME, " like ", name)
+        });
     }
 
 }

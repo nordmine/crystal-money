@@ -145,7 +145,7 @@ public class ExchangeActivity extends Activity {
 
         long created = calendar.getTimeInMillis();
 
-        ExchangeItem item = new ExchangeItem(id, created, fromAccountId, toAccountId, amount, null, null);
+        ExchangeItem item = new ExchangeItem(id, created, fromAccountId, toAccountId, amount);
         exchangeDao.save(id, item);
         setResult(RESULT_OK);
         finish();
