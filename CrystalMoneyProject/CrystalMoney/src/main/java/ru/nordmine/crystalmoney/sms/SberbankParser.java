@@ -15,7 +15,9 @@ public class SberbankParser implements SmsParser {
         patterns.add(new PatternData(OUTCOME, false, cardNumberWithDateTimePattern + " покупка на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\."));
         patterns.add(new PatternData(OUTCOME, false, cardNumberWithDateTimePattern + " оплата услуг на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\."));
         patterns.add(new PatternData(OUTCOME, true, cardNumberWithDateTimePattern + " выдача наличных на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\."));
+        patterns.add(new PatternData(INCOME, false, cardNumberWithDateTimePattern + " операция зачисления на сумму (\\d+\\.\\d+) руб\\. PEREVOD WEB-BANK (.*?) выполнена успешно\\."));
         patterns.add(new PatternData(INCOME, true, cardNumberWithDateTimePattern + " операция зачисления на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\."));
+        patterns.add(new PatternData(OUTCOME, false, cardNumberWithDateTimePattern + " операция списания на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\."));
         patterns.add(new PatternData(OUTCOME, false, cardNumberWithDatePattern + " оплата Мобильного банка за (.*?) на сумму (\\d+\\.\\d+) руб\\. выполнена успешно\\."));
         return patterns;
     }

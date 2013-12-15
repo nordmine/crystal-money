@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -71,12 +72,26 @@ public class TransactionActivity extends Activity {
         amountEditText = (EditText) findViewById(R.id.amountEditText);
         amountEditText.setOnFocusChangeListener(new OnAmountFocusChangeListener());
 
-		addItemsOnAccountTypeSpinner();
-
         this.preferences = getSharedPreferences(MY_PREFS, Activity.MODE_PRIVATE);
+
+        addItemsOnAccountTypeSpinner();
 
 		Bundle bundle = getIntent().getExtras();
 		transactionType = bundle.getInt("transactionType");
+
+        accountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putInt("selectedAccount", i);
+                editor.apply();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         defaultCategoryPreferenceName = "defaultCategoryId" + transactionType;
 
@@ -140,7 +155,11 @@ public class TransactionActivity extends Activity {
                 accountItems.toArray(new AccountItem[accountItems.size()]));
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		accountSpinner.setAdapter(dataAdapter);
-	}
+
+        if (preferences.contains("selectedAccount")) {
+            accountSpinner.setSelection(preferences.getInt("selectedAccount", 0));
+        }
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

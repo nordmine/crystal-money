@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class MyDb extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "ru.nordmine.crystalmoney.db";
-	private static final int DATABASE_VERSION = 16;
+	private static final int DATABASE_VERSION = 17;
 
 	public static final String UID = "_id";
 	
@@ -37,6 +37,7 @@ public class MyDb extends SQLiteOpenHelper {
     public static final String EXCHANGE_FROM_ACCOUNT_ID = "from_account_id";
     public static final String EXCHANGE_TO_ACCOUNT_ID = "to_account_id";
     public static final String EXCHANGE_AMOUNT = "amount";
+    public static final String EXCHANGE_COMMENT = "comment";
 	
 	private static final String SQL_CREATE_ACCOUNTS =
 			"create table " + ACCOUNT_TABLE_NAME 
@@ -76,6 +77,7 @@ public class MyDb extends SQLiteOpenHelper {
             + EXCHANGE_FROM_ACCOUNT_ID + " integer not null, "
             + EXCHANGE_TO_ACCOUNT_ID + " integer not null, "
             + EXCHANGE_AMOUNT + " numeric not null, "
+            + EXCHANGE_COMMENT + " varchar(255) not null, "
             + "foreign key (" + EXCHANGE_FROM_ACCOUNT_ID
             + ") REFERENCES " + ACCOUNT_TABLE_NAME + "(" + UID + "), "
             + "foreign key (" + EXCHANGE_TO_ACCOUNT_ID
@@ -106,6 +108,8 @@ public class MyDb extends SQLiteOpenHelper {
         if (oldVersion == 15) {
             db.execSQL("alter table " + ACCOUNT_TABLE_NAME + " add column " + ACCOUNT_CARD_NUMBER + " varchar(50) default '' not null");
             db.execSQL("alter table " + ACCOUNT_TABLE_NAME + " add column " + ACCOUNT_SMS_SENDER + " varchar(50) default '' not null");
+        } else if(oldVersion == 16) {
+            db.execSQL("alter table " + EXCHANGE_TABLE_NAME + " add column " + EXCHANGE_COMMENT + " varchar(255) default '' not null");
         } else {
             String[] tablesForDelete = new String[]{TRX_TABLE_NAME, EXCHANGE_TABLE_NAME,
                     ACCOUNT_TABLE_NAME, CAT_TABLE_NAME};

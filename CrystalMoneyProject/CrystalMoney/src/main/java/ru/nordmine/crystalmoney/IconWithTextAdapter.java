@@ -13,16 +13,14 @@ public class IconWithTextAdapter extends ArrayAdapter<NumberWithText> {
 	private NumberWithText[] items;
 	private Context context;
 
-	public IconWithTextAdapter(Context context, int textViewResourceId,
-			NumberWithText[] objects) {
+	public IconWithTextAdapter(Context context, int textViewResourceId,	NumberWithText[] objects) {
 		super(context, textViewResourceId, objects);
 		this.items = objects;
 		this.context = context;
 	}
 
 	@Override
-	public View getDropDownView(int position, View convertView,
-			ViewGroup parent) {
+	public View getDropDownView(int position, View convertView, ViewGroup parent) {
 		return getCustomView(position, convertView, parent);
 	}
 
@@ -31,9 +29,7 @@ public class IconWithTextAdapter extends ArrayAdapter<NumberWithText> {
 		return getCustomView(position, convertView, parent);
 	}
 
-	public View getCustomView(int position, View convertView,
-			ViewGroup parent) {
-
+	public View getCustomView(int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View row = inflater.inflate(R.layout.row_with_icon, parent, false);
 		TextView label = (TextView) row.findViewById(R.id.text);

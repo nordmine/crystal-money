@@ -29,12 +29,15 @@ import ru.nordmine.crystalmoney.trx.TransactionItem;
 public class TransactionSmsReceiver extends BroadcastReceiver {
 
     private static final String SBERBANK = "900";
-    private static final String MTS_BANK = "+79660359487";
+    private static final String MTS_BANK1 = "+79660359487";
+    private static final String MTS_BANK2 = "+79922000889";
 
     private Map<String, SmsParser> getParsers() {
         Map<String, SmsParser> parsers = new HashMap<String, SmsParser>();
         parsers.put(SBERBANK, new SberbankParser());
-        parsers.put(MTS_BANK, new MtsBankParser());
+        MtsBankParser mtsBankParser = new MtsBankParser();
+        parsers.put(MTS_BANK1, mtsBankParser);
+        parsers.put(MTS_BANK2, mtsBankParser);
         return parsers;
     }
 
@@ -136,7 +139,7 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
         }
 
         ExchangeDao exchangeDao = new ExchangeDao(context);
-        exchangeDao.save(0, new ExchangeItem(0, new Date().getTime(), fromAccount.getId(), toAccount.getId(), result.getAmount()));
+        exchangeDao.save(0, new ExchangeItem(0, new Date().getTime(), fromAccount.getId(), toAccount.getId(), result.getAmount(), result.getComment()));
     }
 
     private void processAsTransaction(Context context, PatternData pattern, ParsingResult result, int trxType, AccountItem selectedAccount) {

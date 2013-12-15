@@ -70,16 +70,16 @@ public class AccountListActivity extends Activity {
 
 	private void loadAccountsFromDatabase() {
 	 	items = dao.getAll();
-		NumberWithText[] iconsOriginal = AccountActivity.getAccountIcons();
+		Integer[] iconsOriginal = AccountActivity.getAccountIcons();
 		List<AccountItem> icons = new ArrayList<AccountItem>();
 
         StatisticsDao statistics = new StatisticsDao(this);
         Map<Integer, BigDecimal> totalAmount = statistics.getTotalAmount();
 		
 		for (AccountItem ai : items) {
-			NumberWithText item = iconsOriginal[ai.getIconId()];
+			Integer iconId = iconsOriginal[ai.getIconId()];
             BigDecimal statAmount = totalAmount.containsKey(ai.getId()) ? totalAmount.get(ai.getId()) : BigDecimal.ZERO;
-			icons.add(new AccountItem(ai.getId(), ai.getName(), item.getNumber(),
+			icons.add(new AccountItem(ai.getId(), ai.getName(), iconId,
                     ai.getAmount().add(statAmount), ai.isCard(), ai.getComment(),
                     ai.getCardNumber(), ai.getSmsSender()));
 		}

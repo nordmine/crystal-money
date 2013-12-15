@@ -52,10 +52,10 @@ public class TransactionItemAdapter extends ArrayAdapter<TransactionItem> {
         TextView commentTextView = (TextView)row.findViewById(R.id.commentTextView);
         commentTextView.setText(item.getComment());
 
-		NumberWithText[] accountTypes = AccountActivity.getAccountIcons();
+		Integer[] accountTypes = AccountActivity.getAccountIcons();
 		
 		ImageView icon = (ImageView) row.findViewById(R.id.iconImageView);
-		icon.setImageResource(accountTypes[item.getAccountIconId()].getNumber());
+		icon.setImageResource(accountTypes[item.getAccountIconId()]);
 		
 		SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
 		

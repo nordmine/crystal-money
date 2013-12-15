@@ -39,7 +39,7 @@ public class ExchangeItemAdapter extends ArrayAdapter<ExchangeItem> {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(R.layout.row_exchange_item, parent, false);
 
-        NumberWithText[] icons = AccountActivity.getAccountIcons();
+        Integer[] icons = AccountActivity.getAccountIcons();
 
         ExchangeItem item = getItem(position);
 
@@ -48,14 +48,17 @@ public class ExchangeItemAdapter extends ArrayAdapter<ExchangeItem> {
         fromTextView.setText(sdf.format(item.getCreated()));
 
         ImageView toAccountIconImageView = (ImageView) row.findViewById(R.id.toAccountIconImageView);
-        toAccountIconImageView.setImageResource(icons[item.getToAccountIconId()].getNumber());
+        toAccountIconImageView.setImageResource(icons[item.getToAccountIconId()]);
 
         ImageView fromAccountIconImageView = (ImageView) row.findViewById(R.id.fromAccountIconImageView);
-        fromAccountIconImageView.setImageResource(icons[item.getFromAccountIconId()].getNumber());
+        fromAccountIconImageView.setImageResource(icons[item.getFromAccountIconId()]);
 
         DecimalFormat df = new DecimalFormat("###,##0.00");
         TextView amountTextView = (TextView) row.findViewById(R.id.amountTextView);
         amountTextView.setText(df.format(item.getAmount().doubleValue()));
+
+        TextView commentTextView = (TextView) row.findViewById(R.id.commentTextView);
+        commentTextView.setText(item.getComment());
 
         return row;
     }

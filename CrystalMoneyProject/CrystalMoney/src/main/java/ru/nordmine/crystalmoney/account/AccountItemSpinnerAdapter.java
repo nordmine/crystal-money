@@ -40,9 +40,9 @@ public class AccountItemSpinnerAdapter extends ArrayAdapter<AccountItem> {
 		TextView label = (TextView) row.findViewById(R.id.text);
 		label.setText(item.getName());
 
-		NumberWithText[] accountTypes = AccountActivity.getAccountIcons();
+		Integer[] accountTypes = AccountActivity.getAccountIcons();
 		ImageView icon = (ImageView) row.findViewById(R.id.icon);
-		icon.setImageResource(accountTypes[item.getIconId()].getNumber());
+		icon.setImageResource(accountTypes[item.getIconId()]);
 
 		return row;
 	}

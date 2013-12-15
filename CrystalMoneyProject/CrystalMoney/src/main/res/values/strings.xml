@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Crystal Money</string>
     <string name="action_settings">Настройки</string>
     <string name="prop_title">Настройки</string>
@@ -8,7 +7,7 @@
     <string name="button_prop">Настройки</string>
     <string name="title_activity_account">Редактирование счёта</string>
     <string name="account_name_caption">Имя счёта</string>
-    <string name="account_amount_caption">Сумма</string>
+    <string name="caption_amount">Сумма</string>
     <string name="account_button_save">Сохранить</string>
     <string name="title_activity_account_list">Мои счета</string>
     <string name="account_list_add_caption">Добавить счёт</string>
@@ -49,4 +48,7 @@
     <string name="caption_card_number_last_four_digits">Последние 4 цифры из 16-значного номера</string>
     <string name="caption_sms_sender">Имя отправителя sms-уведомлений</string>
     <string name="default_account_name">наличные</string>
+    <string name="caption_from_account">С какого счёта</string>
+    <string name="caption_to_account">На какой счёт</string>
+    <string name="caption_account_icon">Картинка, связанная со счётом</string>
 </resources>

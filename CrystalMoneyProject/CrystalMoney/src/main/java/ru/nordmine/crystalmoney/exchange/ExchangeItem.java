@@ -11,18 +11,20 @@ public class ExchangeItem {
     private BigDecimal amount;
     private Integer fromAccountIconId;
     private Integer toAccountIconId;
+    private String comment;
 
     // todo refactor all items to readable and writable (readable extends writable)
-    public ExchangeItem(int id, long created, int fromAccountId, int toAccountId, BigDecimal amount) {
+    public ExchangeItem(int id, long created, int fromAccountId, int toAccountId, BigDecimal amount, String comment) {
         this.id = id;
         this.created = created;
         this.fromAccountId = fromAccountId;
         this.toAccountId = toAccountId;
         this.amount = amount;
+        this.comment = comment;
     }
 
-    public ExchangeItem(int id, long created, int fromAccountId, int toAccountId, BigDecimal amount, Integer fromAccountIconId, Integer toAccountIconId) {
-        this(id, created, fromAccountId, toAccountId, amount);
+    public ExchangeItem(int id, long created, int fromAccountId, int toAccountId, BigDecimal amount, String comment, Integer fromAccountIconId, Integer toAccountIconId) {
+        this(id, created, fromAccountId, toAccountId, amount, comment);
         this.fromAccountIconId = fromAccountIconId;
         this.toAccountIconId = toAccountIconId;
     }
@@ -81,5 +83,13 @@ public class ExchangeItem {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

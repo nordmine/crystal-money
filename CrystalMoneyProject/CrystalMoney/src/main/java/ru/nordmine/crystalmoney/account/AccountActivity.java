@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import ru.nordmine.crystalmoney.IconAdapter;
 import ru.nordmine.crystalmoney.IconWithTextAdapter;
 import ru.nordmine.crystalmoney.NumberWithText;
 import ru.nordmine.crystalmoney.R;
@@ -86,23 +88,21 @@ public class AccountActivity extends Activity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 	}
 
-	public static NumberWithText[] getAccountIcons() {
-		List<NumberWithText> list = new ArrayList<NumberWithText>();
-		list.add(new NumberWithText(R.drawable.cash, "Наличные"));
-		list.add(new NumberWithText(R.drawable.wallet_icon, "Кошелёк"));
-		list.add(new NumberWithText(R.drawable.bank, "Банк"));
-		list.add(new NumberWithText(R.drawable.dollar, "Доллары"));
-		list.add(new NumberWithText(R.drawable.visa, "Visa"));
-        list.add(new NumberWithText(R.drawable.smartcard, "Смарткарта"));
-        list.add(new NumberWithText(R.drawable.money_envelope, "Конверт"));
-		return list.toArray(new NumberWithText[list.size()]);
+	public static Integer[] getAccountIcons() {
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(R.drawable.cash);
+		list.add(R.drawable.wallet_icon);
+		list.add(R.drawable.bank);
+		list.add(R.drawable.dollar);
+		list.add(R.drawable.visa);
+        list.add(R.drawable.smartcard);
+        list.add(R.drawable.money_envelope);
+		return list.toArray(new Integer[list.size()]);
 	}
 
 	private void addItemsOnAccountTypeSpinner() {
-		IconWithTextAdapter dataAdapter = new IconWithTextAdapter(this,
-				R.layout.row_with_icon, getAccountIcons());
-		dataAdapter
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		IconAdapter dataAdapter = new IconAdapter(this, R.layout.row_icon, getAccountIcons());
+		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		accountTypeSpinner.setAdapter(dataAdapter);
 	}
 

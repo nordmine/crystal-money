@@ -39,7 +39,9 @@ public class ExchangeActivity extends Activity {
 
     private Spinner fromAccountSpinner, toAccountSpinner;
     private EditText amountEditText;
+    private EditText commentEditText;
     private Button dateButton;
+
     private Calendar calendar = Calendar.getInstance();
 
     private int selectedToAccountId = 0;
@@ -53,6 +55,7 @@ public class ExchangeActivity extends Activity {
         toAccountSpinner = (Spinner) findViewById(R.id.toAccountSpinner);
         amountEditText = (EditText) findViewById(R.id.amountEditText);
         dateButton = (Button) findViewById(R.id.dateButton);
+        commentEditText = (EditText) findViewById(R.id.commentEditText);
 
         fromAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -121,6 +124,7 @@ public class ExchangeActivity extends Activity {
         ExchangeItem item = exchangeDao.getById(id);
 
         amountEditText.setText(item.getAmount().toPlainString());
+        commentEditText.setText(item.getComment());
         selectedToAccountId = item.getToAccountId();
         onFromAccountSpinnerSelectionChanged(item.getFromAccountId(), selectedToAccountId);
 
@@ -141,11 +145,13 @@ public class ExchangeActivity extends Activity {
             amountText = "0.00";
         }
 
+        String comment = commentEditText.getText().toString();
+
         BigDecimal amount = new BigDecimal(amountText).setScale(2, RoundingMode.HALF_UP);
 
         long created = calendar.getTimeInMillis();
 
-        ExchangeItem item = new ExchangeItem(id, created, fromAccountId, toAccountId, amount);
+        ExchangeItem item = new ExchangeItem(id, created, fromAccountId, toAccountId, amount, comment);
         exchangeDao.save(id, item);
         setResult(RESULT_OK);
         finish();
