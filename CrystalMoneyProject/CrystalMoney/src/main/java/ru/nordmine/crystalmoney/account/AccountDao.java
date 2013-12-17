@@ -68,4 +68,10 @@ public class AccountDao extends BasicDao<AccountItem> {
         });
     }
 
+    public List<AccountItem> getBySender(String sender) {
+        return super.getAll(new WhereClauseItem[]{
+                new WhereClauseItem(MyDb.ACCOUNT_SMS_SENDER, " like ", sender)
+        });
+    }
+
 }

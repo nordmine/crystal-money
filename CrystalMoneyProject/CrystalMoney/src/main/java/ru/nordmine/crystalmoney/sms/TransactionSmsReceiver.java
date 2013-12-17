@@ -8,6 +8,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,16 +29,10 @@ import ru.nordmine.crystalmoney.trx.TransactionItem;
 
 public class TransactionSmsReceiver extends BroadcastReceiver {
 
-    private static final String SBERBANK = "900";
-    private static final String MTS_BANK1 = "+79660359487";
-    private static final String MTS_BANK2 = "+79922000889";
-
-    private Map<String, SmsParser> getParsers() {
-        Map<String, SmsParser> parsers = new HashMap<String, SmsParser>();
-        parsers.put(SBERBANK, new SberbankParser());
-        MtsBankParser mtsBankParser = new MtsBankParser();
-        parsers.put(MTS_BANK1, mtsBankParser);
-        parsers.put(MTS_BANK2, mtsBankParser);
+    private List<SmsParser> getParsers() {
+        List<SmsParser> parsers = new ArrayList<SmsParser>();
+        parsers.add(new SberbankParser());
+        parsers.add(new MtsBankParser());
         return parsers;
     }
 
@@ -68,26 +63,29 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
                 return;
             }
 
-            Map<String, SmsParser> parsers = getParsers();
+            AccountDao accountDao = new AccountDao(context);
+            List<AccountItem> accounts = accountDao.getBySender(from);
 
-            if (parsers.containsKey(from)) {
-                String completeMessage = completeTextMessage.toString();
-                SmsParser smsParser = parsers.get(from);
+            if (accounts.isEmpty()) {
+                Log.d(this.getClass().toString(), "Not found from: " + from);
+                return;
+            }
 
-                // получаем паттерны
-                List<PatternData> messagePatterns = smsParser.getMessagePatterns();
+            List<SmsParser> parsers = getParsers();
+            String completeMessage = completeTextMessage.toString();
 
-                for (PatternData pattern : messagePatterns) {
-
+            for (SmsParser parser : parsers) {
+                for (PatternData pattern : parser.getMessagePatterns()) {
                     Pattern r = Pattern.compile(pattern.getMessagePattern());
                     Matcher m = r.matcher(completeMessage);
 
                     if (m.find()) {
+                        // отладочная информация
                         for (int i = 0; i <= m.groupCount(); i++) {
                             Log.d(this.getClass().toString(), "Found value " + i + ": " + m.group(i));
                         }
 
-                        ParsingResult result = smsParser.getParsingResult(m);
+                        ParsingResult result = parser.getParsingResult(m);
                         if (result == null) {
                             Log.d(this.getClass().toString(), "Match pattern error");
                             return;
@@ -95,15 +93,14 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
 
                         int trxType = pattern.getTransactionType();
 
-                        // получаем аккаунт
-                        AccountItem selectedAccount = getAccount(context, from, result.getCardNumber());
+                        // выбираем счёт по номеру карты
+                        AccountItem selectedAccount = selectAccountByCardNumber(accounts, result);
                         if (selectedAccount == null) {
                             Log.d(this.getClass().toString(), "No selected account by sender and card number");
                             return;
                         }
 
                         if (pattern.isExchange()) {
-                            AccountDao accountDao = new AccountDao(context);
                             List<AccountItem> cashAccounts = accountDao.getByName(context.getResources().getString(R.string.default_account_name));
                             if (cashAccounts.isEmpty()) {
                                 processAsTransaction(context, pattern, result, trxType, selectedAccount);
@@ -113,16 +110,23 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
                         } else {
                             processAsTransaction(context, pattern, result, trxType, selectedAccount);
                         }
-
-                        break;
-                    } else {
-                        Log.d(this.getClass().toString(), "No match");
+                        return;
                     }
                 }
-            } else {
-                Log.d(this.getClass().toString(), "Not found from: " + from);
+            }
+            Log.d(this.getClass().toString(), "No match");
+        }
+    }
+
+    private AccountItem selectAccountByCardNumber(List<AccountItem> accounts, ParsingResult result) {
+        AccountItem selectedAccount = null;
+        for (AccountItem account : accounts) {
+            if (account.getCardNumber().equals(result.getCardNumber())) {
+                selectedAccount = account;
+                break;
             }
         }
+        return selectedAccount;
     }
 
     private void processAsExchange(Context context, ParsingResult result, int trxType, AccountItem selectedAccount, List<AccountItem> cashAccounts) {
@@ -206,20 +210,5 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
             categories = categoryDao.getByName(categoryNameForSms);
         }
         return categories.get(0);
-    }
-
-    private AccountItem getAccount(Context context, String senderAddress, String cardNumber) {
-        AccountItem selectedAccount = null;
-        Log.d(this.getClass().toString(), senderAddress);
-        AccountDao accountDao = new AccountDao(context);
-        List<AccountItem> accounts = accountDao.getAll();
-
-        for (AccountItem item : accounts) {
-            if (item.getSmsSender().equalsIgnoreCase(senderAddress) && item.getCardNumber().equals(cardNumber)) {
-                selectedAccount = item;
-                break;
-            }
-        }
-        return selectedAccount;
     }
 }
