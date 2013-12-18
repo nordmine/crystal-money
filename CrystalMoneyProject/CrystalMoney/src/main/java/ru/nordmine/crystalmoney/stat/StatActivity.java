@@ -146,7 +146,6 @@ public class StatActivity extends Activity {
                     canvas.drawArc(rectf, startAngle, item.getDegree().floatValue(), true, paint);
                 } else {
                     startAngle += items.get(i - 1).getDegree().floatValue();
-                    // todo что будет, если категорий будет больше десяти?
                     paint.setColor(item.getColor());
                     canvas.drawArc(rectf, startAngle, item.getDegree().floatValue(), true, paint);
                 }

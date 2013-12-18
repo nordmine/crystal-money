@@ -33,40 +33,40 @@ import ru.nordmine.crystalmoney.category.CategoryListActivity;
 import ru.nordmine.crystalmoney.handlers.OnAmountFocusChangeListener;
 
 public class TransactionActivity extends Activity {
-	
-	public static final int EDIT_CATEGORY_LIST = 20;
 
-	private Spinner accountSpinner;
-	private EditText amountEditText;
-	private EditText commentEditText;
-	private Button categoryButton;
+    public static final int EDIT_CATEGORY_LIST = 20;
+
+    private Spinner accountSpinner;
+    private EditText amountEditText;
+    private EditText commentEditText;
+    private Button categoryButton;
     private Button dateButton;
 
-	private List<AccountItem> accountItems;
+    private List<AccountItem> accountItems;
     private long selectedDate;
     private Calendar calendar = Calendar.getInstance();
 
-	private int id = 0;
-	private int categoryId = 0;
-	
-	private int transactionType = 0;
-	
-	private AccountDao accountDao = new AccountDao(this);
-	private TransactionDao trxDao;
+    private int id = 0;
+    private int categoryId = 0;
+
+    private int transactionType = 0;
+
+    private AccountDao accountDao = new AccountDao(this);
+    private TransactionDao trxDao;
 
     private static final String MY_PREFS = "my_prefs";
     private SharedPreferences preferences;
 
     private static String defaultCategoryPreferenceName;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_trx);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_trx);
 
-		accountSpinner = (Spinner) findViewById(R.id.accountSpinner);
-		commentEditText = (EditText) findViewById(R.id.commentEditText);
-		categoryButton = (Button) findViewById(R.id.categoryButton);
+        accountSpinner = (Spinner) findViewById(R.id.accountSpinner);
+        commentEditText = (EditText) findViewById(R.id.commentEditText);
+        categoryButton = (Button) findViewById(R.id.categoryButton);
         dateButton = (Button) findViewById(R.id.dateButton);
 
         amountEditText = (EditText) findViewById(R.id.amountEditText);
@@ -76,8 +76,8 @@ public class TransactionActivity extends Activity {
 
         addItemsOnAccountTypeSpinner();
 
-		Bundle bundle = getIntent().getExtras();
-		transactionType = bundle.getInt("transactionType");
+        Bundle bundle = getIntent().getExtras();
+        transactionType = bundle.getInt("transactionType");
 
         accountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -102,15 +102,15 @@ public class TransactionActivity extends Activity {
             calendar.setTime(new Date());
         }
         setTextForDateButton();
-		
-		trxDao = new TransactionDao(this, transactionType);
-		if (bundle.containsKey("defStrID")) {
-			id = bundle.getInt("defStrID");
-			loadRecordById(id);
-		} else {
-			setDefaultCategory();
-			amountEditText.setText("0");
-		}
+
+        trxDao = new TransactionDao(this, transactionType);
+        if (bundle.containsKey("defStrID")) {
+            id = bundle.getInt("defStrID");
+            loadRecordById(id);
+        } else {
+            setDefaultCategory();
+            amountEditText.setText("0");
+        }
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -121,7 +121,7 @@ public class TransactionActivity extends Activity {
         if (transactionType == 2) {
             actionBar.setTitle(R.string.title_activity_outcome);
         }
-	}
+    }
 
     private void setTextForDateButton() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
@@ -149,24 +149,24 @@ public class TransactionActivity extends Activity {
         }
     }
 
-	private void addItemsOnAccountTypeSpinner() {		
-		accountItems = accountDao.getAll();
-		AccountItemSpinnerAdapter dataAdapter = new AccountItemSpinnerAdapter(this, R.layout.row_with_icon,
+    private void addItemsOnAccountTypeSpinner() {
+        accountItems = accountDao.getAll();
+        AccountItemSpinnerAdapter dataAdapter = new AccountItemSpinnerAdapter(this, R.layout.row_with_icon,
                 accountItems.toArray(new AccountItem[accountItems.size()]));
-		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		accountSpinner.setAdapter(dataAdapter);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        accountSpinner.setAdapter(dataAdapter);
 
         if (preferences.contains("selectedAccount")) {
             accountSpinner.setSelection(preferences.getInt("selectedAccount", 0));
         }
     }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.trx, menu);
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.trx, menu);
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -195,74 +195,73 @@ public class TransactionActivity extends Activity {
         return true;
     }
 
-	private void loadRecordById(int id) {
-		TransactionItem trxItem = trxDao.getById(id);
+    private void loadRecordById(int id) {
+        TransactionItem trxItem = trxDao.getById(id);
 
-		commentEditText.setText(trxItem.getComment());
-		amountEditText.setText(trxItem.getAmount().toPlainString());
+        commentEditText.setText(trxItem.getComment());
+        amountEditText.setText(trxItem.getAmount().toPlainString());
         calendar.setTimeInMillis(trxItem.getCreated());
-		for (int i = 0; i < accountItems.size(); i++) {
-			AccountItem kvi = accountItems.get(i);
-			if (kvi.getId() == trxItem.getAccountId()) {
-				accountSpinner.setSelection(i);
-			}
-		}
+        for (int i = 0; i < accountItems.size(); i++) {
+            AccountItem kvi = accountItems.get(i);
+            if (kvi.getId() == trxItem.getAccountId()) {
+                accountSpinner.setSelection(i);
+            }
+        }
 
-		this.categoryId = trxItem.getCategoryId();
-		this.categoryButton.setText(trxItem.getCategoryName());
-		this.transactionType = trxItem.getTransactionType();
-	}
+        this.categoryId = trxItem.getCategoryId();
+        this.categoryButton.setText(trxItem.getCategoryName());
+        this.transactionType = trxItem.getTransactionType();
+    }
 
-	private void onSaveClick() {
-		if (this.categoryId == 0) {
-			Toast.makeText(this, R.string.caption_no_selected_category,
-					Toast.LENGTH_LONG).show();
-			return;
-		}
+    private void onSaveClick() {
+        if (this.categoryId == 0) {
+            Toast.makeText(this, R.string.caption_no_selected_category,
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
 
-		String comment = commentEditText.getText().toString();
-		
-		String amountText = amountEditText.getText().toString();
-		if (amountText.trim().isEmpty()) {
-			amountText = "0.00";
-		}
-		BigDecimal amount = new BigDecimal(amountText).setScale(2, RoundingMode.HALF_UP);
-		
-		int accountId = accountItems.get(accountSpinner.getSelectedItemPosition()).getId();
-		long created = calendar.getTimeInMillis();
+        String comment = commentEditText.getText().toString();
 
-		TransactionItem trxItem = new TransactionItem(id, comment, accountId,
-				amount, created, accountId, transactionType, categoryId, null);
-		trxDao.save(id, trxItem);
+        String amountText = amountEditText.getText().toString();
+        if (amountText.trim().isEmpty()) {
+            amountText = "0.00";
+        }
+        BigDecimal amount = new BigDecimal(amountText).setScale(2, RoundingMode.HALF_UP);
 
-		setResult(RESULT_OK);
-		finish();
-	}
-	
-	public void onCategoryButtonClick(View v) {
-		Intent intent = new Intent(TransactionActivity.this,
-				CategoryListActivity.class);
-		intent.putExtra("categoryType", transactionType);
-		startActivityForResult(intent, EDIT_CATEGORY_LIST);
-	}
-	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == EDIT_CATEGORY_LIST && resultCode == RESULT_OK) {
-			Bundle bundle = data.getExtras();
-			String categoryName = bundle.getString("categoryName");
-			this.categoryId = bundle.getInt("categoryId");
-			categoryButton.setText(categoryName);
+        int accountId = accountItems.get(accountSpinner.getSelectedItemPosition()).getId();
+        long created = calendar.getTimeInMillis();
+
+        TransactionItem trxItem = new TransactionItem(id, comment, accountId,
+                amount, created, accountId, transactionType, categoryId, null);
+        trxDao.save(id, trxItem);
+
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    public void onCategoryButtonClick(View v) {
+        Intent intent = new Intent(TransactionActivity.this,
+                CategoryListActivity.class);
+        intent.putExtra("categoryType", transactionType);
+        startActivityForResult(intent, EDIT_CATEGORY_LIST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_CATEGORY_LIST && resultCode == RESULT_OK) {
+            Bundle bundle = data.getExtras();
+            String categoryName = bundle.getString("categoryName");
+            this.categoryId = bundle.getInt("categoryId");
+            categoryButton.setText(categoryName);
             // установка категории по умолчанию
             SharedPreferences.Editor editor = preferences.edit();
             editor.putInt(defaultCategoryPreferenceName, this.categoryId);
             editor.apply();
-		}
-	}
+        }
+    }
 
-    public void onDateButtonClick(View v)
-    {
+    public void onDateButtonClick(View v) {
         new DatePickerDialog(
                 this,
                 new DatePickerDialog.OnDateSetListener() {

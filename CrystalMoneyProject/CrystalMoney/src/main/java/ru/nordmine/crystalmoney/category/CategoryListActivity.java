@@ -40,11 +40,8 @@ public class CategoryListActivity extends Activity implements CategoryDialog.OnC
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> a, View v, int position,
 					long id) {
-				Intent intent = new Intent();
-				intent.putExtra("categoryId", items.get(position).getId());
-                intent.putExtra("categoryName", items.get(position).getName());
-				setResult(RESULT_OK, intent);
-				finish();
+                CategoryItem category = items.get(position);
+                setCategoryAndClose(category);
 			}
 		});
 
@@ -58,7 +55,15 @@ public class CategoryListActivity extends Activity implements CategoryDialog.OnC
 		loadCategoriesFromDatabase();
 	}
 
-	private void loadCategoriesFromDatabase() {
+    private void setCategoryAndClose(CategoryItem category) {
+        Intent intent = new Intent();
+        intent.putExtra("categoryId", category.getId());
+        intent.putExtra("categoryName", category.getName());
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    private void loadCategoriesFromDatabase() {
 		items = dao.getAll();
 		
 		CategoryItemAdapter adapter = new CategoryItemAdapter(this,
@@ -118,7 +123,8 @@ public class CategoryListActivity extends Activity implements CategoryDialog.OnC
         CategoryItem item = new CategoryItem(0, categoryType, categoryName);
 		dao.save(0, item);
 
-		loadCategoriesFromDatabase();
+        List<CategoryItem> categories = dao.getByName(categoryName);
+        setCategoryAndClose(categories.get(0));
 	}
 
     private boolean checkCategoryName(String categoryName) {

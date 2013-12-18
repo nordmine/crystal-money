@@ -9,11 +9,10 @@ import android.util.Log;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 import ru.nordmine.crystalmoney.db.MyDb;
 
@@ -122,38 +121,29 @@ public class StatByCategoriesDao {
             total = total.add(item.getSum()).setScale(2, RoundingMode.HALF_UP);
         }
 
-        Queue<Integer> queue = getColors();
+        List<Integer> palette = generatePalette(items.size());
 
-        for (StatItem item : items) {
+        for (int i = 0; i < items.size(); i++) {
+            StatItem item = items.get(i);
             item.setPercent(new BigDecimal(100).multiply((item.getSum().divide(total, 4, RoundingMode.HALF_UP))));
-            item.setDegree (new BigDecimal(360).multiply((item.getSum().divide(total, 4, RoundingMode.HALF_UP))));
-            item.setColor(queue.remove());
+            item.setDegree(new BigDecimal(360).multiply((item.getSum().divide(total, 4, RoundingMode.HALF_UP))));
+            item.setColor(palette.get(i));
         }
     }
 
-    private static Queue<Integer> getColors() {
-        Queue<Integer> colorList = new PriorityQueue<Integer>();
-        colorList.add(Color.rgb(102, 205, 170));
-        colorList.add(Color.rgb(127, 255, 212));
-        colorList.add(Color.rgb(85, 107, 47));
-        colorList.add(Color.rgb(46, 139, 87));
-        colorList.add(Color.rgb(32, 178, 170));
-        colorList.add(Color.rgb(0, 255, 127));
-        colorList.add(Color.rgb(250, 235, 215));
-        colorList.add(Color.rgb(143, 188, 143));
-        colorList.add(Color.rgb(139, 131, 120));
-        colorList.add(Color.rgb(255, 228, 225));
-        colorList.add(Color.rgb(49, 79, 79));
-        colorList.add(Color.rgb(100, 149, 237));
-        colorList.add(Color.rgb(175, 238, 238));
-        colorList.add(Color.rgb(152, 251, 152));
-        colorList.add(Color.rgb(189, 183, 107));
-        colorList.add(Color.rgb(0, 100, 0));
-        colorList.add(Color.rgb(238, 221, 130));
-        colorList.add(Color.rgb(60, 179, 113));
-        colorList.add(Color.rgb(188, 143, 143));
-        colorList.add(Color.rgb(147, 112, 219));
-        return colorList;
+    private static List<Integer> generatePalette(int count) {
+        Integer baseColor = Color.rgb(102, 205, 170);
+        float[] baseHSV = new float[3];
+        Color.colorToHSV(baseColor, baseHSV);
+        List<Integer> colors = new ArrayList<Integer>();
+        colors.add(baseColor);
+        float baseHue = baseHSV[0];
+        double step = 240.0 / (double) count;
+        for (int i = 1; i < count; i++) {
+            float[] nextColor = Arrays.copyOf(baseHSV, baseHSV.length);
+            nextColor[0] = (float) ((baseHue + step * ((double) i)) % 240.0);
+            colors.add(Color.HSVToColor(nextColor));
+        }
+        return colors;
     }
-
 }

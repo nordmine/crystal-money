@@ -13,7 +13,6 @@ public class ExchangeItem {
     private Integer toAccountIconId;
     private String comment;
 
-    // todo refactor all items to readable and writable (readable extends writable)
     public ExchangeItem(int id, long created, int fromAccountId, int toAccountId, BigDecimal amount, String comment) {
         this.id = id;
         this.created = created;

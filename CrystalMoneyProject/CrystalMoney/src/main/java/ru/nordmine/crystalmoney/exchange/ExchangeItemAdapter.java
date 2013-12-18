@@ -11,7 +11,6 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
-import ru.nordmine.crystalmoney.NumberWithText;
 import ru.nordmine.crystalmoney.R;
 import ru.nordmine.crystalmoney.account.AccountActivity;
 
