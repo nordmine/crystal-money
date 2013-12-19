@@ -51,4 +51,6 @@
     <string name="caption_from_account">С какого счёта</string>
     <string name="caption_to_account">На какой счёт</string>
     <string name="caption_account_icon">Картинка, связанная со счётом</string>
+    <string name="caption_day">День</string>
+    <string name="caption_month">Месяц</string>
 </resources>

@@ -79,11 +79,10 @@ public class StatActivity extends Activity {
 
         Resources res = getResources();
         String[] monthNames = res.getStringArray(R.array.month_names);
+        DateFormatSymbols russianSymbols = new DateFormatSymbols();
+        russianSymbols.setMonths(monthNames);
 
-        DateFormatSymbols russSymbol = new DateFormatSymbols();
-        russSymbol.setMonths(monthNames);
-
-        SimpleDateFormat df = new SimpleDateFormat("MMMM yyyy", russSymbol);
+        SimpleDateFormat df = new SimpleDateFormat("MMMM yyyy", russianSymbols);
         TextView monthNameTextView = (TextView) findViewById(R.id.monthNameTextView);
         monthNameTextView.setText(df.format(new Date(calendar.getTimeInMillis())));
 
