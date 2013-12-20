@@ -56,7 +56,7 @@ public class StatActivity extends Activity {
 
     private void drawChart() {
         DisplayMetrics metrics = this.getResources().getDisplayMetrics();
-        int parentWidth = metrics.widthPixels;
+        int parentWidth = metrics.widthPixels - 32;
         StatByCategoriesDao dao = new StatByCategoriesDao(this);
 
         long fromDate = calendar.getTimeInMillis();
@@ -124,7 +124,7 @@ public class StatActivity extends Activity {
             super(context);
 
             int padding = 10;
-            int diameter = parentWidth / 2;
+            int diameter = parentWidth / 3 * 2;
             int radius = diameter / 2;
             int center = parentWidth / 2 - padding;
             rectf = new RectF(center - radius, padding, center + radius, padding + diameter);
