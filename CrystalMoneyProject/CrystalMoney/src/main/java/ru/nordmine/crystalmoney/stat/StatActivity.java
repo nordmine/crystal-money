@@ -56,7 +56,8 @@ public class StatActivity extends Activity {
 
     private void drawChart() {
         DisplayMetrics metrics = this.getResources().getDisplayMetrics();
-        int parentWidth = metrics.widthPixels - 32;
+        int parentWidth = metrics.widthPixels - 50;
+        linear.setLayoutParams(new LinearLayout.LayoutParams(parentWidth, parentWidth / 3 * 2 + 30));
         StatByCategoriesDao dao = new StatByCategoriesDao(this);
 
         long fromDate = calendar.getTimeInMillis();
