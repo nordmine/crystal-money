@@ -85,7 +85,7 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
                             Log.d(this.getClass().toString(), "Found value " + i + ": " + m.group(i));
                         }
 
-                        ParsingResult result = parser.getParsingResult(m);
+                        ParsingResult result = pattern.getResultParser().getParsingResult(m);
                         if (result == null) {
                             Log.d(this.getClass().toString(), "Match pattern error");
                             return;

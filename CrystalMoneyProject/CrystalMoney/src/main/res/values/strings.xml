@@ -53,4 +53,5 @@
     <string name="caption_account_icon">Картинка, связанная со счётом</string>
     <string name="caption_day">День</string>
     <string name="caption_month">Месяц</string>
+    <string name="mobile_bank">мобильный банк</string>
 </resources>
