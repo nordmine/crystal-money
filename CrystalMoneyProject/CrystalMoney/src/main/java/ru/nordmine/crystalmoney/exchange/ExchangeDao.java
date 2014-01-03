@@ -6,11 +6,14 @@ import android.database.Cursor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.nordmine.crystalmoney.db.BasicDao;
 import ru.nordmine.crystalmoney.db.JoinTableItem;
 import ru.nordmine.crystalmoney.db.MyDb;
+import ru.nordmine.crystalmoney.db.WhereClauseItem;
+import ru.nordmine.crystalmoney.trx.TransactionItem;
 
 public class ExchangeDao extends BasicDao<ExchangeItem> {
 
@@ -82,5 +85,12 @@ public class ExchangeDao extends BasicDao<ExchangeItem> {
     @Override
     public List<ExchangeItem> getAll() {
         return super.getAll(null);
+    }
+
+    public List<ExchangeItem> getAll(long startDate, long finishDate) {
+        List<WhereClauseItem> whereClause = new ArrayList<WhereClauseItem>();
+        whereClause.add(new WhereClauseItem(getTableName() + "." + MyDb.EXCHANGE_CREATED, ">=", Long.toString(startDate)));
+        whereClause.add(new WhereClauseItem(getTableName() + "." + MyDb.EXCHANGE_CREATED, "<", Long.toString(finishDate)));
+        return super.getAll(whereClause.toArray(new WhereClauseItem[whereClause.size()]));
     }
 }

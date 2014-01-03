@@ -3,6 +3,8 @@ package ru.nordmine.crystalmoney.exchange;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -10,9 +12,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import ru.nordmine.crystalmoney.MainActivity;
@@ -22,11 +28,20 @@ import ru.nordmine.crystalmoney.account.AccountDao;
 public class ExchangeListActivity extends Activity {
 
     public static final int EXCHANGE_AMOUNT_EDIT = 41;
+    private static final String EXCHANGE_START_DATE = "exchange_start_date";
+    private static final String MY_PREFS = "my_prefs2";
 
     private ListView listView;
     private List<ExchangeItem> items;
     private ExchangeDao dao = new ExchangeDao(this);
     private AccountDao accountDao = new AccountDao(this);
+    private Calendar startCalendar;
+    private int calendarField = Calendar.MONTH;
+
+    private Resources res;
+    private SharedPreferences preferences;
+
+    protected TextView pagerTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +49,20 @@ public class ExchangeListActivity extends Activity {
         setContentView(R.layout.activity_exchange_list);
 
         listView = (ListView) findViewById(R.id.exchangeListView);
+        pagerTextView = (TextView) findViewById(R.id.pagerTextView);
+
+        preferences = getSharedPreferences(MY_PREFS, Activity.MODE_PRIVATE);
+
+        startCalendar = Calendar.getInstance();
+        startCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        startCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        startCalendar.set(Calendar.MINUTE, 0);
+        startCalendar.set(Calendar.SECOND, 0);
+        startCalendar.set(Calendar.MILLISECOND, 0);
+
+        startCalendar.setTimeInMillis(preferences.getLong(EXCHANGE_START_DATE, startCalendar.getTimeInMillis()));
+
+        res = getResources();
 
         loadExchangesFromDatabase();
 
@@ -57,7 +86,17 @@ public class ExchangeListActivity extends Activity {
     }
 
     private void loadExchangesFromDatabase() {
-        items = dao.getAll();
+        Calendar endCalendar = Calendar.getInstance();
+        endCalendar.setTimeInMillis(startCalendar.getTimeInMillis());
+        endCalendar.add(calendarField, 1);
+
+        String[] monthNames = res.getStringArray(R.array.month_names);
+        DateFormatSymbols russianSymbols = new DateFormatSymbols();
+        russianSymbols.setMonths(monthNames);
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", russianSymbols);
+        pagerTextView.setText(sdf.format(startCalendar.getTime()));
+
+        items = dao.getAll(startCalendar.getTimeInMillis(), endCalendar.getTimeInMillis());
 
         listView.setAdapter(new ExchangeItemAdapter(this, android.R.layout.simple_list_item_1,
                 items.toArray(new ExchangeItem[items.size()])));
@@ -138,9 +177,32 @@ public class ExchangeListActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.exchange_list, menu);
         return true;
+    }
+
+    public void onNextButtonClick(View v) {
+        startCalendar.add(calendarField, 1);
+        loadExchangesFromDatabase();
+    }
+
+    public void onPrevButtonClick(View v) {
+        startCalendar.add(calendarField, -1);
+        loadExchangesFromDatabase();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(EXCHANGE_START_DATE, startCalendar.getTimeInMillis());
+        editor.apply();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startCalendar.setTimeInMillis(preferences.getLong(EXCHANGE_START_DATE, startCalendar.getTimeInMillis()));
     }
 
 }
