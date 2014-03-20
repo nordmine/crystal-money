@@ -94,9 +94,14 @@ public class AccountActivity extends Activity {
 		list.add(R.drawable.wallet_icon);
 		list.add(R.drawable.bank);
 		list.add(R.drawable.dollar);
-		list.add(R.drawable.visa);
+		list.add(R.drawable.visa_logo);
         list.add(R.drawable.smartcard);
         list.add(R.drawable.money_envelope);
+        list.add(R.drawable.portmone);
+        list.add(R.drawable.sberbank);
+        list.add(R.drawable.alfabank);
+        list.add(R.drawable.alfabank2);
+        list.add(R.drawable.qiwi);
 		return list.toArray(new Integer[list.size()]);
 	}
 
