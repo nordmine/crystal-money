@@ -54,4 +54,5 @@
     <string name="caption_day">День</string>
     <string name="caption_month">Месяц</string>
     <string name="mobile_bank">мобильный банк</string>
+    <string name="empty_account_list">Для начала работы создайте Ваш основной счёт.</string>
 </resources>

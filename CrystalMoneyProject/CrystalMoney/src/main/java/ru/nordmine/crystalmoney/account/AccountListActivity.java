@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import ru.nordmine.crystalmoney.MainActivity;
-import ru.nordmine.crystalmoney.NumberWithText;
 import ru.nordmine.crystalmoney.R;
 import ru.nordmine.crystalmoney.exchange.ExchangeActivity;
 import ru.nordmine.crystalmoney.stat.StatisticsDao;
@@ -69,39 +67,51 @@ public class AccountListActivity extends Activity {
 	}
 
 	private void loadAccountsFromDatabase() {
-	 	items = dao.getAll();
+		items = dao.getAll();
 		Integer[] iconsOriginal = AccountActivity.getAccountIcons();
 		List<AccountItem> icons = new ArrayList<AccountItem>();
 
-        StatisticsDao statistics = new StatisticsDao(this);
-        Map<Integer, BigDecimal> totalAmount = statistics.getTotalAmount();
-		
+		StatisticsDao statistics = new StatisticsDao(this);
+		Map<Integer, BigDecimal> totalAmount = statistics.getTotalAmount();
+
 		for (AccountItem ai : items) {
 			Integer iconId = iconsOriginal[ai.getIconId()];
-            BigDecimal statAmount = totalAmount.containsKey(ai.getId()) ? totalAmount.get(ai.getId()) : BigDecimal.ZERO;
-			icons.add(new AccountItem(ai.getId(), ai.getName(), iconId,
-                    ai.getAmount().add(statAmount), ai.isCard(), ai.getComment(),
-                    ai.getCardNumber(), ai.getSmsSender()));
+			BigDecimal statAmount = totalAmount.containsKey(ai.getId()) ? totalAmount.get(ai.getId()) : BigDecimal.ZERO;
+			icons.add(new AccountItem(
+					ai.getId(),
+					ai.getName(),
+					iconId,
+					ai.getAmount().add(statAmount),
+					ai.isCard(),
+					ai.getComment(),
+					ai.getCardNumber(),
+					ai.getSmsSender()));
 		}
 
 		listView.setAdapter(new AccountItemAdapter(this,
-					android.R.layout.simple_list_item_1, icons
-							.toArray(new AccountItem[icons.size()])));
+				android.R.layout.simple_list_item_1, icons
+				.toArray(new AccountItem[icons.size()])
+		));
 
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
 
-        DecimalFormat df = new DecimalFormat("###,##0.00");
+		DecimalFormat df = new DecimalFormat("###,##0.00");
 
-        BigDecimal totalSumPerDay = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
-        totalSumPerDayTextView.setText("Расходы за день: " + df.format(totalSumPerDay.doubleValue()));
+		if (items.size() > 0) {
+			BigDecimal totalSumPerDay = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
+			totalSumPerDayTextView.setText("Расходы за день: " + df.format(totalSumPerDay.doubleValue()));
 
-        c.set(Calendar.DAY_OF_MONTH, 1);
-        BigDecimal totalSumPerMonth = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
-        totalSumPerMonthTextView.setText("Расходы за месяц: " + df.format(totalSumPerMonth.doubleValue()));
+			c.set(Calendar.DAY_OF_MONTH, 1);
+			BigDecimal totalSumPerMonth = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
+			totalSumPerMonthTextView.setText("Расходы за месяц: " + df.format(totalSumPerMonth.doubleValue()));
+		} else {
+			totalSumPerDayTextView.setText(R.string.empty_account_list);
+			totalSumPerMonthTextView.setText("");
+		}
 	}
 
     @Override
@@ -136,7 +146,6 @@ public class AccountListActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.account_list, menu);
 		return true;
 	}
