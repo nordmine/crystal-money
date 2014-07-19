@@ -32,6 +32,7 @@ public class TransactionSmsReceiver extends BroadcastReceiver {
     private List<SmsParser> getParsers() {
         List<SmsParser> parsers = new ArrayList<SmsParser>();
         parsers.add(new SberbankParser());
+        parsers.add(new AlfabankParser());
         parsers.add(new MtsBankParser());
         return parsers;
     }
