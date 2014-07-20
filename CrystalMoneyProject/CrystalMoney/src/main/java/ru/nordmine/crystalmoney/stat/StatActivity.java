@@ -18,10 +18,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import ru.nordmine.crystalmoney.MainActivity;
@@ -87,9 +89,23 @@ public class StatActivity extends Activity {
         TextView monthNameTextView = (TextView) findViewById(R.id.monthNameTextView);
         monthNameTextView.setText(df.format(new Date(calendar.getTimeInMillis())));
 
+	    BigDecimal totalSum = BigDecimal.ZERO;
+	    for (StatItem item : items) {
+			totalSum = totalSum.add(item.getSum());
+	    }
+
+	    List<StatItem> itemsWithTotal = new LinkedList<StatItem>(items);
+	    if(!items.isEmpty()) {
+		    StatItem totalSumStatItem = new StatItem();
+		    totalSumStatItem.setColor(0xFFFFFF);
+		    totalSumStatItem.setSum(totalSum);
+		    totalSumStatItem.setPercent(new BigDecimal("100"));
+		    totalSumStatItem.setCategoryName("Итого");
+		    itemsWithTotal.add(totalSumStatItem);
+	    }
         percentByCategoryListView.setAdapter(
                 new StatItemAdapter(this, android.R.layout.simple_list_item_1,
-                        items.toArray(new StatItem[0])));
+		                itemsWithTotal.toArray(new StatItem[itemsWithTotal.size()])));
     }
 
     @Override

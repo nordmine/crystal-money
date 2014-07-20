@@ -14,13 +14,14 @@ public class SberbankParser implements SmsParser {
         String cardNumberWithDateTimePattern = cardNumberWithDatePattern + " \\d{2}:\\d{2}";
         ResultParser commentLast = new CommentLastResultParser();
         ResultParser commentInMiddle = new CommentInMiddleResultParser();
-        patterns.add(new PatternData(OUTCOME, false, cardNumberWithDateTimePattern + " покупка на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\.", commentLast));
-        patterns.add(new PatternData(OUTCOME, false, cardNumberWithDateTimePattern + " оплата услуг на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\.", commentLast));
+	    // todo поправить другие шаблоны при необходимости
+        patterns.add(new PatternData(OUTCOME, false, cardNumberWithDateTimePattern + " покупка на сумму (\\d+\\.\\d+)\\s?р\\. (.*?) Баланс", commentLast));
+        patterns.add(new PatternData(OUTCOME, false, cardNumberWithDateTimePattern + " оплата услуг на сумму (\\d+\\.\\d+)\\s?р\\. (.*?) Баланс", commentLast));
         patterns.add(new PatternData(OUTCOME, true, cardNumberWithDateTimePattern + " выдача наличных на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\.", commentLast));
         patterns.add(new PatternData(INCOME, false, cardNumberWithDateTimePattern + " операция зачисления на сумму (\\d+\\.\\d+) руб\\. PEREVOD WEB-BANK (.*?) выполнена успешно\\.", commentLast));
         patterns.add(new PatternData(INCOME, true, cardNumberWithDateTimePattern + " операция зачисления на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\.", commentLast));
         patterns.add(new PatternData(OUTCOME, false, cardNumberWithDateTimePattern + " операция списания на сумму (\\d+\\.\\d+) руб\\. (.*?) выполнена успешно\\.", commentLast));
-        patterns.add(new PatternData(OUTCOME, false, cardNumberWithDatePattern + " оплата Мобильного банка за (.*?) на сумму (\\d+\\.\\d+) руб\\. выполнена успешно\\.", commentInMiddle));
+        patterns.add(new PatternData(OUTCOME, false, cardNumberWithDatePattern + " оплата Мобильного банка за (.*?) на сумму (\\d+\\.\\d+)\\s?р\\. Баланс", commentInMiddle));
         return patterns;
     }
 

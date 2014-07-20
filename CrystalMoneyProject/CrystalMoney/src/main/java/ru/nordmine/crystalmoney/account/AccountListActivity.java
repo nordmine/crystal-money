@@ -34,6 +34,7 @@ public class AccountListActivity extends Activity {
 	private ListView listView;
     private TextView totalSumPerDayTextView;
     private TextView totalSumPerMonthTextView;
+	private TextView totalSumTextView;
 	private List<AccountItem> items;
 	private AccountDao dao = new AccountDao(this);
 
@@ -45,6 +46,7 @@ public class AccountListActivity extends Activity {
 		listView = (ListView) findViewById(R.id.categoryListView);
         totalSumPerDayTextView = (TextView) findViewById(R.id.totalSumPerDayTextView);
         totalSumPerMonthTextView = (TextView) findViewById(R.id.totalSumPerMonthTextView);
+		totalSumTextView = (TextView) findViewById(R.id.totalSumTextView);
 
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> a, View v, int position,
@@ -57,7 +59,7 @@ public class AccountListActivity extends Activity {
 				startActivityForResult(intent, EDIT_ACCOUNT);
 			}
 		});
-		
+
 		registerForContextMenu(listView);
 
 		loadAccountsFromDatabase();
@@ -74,9 +76,11 @@ public class AccountListActivity extends Activity {
 		StatisticsDao statistics = new StatisticsDao(this);
 		Map<Integer, BigDecimal> totalAmount = statistics.getTotalAmount();
 
+		BigDecimal totalSum = BigDecimal.ZERO;
 		for (AccountItem ai : items) {
 			Integer iconId = iconsOriginal[ai.getIconId()];
 			BigDecimal statAmount = totalAmount.containsKey(ai.getId()) ? totalAmount.get(ai.getId()) : BigDecimal.ZERO;
+			totalSum = totalSum.add(ai.getAmount()).add(statAmount);
 			icons.add(new AccountItem(
 					ai.getId(),
 					ai.getName(),
@@ -108,6 +112,8 @@ public class AccountListActivity extends Activity {
 			c.set(Calendar.DAY_OF_MONTH, 1);
 			BigDecimal totalSumPerMonth = statistics.getTotalOutcomeBetweenDate(c.getTimeInMillis(), null);
 			totalSumPerMonthTextView.setText("Расходы за месяц: " + df.format(totalSumPerMonth.doubleValue()));
+
+			totalSumTextView.setText("Доступно на всех счетах: " + df.format(totalSum.doubleValue()));
 		} else {
 			totalSumPerDayTextView.setText(R.string.empty_account_list);
 			totalSumPerMonthTextView.setText("");
@@ -130,7 +136,7 @@ public class AccountListActivity extends Activity {
         }
         return true;
     }
-	
+
 	public void onAddButtonClick() {
 		Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
 		startActivityForResult(intent, EDIT_ACCOUNT);
@@ -155,12 +161,12 @@ public class AccountListActivity extends Activity {
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		if (v.getId() == R.id.categoryListView) {
-			AdapterView.AdapterContextMenuInfo info = 
+			AdapterView.AdapterContextMenuInfo info =
 					(AdapterView.AdapterContextMenuInfo) menuInfo;
 			menu.setHeaderTitle(items.get(info.position).getName());
 			menu.add(0, 0, 0, R.string.caption_move_to_another_account);
 			menu.add(0, 1, 1, R.string.caption_delete);
-		}		
+		}
 	}
 
 	@Override
